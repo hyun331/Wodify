@@ -25,8 +25,8 @@ public class RecordDetail extends BaseEntity {
     private Integer reps; // 횟수 // tinyint 하고 싶다. 100이 안넘어가잖아
     private BigDecimal kg; // 무게
     private BigDecimal meter; // 거리
-    private Integer cal; // 칼로리 // 얘는 넘어가겠다.
-    private LocalTime sec; // 시간 // TIME 이 맞는 데이터 타입일까? 수행한 시간인데?
+    private Integer cal; // 칼로리 // 얘는 100 넘어가겠다.
+    private LocalTime sec; // 시간 // TIME 이 맞는 데이터 타입일까? 수행한 시간인데? 강사님 왈 시간의 양이면 숫자값을 받으라는디?
 
     @ManyToOne // 하나의 운동기록 안에 여러개의 세부 운동기록
     @JoinColumn(name = "record_id")

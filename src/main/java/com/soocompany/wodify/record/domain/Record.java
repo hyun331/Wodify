@@ -27,11 +27,11 @@ public class Record extends BaseEntity {
     @Column(nullable = false, columnDefinition = "char(1) default 'N'")
     private String snf; // 성공여부 success or failure
     @Column(nullable = false)
-    private LocalTime exerciseTime; // 운동 수행 시간 // TIME 이 맞는 데이터 타입일까? 수행한 시간인데?
-    @Column(nullable = false, length = 3000)
+    private LocalTime exerciseTime; // 운동 수행 시간 // TIME 이 맞는 데이터 타입일까? 수행한 시간인데? 강사님 왈 시간의 양이면 숫자값을 받으라는디?
+    @Column(length = 3000)
     private String comments; // 코멘트
     @Column(nullable = false, columnDefinition = "char(1) default 'Y'")
-    private String visibility_YN; // 공개 범위 Y공개, N비공개
+    private String visibilityYN; // 공개 범위 Y공개, N비공개
 
 //    @OneToOne // 하나의 와드에 하나의 운동기록
 //    @JoinColumn(name = "wod_id") // 아직 와드에 대한 걸 못받음.
