@@ -39,8 +39,8 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToOne
-    @JoinColumn("box_id")
+    @ManyToOne
+    @JoinColumn(name = "box_id")
     private Box box;
 
 
