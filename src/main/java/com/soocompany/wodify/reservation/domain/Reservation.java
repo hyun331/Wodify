@@ -1,5 +1,6 @@
 package com.soocompany.wodify.reservation.domain;
 
+import com.soocompany.wodify.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,9 +27,9 @@ public class Reservation {
 //    @ManyToOne
 //    private Wod wod;
 
-//    @JoinColumn("coach_id")
-//    @ManyToOne
-//    private Member coach;
+    @JoinColumn(name = "coach_id")
+    @ManyToOne
+    private Member coach;
     @Column(nullable = false)
     private int maximumPeople;
     @Column(nullable = false)
