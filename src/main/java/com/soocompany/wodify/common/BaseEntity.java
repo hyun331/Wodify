@@ -16,5 +16,5 @@ public abstract class BaseEntity {
     private LocalDateTime createdTime;
 
     @Column(nullable = false, columnDefinition = "char(1) default 'N'")
-    private String delYn;
+    private String delYn = "N";
 }
