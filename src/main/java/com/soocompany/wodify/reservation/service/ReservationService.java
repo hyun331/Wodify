@@ -13,5 +13,6 @@ public class ReservationService {
 
     public void reservationCreate(ReservationCreateReqDto dto) {
         Reservation reservation = dto.toEntity();
+        reservationRepository.save(reservation);
     }
 }

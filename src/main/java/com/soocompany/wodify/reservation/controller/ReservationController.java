@@ -1,12 +1,12 @@
 package com.soocompany.wodify.reservation.controller;
 
 import com.soocompany.wodify.reservation.dto.ReservationCreateReqDto;
+import com.soocompany.wodify.reservation.dto.ReservationListResDto;
 import com.soocompany.wodify.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

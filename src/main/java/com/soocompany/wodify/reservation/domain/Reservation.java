@@ -25,9 +25,9 @@ public class Reservation extends BaseEntity {
     @Column(nullable = false)
     private LocalTime time;
 
-    @JoinColumn("wod_id")
-    @ManyToOne
-    private Wod wod;
+//    @JoinColumn("wod_id")
+//    @ManyToOne
+//    private Wod wod;
 
     @JoinColumn(name = "coach_id")
     @ManyToOne
