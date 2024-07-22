@@ -1,8 +1,5 @@
 package com.soocompany.wodify.wod.exercise.controller;
 
-import com.soocompany.wodify.wod.category.domain.Category;
-import com.soocompany.wodify.wod.category.dto.CategoryListResDto;
-import com.soocompany.wodify.wod.category.dto.CategorySaveReqDto;
 import com.soocompany.wodify.wod.exercise.domain.Exercise;
 import com.soocompany.wodify.wod.exercise.dto.ExerciseListReqDto;
 import com.soocompany.wodify.wod.exercise.dto.ExerciseListResDto;
@@ -29,9 +26,15 @@ public class ExerciseController {
         return exerciseService.saveExercise(dtoList);
     }
 
-    @GetMapping("/list")
+    @GetMapping("/list/all")
     @ResponseBody
-    public List<ExerciseListResDto> ExerciseList(@RequestBody ExerciseListReqDto dto) {
-        return exerciseService.exerciseList(dto);
+    public List<ExerciseListResDto> exerciseListAllByEmail(@RequestBody ExerciseListReqDto dto) {
+        return exerciseService.exerciseListAllByEmail(dto);
+    }
+
+    @GetMapping("/list/categoryId")
+    @ResponseBody
+    public List<ExerciseListResDto> exerciseListByEmailAndCategoryId(@RequestBody ExerciseListReqDto dto) {
+        return exerciseService.exerciseListByEmailAndCategoryId(dto);
     }
 }

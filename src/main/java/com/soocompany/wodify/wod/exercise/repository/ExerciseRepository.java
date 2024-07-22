@@ -9,5 +9,9 @@ import java.util.Optional;
 
 @Repository
 public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
+
+    List<Exercise> findByEmailIn(List<String> emails);
+    List<Exercise> findByEmailInAndCategoryId(List<String> emails, Long categoryId);
+
     Optional<List<Exercise>> findByCategoryId(Long categoryId);
 }

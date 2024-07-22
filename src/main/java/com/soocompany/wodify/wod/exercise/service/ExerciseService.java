@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,13 +39,25 @@ public class ExerciseService {
         return savedExerciseList;
     }
 
-    public List<Exercise> findByCategoryId(Long id) {
-        return exerciseRepository.findByCategoryId(id).orElseThrow(() -> new EntityNotFoundException("id 에 해당하는 종목이 없습니다."));
-    }
-
     public List<ExerciseListResDto> exerciseList(ExerciseListReqDto dto) {
         return exerciseRepository
                 .findByCategoryId(dto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("카테고리 id에 해당되는 종목이 없습니다."))
+                .stream()
+                .map(Exercise::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<ExerciseListResDto> exerciseListAllByEmail(ExerciseListReqDto dto) {
+        return exerciseRepository
+                .findByEmailIn(Arrays.asList("admin@naver.com", "coach@naver.com", dto.getEmail()))
+                .stream()
+                .map(Exercise::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<ExerciseListResDto> exerciseListByEmailAndCategoryId(ExerciseListReqDto dto) {
+        return exerciseRepository
+                .findByEmailInAndCategoryId(Arrays.asList("admin@naver.com", "coach@naver.com", dto.getEmail()), dto.getCategoryId())
                 .stream()
                 .map(Exercise::toDto)
                 .collect(Collectors.toList());
