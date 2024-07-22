@@ -1,6 +1,7 @@
 package com.soocompany.wodify.reservation.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.reservation.domain.Reservation;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReservationCreateReqDto {
+    private Long boxId;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     @JsonFormat(pattern = "kk:mm:ss")
@@ -24,8 +26,9 @@ public class ReservationCreateReqDto {
     private Long coachId;
 
 
-    public Reservation toEntity() {
+    public Reservation toEntity(Box box) {
         return Reservation.builder()
+                .box(box)
                 .date(this.date)
                 .time(this.time)
                 .maximumPeople(this.maximumPeople)
