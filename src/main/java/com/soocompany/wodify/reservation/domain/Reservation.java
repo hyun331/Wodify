@@ -1,5 +1,6 @@
 package com.soocompany.wodify.reservation.domain;
 
+import com.soocompany.wodify.common.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +15,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Reservation {
+public class Reservation extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
@@ -23,9 +24,10 @@ public class Reservation {
     private LocalDate date;
     @Column(nullable = false)
     private LocalTime time;
-//    @JoinColumn("wod_id")
-//    @ManyToOne
-//    private Wod wod;
+
+    @JoinColumn("wod_id")
+    @ManyToOne
+    private Wod wod;
 
     @JoinColumn(name = "coach_id")
     @ManyToOne
