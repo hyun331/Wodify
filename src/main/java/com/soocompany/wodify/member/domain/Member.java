@@ -1,5 +1,6 @@
 package com.soocompany.wodify.member.domain;
 
+import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
