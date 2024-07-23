@@ -1,6 +1,11 @@
 package com.soocompany.wodify.reservation.domain;
 
+import com.soocompany.wodify.box.domain.Box;
+import com.soocompany.wodify.common.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
+import com.soocompany.wodify.reservation.dto.ReservationDetailResDto;
+import com.soocompany.wodify.reservation.dto.ReservationListResDto;
+import com.soocompany.wodify.reservation.repository.ReservationRepository;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +19,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Reservation {
+public class Reservation extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
@@ -23,9 +28,14 @@ public class Reservation {
     private LocalDate date;
     @Column(nullable = false)
     private LocalTime time;
-//    @JoinColumn("wod_id")
+
+//    @JoinColumn(name = "wod_id")
 //    @ManyToOne
 //    private Wod wod;
+
+    @ManyToOne
+    @JoinColumn(name = "box_id")
+    private Box box;
 
     @JoinColumn(name = "coach_id")
     @ManyToOne
@@ -34,4 +44,24 @@ public class Reservation {
     private int maximumPeople;
     @Column(nullable = false)
     private int availablePeople;
+
+
+    public ReservationListResDto ListResDtoFromEntity() {
+        return ReservationListResDto.builder()
+                .id(this.id)
+                .date(this.date)
+                .time(this.time)
+                .build();
+
+    }
+    public ReservationDetailResDto detailResDtoFromEntity() {
+        return ReservationDetailResDto.builder()
+                .id(this.id)
+                .date(this.date)
+                .time(this.time)
+                .maximumPeople(this.maximumPeople)
+                .availablePeople(this.availablePeople)
+                .build();
+
+    }
 }

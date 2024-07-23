@@ -1,9 +1,9 @@
 package com.soocompany.wodify.box.domain;
 
+
 import com.soocompany.wodify.common.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
 import lombok.*;
-
 import javax.persistence.*;
 
 @Getter
