@@ -1,5 +1,6 @@
 package com.soocompany.wodify.member.domain;
 
+import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+
 
 @Getter
 @Entity
@@ -42,6 +44,5 @@ public class Member extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "box_id")
     private Box box;
-
 
 }
