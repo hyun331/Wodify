@@ -1,38 +1,5 @@
 package com.soocompany.wodify.box.controller;
 
-//import com.soocompany.wodify.box.dto.BoxSaveReqDto;
-//import com.soocompany.wodify.box.dto.BoxUpdateReqDto;
-//import com.soocompany.wodify.box.service.BoxService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.web.bind.annotation.*;
-//
-//@Controller
-//@RequestMapping("/box")
-//public class BoxController {
-//
-//    private final BoxService boxService;
-//
-//    @Autowired
-//    public BoxController(BoxService boxService) {
-//        this.boxService = boxService;
-//    }
-//
-//    @PostMapping("/create")
-//    @ResponseBody
-//    public String boxCreate(@RequestBody BoxSaveReqDto dto) {
-//        boxService.boxCreate(dto);
-//        return "ok";
-//    }
-//
-//    @PutMapping("/update/{id}")
-//    @ResponseBody
-//    public String boxUpdate(@PathVariable Long id, @RequestBody BoxUpdateReqDto dto) {
-//        boxService.boxUpdate(id, dto);
-//        return "ok";
-//    }
-//}
-
 import com.soocompany.wodify.box.dto.BoxSaveReqDto;
 import com.soocompany.wodify.box.dto.BoxUpdateReqDto;
 import com.soocompany.wodify.box.service.BoxService;

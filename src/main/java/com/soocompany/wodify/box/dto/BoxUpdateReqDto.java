@@ -11,4 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BoxUpdateReqDto {
     private String name;
+
+    private String logo;
+
+    private String operatingHours;
+
+    private String fee;
+
+    private String intro;
+
+//    private String code;
 }

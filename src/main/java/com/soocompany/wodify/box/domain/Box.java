@@ -19,8 +19,7 @@ public class Box extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @Lob
-    private byte[] logo;
+    private String logo;
 
     private String operatingHours;
 
@@ -36,9 +35,6 @@ public class Box extends BaseEntity {
     private Member member;
 
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public void markAsDeleted() {
         try {
