@@ -42,8 +42,8 @@ public class BoxService {
             entityManager.detach(box);
             box = Box.builder()
                     .id(box.getId())
-                    .name(dto.getName() != null ? dto.getName() : box.getName())
-                    .logo(dto.getLogo() != null ? dto.getLogo() : box.getLogo())
+//                    .name(dto.getName() != null ? dto.getName() : box.getName())
+//                    .logo(dto.getLogo() != null ? dto.getLogo() : box.getLogo())
                     .operatingHours(box.getOperatingHours())
                     .fee(box.getFee())
                     .intro(box.getIntro())
