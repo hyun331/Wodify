@@ -19,6 +19,4 @@ public class BoxUpdateReqDto {
     private String fee;
 
     private String intro;
-
-//    private String code;
 }
