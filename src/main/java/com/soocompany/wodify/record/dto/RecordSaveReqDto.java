@@ -21,7 +21,7 @@ public class RecordSaveReqDto {
     private String comments; // 코멘트
     private String visibilityYN; // 공개 범위 Y공개, N비공개
 
-//    private ReservationDetail reservationDetail; // 이거 앞단에서 어떻게 받나..
+    private Long reservationDetailId; // 이거 앞단에서 어떻게 받나..
 
     public Record toEntity(LocalTime exerciseTime){
         return Record.builder()

@@ -2,6 +2,9 @@ package com.soocompany.wodify.member.domain;
 
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.BaseEntity;
+import com.soocompany.wodify.member.dto.MemberDetResDto;
+import com.soocompany.wodify.member.dto.MemberListResDto;
+import com.soocompany.wodify.member.dto.MemberUpdateDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

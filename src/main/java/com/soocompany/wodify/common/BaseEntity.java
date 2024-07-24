@@ -17,4 +17,5 @@ public abstract class BaseEntity {
 
     @Column(nullable = false, columnDefinition = "char(1) default 'N'")
     private String delYn = "N";
+
 }
