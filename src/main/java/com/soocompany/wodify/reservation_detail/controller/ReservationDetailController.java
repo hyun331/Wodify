@@ -1,12 +1,10 @@
 package com.soocompany.wodify.reservation_detail.controller;
 
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetCreateReqDto;
+import com.soocompany.wodify.reservation_detail.dto.ReservationDetailDetResDto;
 import com.soocompany.wodify.reservation_detail.service.ReservationDetailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,5 +18,9 @@ public class ReservationDetailController {
         return "ok";
     }
 
+    @GetMapping("/detail/{id}")
+    public ReservationDetailDetResDto reservationDetailDetail(@PathVariable Long id) {
+        return reservationDetailService.detail(id);
+    }
 
 }
