@@ -92,7 +92,7 @@ public class KakaoController {
             e.printStackTrace();;
         }
 
-        return "redirect:/member/afterLogin/"+email;
+        return "redirect:/member/afterKakaoLogin/"+email;
 
     }
 

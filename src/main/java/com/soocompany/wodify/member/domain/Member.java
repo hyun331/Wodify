@@ -5,6 +5,7 @@ import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.BaseEntity;
 import com.soocompany.wodify.member.dto.MemberDetResDto;
 import com.soocompany.wodify.member.dto.MemberListResDto;
+import com.soocompany.wodify.member.dto.MemberUpdateDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -88,4 +89,17 @@ public class Member extends BaseEntity {
                 .address(this.address)
                 .build();
     }
+
+
+    //member 개인정보 수정
+    public void memberInfoUpdate(MemberUpdateDto memberUpdateDto) {
+        this.name = memberUpdateDto.getName();
+        this.address = memberUpdateDto.getAddress();
+        this.phone = memberUpdateDto.getPhone();
+        this.deadLift = memberUpdateDto.getDeadLift();
+        this.squat = memberUpdateDto.getSquat();
+        this.benchPress = memberUpdateDto.getBenchPress();
+    }
+
+
 }
