@@ -15,6 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WodDetail extends BaseEntity {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,8 +25,11 @@ public class WodDetail extends BaseEntity {
     private Wod wod;
 
     @Column(nullable = false)
+    private Int order;
+    
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
-    private String target;
+    private String contents;
 }
