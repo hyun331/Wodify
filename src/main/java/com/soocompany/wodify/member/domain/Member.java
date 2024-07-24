@@ -3,7 +3,9 @@ package com.soocompany.wodify.member.domain;
 
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.BaseEntity;
-import com.soocompany.wodify.member.dto.MemberResDto;
+import com.soocompany.wodify.member.dto.MemberDetResDto;
+import com.soocompany.wodify.member.dto.MemberListResDto;
+import com.soocompany.wodify.member.dto.MemberUpdateDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,6 +35,7 @@ public class Member extends BaseEntity {
 
     private String address;
 
+    @Column(nullable = false)
     private String phone;
 
     @ColumnDefault("0.0")
@@ -45,6 +48,7 @@ public class Member extends BaseEntity {
     private BigDecimal benchPress;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
     @ManyToOne
@@ -52,8 +56,15 @@ public class Member extends BaseEntity {
     private Box box;
 
 
-    public MemberResDto fromEntity(){
-        return MemberResDto.builder()
+    public MemberDetResDto detFromEntity(){
+        //box가 null인거 check -> 안하면 NullPointException
+        Long boxId = null;
+        String boxName = null;
+        if(box!=null){
+            boxId = this.box.getId();
+            boxName = this.box.getName();
+        }
+        return MemberDetResDto.builder()
                 .id(this.id)
                 .name(this.name)
                 .email(this.email)
@@ -63,9 +74,31 @@ public class Member extends BaseEntity {
                 .squat(this.squat)
                 .benchPress(this.benchPress)
                 .role(this.role)
-                .boxId(this.box.getId())
-                .boxName(this.box.getName())
+                .boxId(boxId)
+                .boxName(boxName)
                 .build();
+    }
+
+
+    public MemberListResDto listFromEntity() {
+        return MemberListResDto.builder()
+                .id(this.id)
+                .name(this.name)
+                .email(this.email)
+                .phone(this.phone)
+                .address(this.address)
+                .build();
+    }
+
+
+    //member 개인정보 수정
+    public void memberInfoUpdate(MemberUpdateDto memberUpdateDto) {
+        this.name = memberUpdateDto.getName();
+        this.address = memberUpdateDto.getAddress();
+        this.phone = memberUpdateDto.getPhone();
+        this.deadLift = memberUpdateDto.getDeadLift();
+        this.squat = memberUpdateDto.getSquat();
+        this.benchPress = memberUpdateDto.getBenchPress();
     }
 
 
