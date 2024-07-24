@@ -1,38 +1,5 @@
 package com.soocompany.wodify.box.controller;
 
-//import com.soocompany.wodify.box.dto.BoxSaveReqDto;
-//import com.soocompany.wodify.box.dto.BoxUpdateReqDto;
-//import com.soocompany.wodify.box.service.BoxService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.web.bind.annotation.*;
-//
-//@Controller
-//@RequestMapping("/box")
-//public class BoxController {
-//
-//    private final BoxService boxService;
-//
-//    @Autowired
-//    public BoxController(BoxService boxService) {
-//        this.boxService = boxService;
-//    }
-//
-//    @PostMapping("/create")
-//    @ResponseBody
-//    public String boxCreate(@RequestBody BoxSaveReqDto dto) {
-//        boxService.boxCreate(dto);
-//        return "ok";
-//    }
-//
-//    @PutMapping("/update/{id}")
-//    @ResponseBody
-//    public String boxUpdate(@PathVariable Long id, @RequestBody BoxUpdateReqDto dto) {
-//        boxService.boxUpdate(id, dto);
-//        return "ok";
-//    }
-//}
-
 import com.soocompany.wodify.box.dto.BoxSaveReqDto;
 import com.soocompany.wodify.box.dto.BoxUpdateReqDto;
 import com.soocompany.wodify.box.service.BoxService;
@@ -53,14 +20,20 @@ public class BoxController {
     }
 
 
+//    box만들기(boxcode, 대표id는 uniqe)
     @PostMapping("/create")
     @ResponseBody
     public ResponseEntity<String> boxCreate(@RequestBody BoxSaveReqDto dto) {
-        boxService.boxCreate(dto);
-        return new ResponseEntity<>("Box created successfully", HttpStatus.CREATED);
+        try {
+            boxService.boxCreate(dto);
+            return new ResponseEntity<>("Box created successfully", HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 
+//    box수정(box_id, boxcode, 대표id는 못바꿈)
     @PutMapping("/update/{id}")
     @ResponseBody
     public ResponseEntity<String> boxUpdate(@PathVariable Long id, @RequestBody BoxUpdateReqDto dto) {
@@ -73,6 +46,7 @@ public class BoxController {
     }
 
 
+//   box삭제(delyn을 Y로 바꿈)
     @DeleteMapping("/delete/{id}")
     @ResponseBody
     public ResponseEntity<String> boxDelete(@PathVariable Long id) {
@@ -84,5 +58,3 @@ public class BoxController {
         }
     }
 }
-
-
