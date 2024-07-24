@@ -4,6 +4,7 @@ import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.dto.MemberDetResDto;
 import com.soocompany.wodify.member.dto.MemberListResDto;
 import com.soocompany.wodify.member.dto.MemberSaveReqDto;
+import com.soocompany.wodify.member.dto.MemberUpdateDto;
 import com.soocompany.wodify.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -59,6 +60,11 @@ public class MemberController {
     @GetMapping("/detail/{id}")
     public MemberDetResDto memberDetail(@PathVariable Long id){
         return memberService.memberDetail(id);
+    }
+
+    @PostMapping("/update/{id}")
+    public MemberDetResDto memberUpdate(@PathVariable Long id, @RequestBody MemberUpdateDto memberUpdateDto){
+        return memberService.memberUpdate(id, memberUpdateDto);
     }
 
 

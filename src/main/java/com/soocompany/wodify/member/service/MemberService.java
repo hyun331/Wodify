@@ -4,6 +4,7 @@ import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.dto.MemberDetResDto;
 import com.soocompany.wodify.member.dto.MemberListResDto;
 import com.soocompany.wodify.member.dto.MemberSaveReqDto;
+import com.soocompany.wodify.member.dto.MemberUpdateDto;
 import com.soocompany.wodify.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -70,6 +71,12 @@ public class MemberService {
 
     public MemberDetResDto memberDetail(Long id) {
         Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("member is not found"));
+        return member.detFromEntity();
+    }
+
+    public MemberDetResDto memberUpdate(Long id, MemberUpdateDto memberUpdateDto) {
+        Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("member is not found"));
+        member.memberInfoUpdate(memberUpdateDto);
         return member.detFromEntity();
     }
 }
