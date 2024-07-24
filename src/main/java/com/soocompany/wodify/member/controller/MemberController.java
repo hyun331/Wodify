@@ -29,7 +29,6 @@ public class MemberController {
         //email 받아옴.. redirect 사용해서 email 받아옴. vue에서 rest인 경우 redirect 처리 필요
 
         //회원가입한 유저인지 확인해야함. email과 delyn=n인 사람찾기
-        System.out.println(email+"\n\n\n\n\n\n\n");
         MemberDetResDto memberDetResDto = memberService.isMemberExist(email, "N");
         if(memberDetResDto !=null){
             //존재하는 회원 -> home화면으로
@@ -62,10 +61,17 @@ public class MemberController {
         return memberService.memberDetail(id);
     }
 
-    @PostMapping("/update/{id}")
+    //멤버 개인정보 수정
+    @PatchMapping("/update/{id}")
     public MemberDetResDto memberUpdate(@PathVariable Long id, @RequestBody MemberUpdateDto memberUpdateDto){
         return memberService.memberUpdate(id, memberUpdateDto);
     }
 
+    //멤버 삭제
+    @PatchMapping("/delete/{id}")
+    public String memberDelete(@PathVariable Long id){
+        memberService.memberDelete(id);
+        return "delete success";
+    }
 
 }

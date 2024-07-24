@@ -97,4 +97,6 @@ public class Member extends BaseEntity {
         this.squat = memberUpdateDto.getSquat();
         this.benchPress = memberUpdateDto.getBenchPress();
     }
+
+
 }

@@ -63,14 +63,14 @@ public class MemberService {
 
 
     public Page<MemberListResDto> memberList(Pageable pageable) {
-        Page<Member> members = memberRepository.findAll(pageable);
+        Page<Member> members = memberRepository.findAllByDelYn(pageable, "N");
         Page<MemberListResDto> memberListResDtos = members.map(a->a.listFromEntity());
         return memberListResDtos;
 
     }
 
     public MemberDetResDto memberDetail(Long id) {
-        Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("member is not found"));
+        Member member = memberRepository.findByIdAndDelYn(id, "N").orElseThrow(()->new EntityNotFoundException("member is not found"));
         return member.detFromEntity();
     }
 
@@ -78,5 +78,10 @@ public class MemberService {
         Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("member is not found"));
         member.memberInfoUpdate(memberUpdateDto);
         return member.detFromEntity();
+    }
+
+    public void memberDelete(Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("member is not found"));
+        member.updateDelYn();
     }
 }
