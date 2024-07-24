@@ -1,4 +1,4 @@
-package com.soocompany.wodify.common.exception;
+package com.soocompany.wodify.common;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
