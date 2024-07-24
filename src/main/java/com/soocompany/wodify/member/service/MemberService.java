@@ -1,5 +1,7 @@
 package com.soocompany.wodify.member.service;
 
+import com.soocompany.wodify.box.domain.Box;
+import com.soocompany.wodify.box.repository.BoxRepository;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.dto.MemberDetResDto;
 import com.soocompany.wodify.member.dto.MemberListResDto;
@@ -22,10 +24,13 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    //순환참조 방지. 만약 안생긴다면 boxService로 변경하기
+    private final BoxRepository boxRepository;
 
     @Autowired
-    public MemberService(MemberRepository memberRepository){
+    public MemberService(MemberRepository memberRepository, BoxRepository boxRepository){
         this.memberRepository = memberRepository;
+        this.boxRepository = boxRepository;
     }
 
 
@@ -74,6 +79,7 @@ public class MemberService {
         return member.detFromEntity();
     }
 
+
     public MemberDetResDto memberUpdate(Long id, MemberUpdateDto memberUpdateDto) {
         Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("member is not found"));
         member.memberInfoUpdate(memberUpdateDto);
@@ -84,4 +90,24 @@ public class MemberService {
         Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("member is not found"));
         member.updateDelYn();
     }
+
+
+    //코치의 박스 가입/변경 메서드
+    //id = member id(코치의 id)
+    public void coachBoxUpdate(Long id, String boxCode) {
+        //유효한 박스 코드인지 확인하기
+        Box box = boxRepository.findByCode(boxCode).orElseThrow(()->new IllegalArgumentException("memberBoxUpdate() : 박스코드가 유효하지 않습니다."));
+        Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("memberBoxUpdate() : id에 맞는 member가 없습니다."));
+
+        //이 코치가 대표면 박스 가입/변경 불가
+        if(member.getBox()!=null && member.equals(member.getBox().getMember())) {
+            throw new IllegalArgumentException("coachBoxUpdate() : 박스의 대표는 다른 박스로 변경 불가합니다.");
+        }
+
+        //box 변경
+        member.memberBoxUpdate(box);
+
+    }
+
+
 }

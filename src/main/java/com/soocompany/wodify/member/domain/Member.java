@@ -102,4 +102,10 @@ public class Member extends BaseEntity {
     }
 
 
+    //member box 수정
+    public void memberBoxUpdate(Box box){
+        this.box = box;
+    }
+
+
 }
