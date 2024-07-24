@@ -1,5 +1,6 @@
 package com.soocompany.wodify.member.domain;
 
+
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.BaseEntity;
 import com.soocompany.wodify.member.dto.MemberDetResDto;
@@ -25,9 +26,11 @@ public class Member extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
+
     private String name;
 
     @Column(nullable = false)
+
     private String email;
 
     private String address;
