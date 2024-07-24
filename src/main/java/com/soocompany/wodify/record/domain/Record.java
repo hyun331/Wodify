@@ -38,16 +38,15 @@ public class Record extends BaseEntity {
 
     public RecordDetResDto detFromEntity(){
         return RecordDetResDto.builder()
-                .id(this.id).snf(this.snf).exerciseTime(this.exerciseTime)
+                .snf(this.snf).exerciseTime(this.exerciseTime)
                 .comments(this.comments).visibilityYN(this.visibilityYN).build();
     }
 
     public void recordUpdateEntity(RecordUpdateReqDto dto){
-
-    }
-
-    public void recordDeleteEntity(){
-
+        this.snf = dto.getSnf();
+        this.exerciseTime = dto.getExerciseTime();
+        this.comments = dto.getComments();
+        this.visibilityYN = dto.getVisibilityYN();
     }
 
 }

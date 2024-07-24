@@ -6,6 +6,7 @@ import com.soocompany.wodify.record.dto.RecordUpdateReqDto;
 import com.soocompany.wodify.record.repository.RecordReository;
 import com.soocompany.wodify.record.domain.Record;
 import com.soocompany.wodify.reservation_detail.domain.ReservationDetail;
+import com.soocompany.wodify.reservation_detail.repository.ReservationDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,59 +21,46 @@ import java.util.Optional;
 public class RecordService {
 
     private final RecordReository recordReository;
+    private final ReservationDetailRepository reservationDetailRepository;
     @Autowired
-    public RecordService(RecordReository recordReository) {
+    public RecordService(RecordReository recordReository, ReservationDetailRepository reservationDetailRepository) {
         this.recordReository = recordReository;
+        this.reservationDetailRepository = reservationDetailRepository;
     }
 
     @Transactional
     public RecordDetResDto recordCreate(RecordSaveReqDto dto){
-//        예약내용 : 현재시간 > 예약시간  : 운동기록
-//
-//        예약내역 정보(사이트가 들고 있는 정보) -> 회원정보,예약정보 -> 와드정보
-//        ReservationDetail reservationDetail // 원래라면 예약내역에 대한 정보를 받겠지..그걸 저장해야겠지.. 어떻게?
+//        생길 수 있는 예외를 더 생각해보자.
+        ReservationDetail reservationDetail = reservationDetailRepository.findById(dto.getReservationDetailId()).orElseThrow(()->new EntityNotFoundException("recordCreate(RecordSaveReqDto dto) : 예약내역이 없습닌다.")); // 예약내역 레포 말고 서비스에서 가져올 수 있도록 하자.
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime exerciseTime = LocalTime.parse(dto.getExerciseTime(), dateTimeFormatter);
+        LocalTime exerciseTime = LocalTime.parse(dto.getExerciseTime(), dateTimeFormatter); // 현재 받아오는 운동수행시간(string) // 앞단에서 무슨값으로(string? localtime?) 들어올지 몰라서 string으로 생각하고 처리해서 넣는다.
 
-        Record saveRecord = recordReository.save(dto.toEntity(exerciseTime));
-        return saveRecord.detFromEntity();
+        Record record = recordReository.save(dto.toEntity(reservationDetail, exerciseTime));
+        return record.detFromEntity();
     }
 
     public RecordDetResDto recordDetail(Long id){
-//       이 ID를 얻는 방법은...? 앞단에서 예약내역을 누르고 그 내역의 운동기록을 누르면 운동기록의 id가 넘어가서...?
-        Record record = recordReository.findById(id).orElseThrow(()->new EntityNotFoundException("운동기록이 없습니다."));
+//        생길 수 있는 예외를 더 생각해보자.
+        Record record = recordReository.findById(id).orElseThrow(()->new EntityNotFoundException("recordDetail(Long id) : 운동기록이 없습니다."));
         return record.detFromEntity();
-
     }
 
     @Transactional
-    public void recordUpdate(RecordUpdateReqDto dto){
-        Record record = recordReository.findById(dto.getId()).orElseThrow(()->new EntityNotFoundException("운동기록이 없습니다."));
+    public RecordDetResDto recordUpdate(Long id, RecordUpdateReqDto dto){
+//        생길 수 있는 예외를 더 생각해보자.
+        Record record = recordReository.findById(id).orElseThrow(()->new EntityNotFoundException("recordUpdate(RecordUpdateReqDto dto) : 운동기록이 없습니다."));
         record.recordUpdateEntity(dto);
+        recordReository.save(record);
+        return record.detFromEntity();
     }
 
     @Transactional
-    public void recordDelete(Long id){
-        Record record = recordReository.findById(id).orElseThrow(()->new EntityNotFoundException("운동기록이 없습니다."));
-        record.recordDeleteEntity();
+    public RecordDetResDto recordDelete(Long id){
+//        생길 수 있는 예외를 더 생각해보자.
+        Record record = recordReository.findById(id).orElseThrow(()->new EntityNotFoundException("recordDelete(Long id) : 운동기록이 없습니다."));
+        record.updateDelYn();
+        return record.detFromEntity();
     }
-
-
-
-//    public void pwUpdate(MemberPwUpdateDto dto){
-//        Member member = memberRepository.findById(dto.getId()).orElseThrow(()->new EntityNotFoundException("member is not found"));
-//        member.pwUpdate(dto.getPassword());
-//        memberRepository.save(member);
-//    }
-//
-//    public void memberDelete(Long id){
-//        Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("member is not found"));
-//        memberRepository.delete(member);
-////        member.updateDelYN("Y"); // 일반적으로 이렇게 해용, 변수랑 메서드 만들어야해용
-////        memberRepository.save(member);
-//    }
-
-
 
 }

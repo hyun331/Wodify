@@ -14,18 +14,18 @@ import java.time.LocalTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RecordSaveReqDto {
+public class RecordSaveReqDto { // 앞단에서 받아와 저장하는 값이에용
 
-    private String snf; // 성공여부 success or failure
-    private String exerciseTime; // 운동 수행 시간 // 앞단에서 어떤 데이터 타입으로 넘어오나? 일단 스프링으로 받는다 치고 서비스에서 변환
-    private String comments; // 코멘트
-    private String visibilityYN; // 공개 범위 Y공개, N비공개
+    private String snf;
+    private String exerciseTime; // 앞단에서 어떤 데이터 타입으로 넘어오나? 일단 스트링으로 받는다 치고 서비스에서 변환
+    private String comments;
+    private String visibilityYN;
 
-    private Long reservationDetailId; // 이거 앞단에서 어떻게 받나..
+    private Long reservationDetailId; // 이거 앞단에서 어떻게 받나..는 나중에 생각해~
 
-    public Record toEntity(LocalTime exerciseTime){
+    public Record toEntity(ReservationDetail reservationDetail, LocalTime exerciseTime){
         return Record.builder()
                 .snf(this.snf).exerciseTime(exerciseTime)
-                .comments(this.comments).visibilityYN(this.visibilityYN).build();
+                .comments(this.comments).visibilityYN(this.visibilityYN).reservationDetail(reservationDetail).build();
     }
 }
