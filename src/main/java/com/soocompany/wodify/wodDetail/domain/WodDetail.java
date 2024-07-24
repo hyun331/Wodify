@@ -25,11 +25,8 @@ public class WodDetail extends BaseEntity {
     private Wod wod;
 
     @Column(nullable = false)
-    private Int order;
-    
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(length = 3000)
     private String contents;
 }
