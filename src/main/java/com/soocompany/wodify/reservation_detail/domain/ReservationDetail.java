@@ -34,6 +34,7 @@ public class ReservationDetail extends BaseEntity {
     public ReservationDetailDetResDto detFromEntity() {
         Box box = this.reservation.getBox();
         return ReservationDetailDetResDto.builder()
+                .id(this.id)
                 .boxId(box.getId())
                 .BoxName(box.getName())
                 .memberId(this.member.getId())
