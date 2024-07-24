@@ -3,7 +3,6 @@ package com.soocompany.wodify.reservation_detail.domain;
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
-import com.soocompany.wodify.record.domain.Record;
 import com.soocompany.wodify.reservation.domain.Reservation;
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetailDetResDto;
 import lombok.AllArgsConstructor;
@@ -12,14 +11,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReservationDetail {
+public class ReservationDetail extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,5 +42,4 @@ public class ReservationDetail {
                 .time(reservation.getTime())
                 .build();
     }
-
 }
