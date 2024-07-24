@@ -30,14 +30,11 @@ public class Wod extends BaseEntity {
     private Member member;
 
     @Column(nullable = false)
-    private String type;
-
-    @Column(nullable = false)
     private Time timeCap;
 
     @Column(nullable = false)
     private int rounds;
 
-    @Lob
+    @Column(length = 3000)
     private String info;
 }
