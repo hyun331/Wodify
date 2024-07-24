@@ -14,45 +14,46 @@ import org.springframework.web.bind.annotation.*;
 public class BoxController {
 
     private final BoxService boxService;
+
     @Autowired
     public BoxController(BoxService boxService) {
         this.boxService = boxService;
     }
 
 
-//    box만들기(boxcode, 대표id는 uniqe)
+    //    box만들기(boxcode, 대표id는 uniqe)
     @PostMapping("/create")
     @ResponseBody
     public ResponseEntity<String> boxCreate(@RequestBody BoxSaveReqDto dto) {
         try {
             boxService.boxCreate(dto);
-            return new ResponseEntity<>("Box created successfully", HttpStatus.CREATED);
+            return new ResponseEntity<>("박스가 성공적으로 생성되었습니다", HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
 
-//    box수정(box_id, boxcode, 대표id는 못바꿈)
+    //    box수정(box_id, boxcode, 대표id는 못바꿈)
     @PutMapping("/update/{id}")
     @ResponseBody
     public ResponseEntity<String> boxUpdate(@PathVariable Long id, @RequestBody BoxUpdateReqDto dto) {
         try {
             boxService.boxUpdate(id, dto);
-            return new ResponseEntity<>("Box updated successfully", HttpStatus.OK);
+            return new ResponseEntity<>("박스가 성공적으로 업데이트되었습니다", HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
 
-//   box삭제(delyn을 Y로 바꿈)
+    //   box삭제(delyn을 Y로 바꿈)
     @DeleteMapping("/delete/{id}")
     @ResponseBody
     public ResponseEntity<String> boxDelete(@PathVariable Long id) {
         try {
             boxService.boxDelete(id);
-            return new ResponseEntity<>("Box deleted successfully", HttpStatus.OK);
+            return new ResponseEntity<>("박스가 성공적으로 삭제되었습니다", HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
