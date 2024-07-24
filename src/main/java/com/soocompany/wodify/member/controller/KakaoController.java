@@ -14,18 +14,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 @Controller
 public class KakaoController {
 
-    @GetMapping("/kakao/login")
-    public String loginView(){
-        return "kakaoLoginTest";
-    }
-
     @GetMapping("/auth/kakao/callback")
-    @ResponseBody
     public String afterLogin(String code) {
         System.out.println(code);
         //Post방식으로 key=value 데이터를 요청
@@ -89,16 +84,15 @@ public class KakaoController {
         );
         System.out.println(response2.getBody());
         JsonNode jsonNode = null;
-        String email=null;
+        String email = null;
         try{
             jsonNode = objectMapper.readTree(response2.getBody());
             email = jsonNode.get("kakao_account").get("email").asText();
         }catch (JsonProcessingException e){
             e.printStackTrace();;
         }
-        System.out.println(email);
 
-        return email;
+        return "redirect:/member/afterKakaoLogin/"+email;
 
     }
 

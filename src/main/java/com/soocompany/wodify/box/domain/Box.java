@@ -35,7 +35,7 @@ public class Box extends BaseEntity {
 
 
 
-    //    수정할 때 null값을 넣으면 그 값은 그냥 원래 값 그대로 저장
+//    수정할 때 null값을 넣으면 그 값은 그냥 원래 값 그대로 저장
     public void updateDetails(String name, String logo, String operatingHours, String fee, String intro) {
         if (name != null) this.name = name;
         if (logo != null) this.logo = logo;
