@@ -51,6 +51,7 @@ public class MemberService {
 
     public MemberDetResDto memberRegister(MemberSaveReqDto memberSaveReqDto){
         if(memberRepository.findByEmailAndDelYn(memberSaveReqDto.getEmail(), "N").isPresent()){
+            log.error("memberRegister() : 이미 존재하는 email 입니다. 회원가입 불가");
             throw  new IllegalArgumentException("이미 존재하는 email 입니다. 회원가입 불가");
         }
         if(memberSaveReqDto.getName()==null)
