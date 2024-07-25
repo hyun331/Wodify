@@ -75,12 +75,20 @@ public class MemberController {
     }
 
 
-    //코치의 박스 가입. 코치 박스 코드 입력 후 submit하면 동작
+    //코치의 박스 가입 및 변경. 코치 박스 코드 입력 후 submit하면 동작
     @PatchMapping("/coach/box/update/{id}")
-    public String coachBoxJoin(@PathVariable Long id, @RequestParam(value = "code")String boxCode){
+    public String coachBoxUpdate(@PathVariable Long id, @RequestParam(value = "code")String boxCode){
         memberService.coachBoxUpdate(id, boxCode);
-        return "coach box join success";
+        return "coach box update success";
     }
+
+    //박스의 회원 등록하기
+    //등록정보 입력도 새로 추가
+//    @PostMapping("/user/box/update/{id}")
+
+
+
+    //
     //멤버의 박스 삭제하기
     //박스별 멤버 리스트 조회
 

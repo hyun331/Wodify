@@ -1,6 +1,6 @@
 package com.soocompany.wodify.wod.exercise.domain;
 
-import com.soocompany.wodify.common.BaseEntity;
+import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.wod.category.domain.Category;
 import com.soocompany.wodify.wod.exercise.dto.ExerciseListResDto;
 import lombok.AllArgsConstructor;

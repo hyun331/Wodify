@@ -1,6 +1,6 @@
 package com.soocompany.wodify.record_detail.domain;
 
-import com.soocompany.wodify.common.BaseEntity;
+import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.record.domain.Record;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

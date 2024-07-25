@@ -8,6 +8,7 @@ import com.soocompany.wodify.member.dto.MemberListResDto;
 import com.soocompany.wodify.member.dto.MemberSaveReqDto;
 import com.soocompany.wodify.member.dto.MemberUpdateDto;
 import com.soocompany.wodify.member.repository.MemberRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,10 +22,10 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    //순환참조 방지. 만약 안생긴다면 boxService로 변경하기
     private final BoxRepository boxRepository;
 
     @Autowired

@@ -2,7 +2,7 @@ package com.soocompany.wodify.member.domain;
 
 
 import com.soocompany.wodify.box.domain.Box;
-import com.soocompany.wodify.common.BaseEntity;
+import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.member.dto.MemberDetResDto;
 import com.soocompany.wodify.member.dto.MemberListResDto;
 import com.soocompany.wodify.member.dto.MemberUpdateDto;
@@ -51,7 +51,9 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Role role;
 
-    @ManyToOne
+
+    //fetch join으로 추후에 변경하기
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "box_id")
     private Box box;
 
