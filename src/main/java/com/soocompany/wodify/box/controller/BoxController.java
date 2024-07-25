@@ -20,7 +20,7 @@ public class BoxController {
     }
 
 
-//    box만들기(boxcode, 대표id는 uniqe)
+    //    box만들기(boxcode, 대표id는 uniqe)
     @PostMapping("/create")
     @ResponseBody
     public ResponseEntity<String> boxCreate(@RequestBody BoxSaveReqDto dto) {
@@ -33,7 +33,7 @@ public class BoxController {
     }
 
 
-//    box수정(box_id, boxcode, 대표id는 못바꿈)
+    //    box수정(box_id, boxcode, 대표id는 못바꿈)
     @PutMapping("/update/{id}")
     @ResponseBody
     public ResponseEntity<String> boxUpdate(@PathVariable Long id, @RequestBody BoxUpdateReqDto dto) {
@@ -46,7 +46,7 @@ public class BoxController {
     }
 
 
-//   box삭제(delyn을 Y로 바꿈)
+    //   box삭제(delyn을 Y로 바꿈)
     @DeleteMapping("/delete/{id}")
     @ResponseBody
     public ResponseEntity<String> boxDelete(@PathVariable Long id) {

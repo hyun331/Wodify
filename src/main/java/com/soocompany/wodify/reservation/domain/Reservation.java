@@ -5,6 +5,7 @@ import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.reservation.dto.ReservationDetailResDto;
 import com.soocompany.wodify.reservation.dto.ReservationListResDto;
+import com.soocompany.wodify.reservation.repository.ReservationRepository;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.soocompany.wodify.record.contrlloer;
 
-import com.soocompany.wodify.common.exception.CommonResDto;
+import com.soocompany.wodify.common.dto.CommonResDto;
 import com.soocompany.wodify.record.dto.RecordSaveReqDto;
 import com.soocompany.wodify.record.dto.RecordUpdateReqDto;
 import com.soocompany.wodify.record.service.RecordService;
