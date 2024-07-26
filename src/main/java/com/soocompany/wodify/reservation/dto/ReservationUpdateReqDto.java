@@ -20,12 +20,4 @@ public class ReservationUpdateReqDto {
     private int maximumPeople;
     private String coachEmail;
 
-    public Reservation toEntity(Member coach){
-        return Reservation.builder()
-                .date(this.date)
-                .time(this.time)
-                .maximumPeople(this.maximumPeople)
-                .coach(coach)
-                .build();
-    }
 }

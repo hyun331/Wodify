@@ -5,6 +5,7 @@ import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.reservation.dto.ReservationDetailResDto;
 import com.soocompany.wodify.reservation.dto.ReservationListResDto;
+import com.soocompany.wodify.reservation.dto.ReservationUpdateReqDto;
 import com.soocompany.wodify.reservation.repository.ReservationRepository;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -64,6 +65,12 @@ public class Reservation extends BaseEntity {
                 .maximumPeople(this.maximumPeople)
                 .availablePeople(this.availablePeople)
                 .build();
+    }
 
+    public void update(ReservationUpdateReqDto dto, Member coach) {
+        this.date = dto.getDate();
+        this.time = dto.getTime();
+        this.maximumPeople = dto.getMaximumPeople();
+        this.coach = coach;
     }
 }

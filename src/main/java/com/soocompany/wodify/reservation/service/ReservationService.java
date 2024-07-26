@@ -54,17 +54,23 @@ public class ReservationService {
 
     }
 
-    public ReservationDetailResDto reservationUpdate(ReservationUpdateReqDto dto) {
+    public ReservationDetailResDto reservationUpdate(Long id, ReservationUpdateReqDto dto) {
+        Reservation reservation = reservationRepository.findByIdAndDelYn(id,"N").orElseThrow(()->new EntityNotFoundException("해당하는 id의 예약이 존재하지 않습다."));
         Member coach = memberRepository.findByEmailAndDelYn(dto.getCoachEmail(), "N").orElseThrow(() -> new EntityNotFoundException("해당 id의 회원이 존재하지 않습니다."));
         if (!coach.getRole().equals(Role.COACH)) {
             throw new IllegalArgumentException("코치권한이 없는 회원입니다.");
         }
-        Reservation reservation = dto.toEntity(coach);
+        if (dto.getMaximumPeople() < reservation.getMaximumPeople()- reservation.getAvailablePeople()) {
+            throw new IllegalArgumentException("현재 예약된 인원보다 적은 인원수로 수정을 불가합니다.");
+        }
+        reservation.update(dto, coach);
         return reservationRepository.save(reservation).detailResDtoFromEntity();
     }
 
     public void reservationDelete(Long id) {
         Reservation reservation = reservationRepository.findByIdAndDelYn(id, "N").orElseThrow(() -> new EntityNotFoundException("해당 id의 예약이 없습니다."));
+        reservation.updateDelYn();
+        reservationRepository.save(reservation);
     }
 }
 

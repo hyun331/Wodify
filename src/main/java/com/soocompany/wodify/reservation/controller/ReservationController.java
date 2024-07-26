@@ -51,9 +51,9 @@ public class ReservationController {
     /**
      * 예약 수정
      */
-    @PatchMapping("/update")
-    public ResponseEntity<CommonResDto> reservationUpdate(@RequestBody ReservationUpdateReqDto dto) {
-        ReservationDetailResDto detailResDto = reservationService.reservationUpdate(dto);
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<CommonResDto> reservationUpdate(@PathVariable Long id,@RequestBody ReservationUpdateReqDto dto) {
+        ReservationDetailResDto detailResDto = reservationService.reservationUpdate(id,dto);
         return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약 수정 성공",detailResDto),HttpStatus.OK);
     }
 
