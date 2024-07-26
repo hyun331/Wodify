@@ -45,7 +45,9 @@ public class Reservation extends BaseEntity {
     @Column(nullable = false)
     private int availablePeople;
 
-
+    public void decreaseAvailablePeople() {
+        this.availablePeople -= 1;
+    }
     public ReservationListResDto ListResDtoFromEntity() {
         return ReservationListResDto.builder()
                 .id(this.id)

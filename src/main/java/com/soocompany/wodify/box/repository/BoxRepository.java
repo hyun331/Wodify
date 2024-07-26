@@ -11,7 +11,10 @@ import java.util.Optional;
 public interface BoxRepository extends JpaRepository<Box, Long> {
     Optional<Box> findByIdAndDelYn(Long Id, String delYn);
 
-    Optional<Box> findByCode(String code);
+    List<Box> findByCodeAndDelYn(String code, String delYn);
+
+    List<Box> findByMember_IdAndDelYn(Long memberId, String delYn);
 
     Optional<Box> findByMember_Id(Long memberId);
 }
+

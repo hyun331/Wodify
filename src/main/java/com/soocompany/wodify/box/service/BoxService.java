@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,21 +31,22 @@ public class BoxService {
 
     @Transactional
     public Box boxCreate(BoxSaveReqDto dto) {
-//        맴버id가 존재하는지 확인하고 없으면 예외발생
+        // 코드가 유일한지 확인
+        List<Box> existingBoxesByCode = boxRepository.findByCodeAndDelYn(dto.getCode(), "N");
+        if (!existingBoxesByCode.isEmpty()) {
+            throw new RuntimeException("boxCreate() : 코드가 " + dto.getCode() + "인 Box가 이미 존재합니다");
+        }
 
+        // 대표 ID가 유일한지 확인
+        List<Box> existingBoxesByMember = boxRepository.findByMember_IdAndDelYn(dto.getRepresentativeId(), "N");
+        if (!existingBoxesByMember.isEmpty()) {
+            throw new RuntimeException("boxCreate() : id가 " + dto.getRepresentativeId() + "인 대표가 이미 다른 Box를 운영중입니다");
+        }
+
+        // 멤버 찾기
         Optional<Member> optionalMember = memberRepository.findById(dto.getRepresentativeId());
         if (optionalMember.isEmpty()) {
-            throw new RuntimeException("Member not found with id " + dto.getRepresentativeId());
-        }
-
-        Optional<Box> existingBoxByCode = boxRepository.findByCode(dto.getCode());
-        if (existingBoxByCode.isPresent() && !existingBoxByCode.get().getDelYn().equals("Y")) {
-            throw new RuntimeException("Box with code " + dto.getCode() + " already exists");
-        }
-
-        Optional<Box> existingBoxByMember = boxRepository.findByMember_Id(dto.getRepresentativeId());
-        if (existingBoxByMember.isPresent() && !existingBoxByMember.get().getDelYn().equals("Y")) {
-            throw new RuntimeException("Member with ID " + dto.getRepresentativeId() + " is already associated with another box");
+            throw new RuntimeException("boxCreate() : id가 " + dto.getRepresentativeId() + "인 대표를 찾을 수 없습니다");
         }
 
         Member member = optionalMember.get();
@@ -56,7 +58,6 @@ public class BoxService {
 
     @Transactional
     public Box boxUpdate(Long id, BoxUpdateReqDto dto) {
-//        delyn이 N일때만 수정 가능
         Optional<Box> optionalBox = boxRepository.findByIdAndDelYn(id, "N");
         if (optionalBox.isPresent()) {
             Box box = optionalBox.get();
@@ -69,21 +70,22 @@ public class BoxService {
             );
             return boxRepository.save(box);
         } else {
-            throw new RuntimeException("Box not found or already deleted with id " + id);
+            throw new RuntimeException("boxUpdate() : id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다");
         }
     }
 
 
 
+
     @Transactional
     public Box boxDelete(Long id) {
-        Optional<Box> optionalBox = boxRepository.findById(id);
+        Optional<Box> optionalBox = boxRepository.findByIdAndDelYn(id, "N");
         if (optionalBox.isPresent()) {
             Box box = optionalBox.get();
-            box.markAsDeleted();
+            box.updateDelYn();
             return boxRepository.save(box);
         } else {
-            throw new RuntimeException("Box not found with id" + id);
+            throw new RuntimeException("boxDelete() : id가 " + id + "인 박스를 찾을 수 없거나 이미 삭제되었습니다");
         }
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class BoxController {
 
     private final BoxService boxService;
+
     @Autowired
     public BoxController(BoxService boxService) {
         this.boxService = boxService;
@@ -26,7 +27,7 @@ public class BoxController {
     public ResponseEntity<String> boxCreate(@RequestBody BoxSaveReqDto dto) {
         try {
             boxService.boxCreate(dto);
-            return new ResponseEntity<>("Box created successfully", HttpStatus.CREATED);
+            return new ResponseEntity<>("박스가 성공적으로 생성되었습니다", HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -39,7 +40,7 @@ public class BoxController {
     public ResponseEntity<String> boxUpdate(@PathVariable Long id, @RequestBody BoxUpdateReqDto dto) {
         try {
             boxService.boxUpdate(id, dto);
-            return new ResponseEntity<>("Box updated successfully", HttpStatus.OK);
+            return new ResponseEntity<>("박스가 성공적으로 업데이트되었습니다", HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -52,7 +53,7 @@ public class BoxController {
     public ResponseEntity<String> boxDelete(@PathVariable Long id) {
         try {
             boxService.boxDelete(id);
-            return new ResponseEntity<>("Box deleted successfully", HttpStatus.OK);
+            return new ResponseEntity<>("박스가 성공적으로 삭제되었습니다", HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
