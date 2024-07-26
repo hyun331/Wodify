@@ -34,7 +34,7 @@ public class Box extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String code;
 
-    @JoinColumn(name = "representative_id", unique = true)
+    @JoinColumn(name = "representative_id")
     @OneToOne
     private Member member;
 
@@ -47,17 +47,6 @@ public class Box extends BaseEntity {
         if (operatingHours != null) this.operatingHours = operatingHours;
         if (fee != null) this.fee = fee;
         if (intro != null) this.intro = intro;
-    }
-
-
-    public void markAsDeleted() {
-        try {
-            java.lang.reflect.Field field = BaseEntity.class.getDeclaredField("delYn");
-            field.setAccessible(true);
-            field.set(this, "Y");
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException("Failed to mark box as deleted", e);
-        }
     }
 
 }
