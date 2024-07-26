@@ -96,7 +96,7 @@ public class MemberService {
 
     //코치의 박스 가입/변경 메서드
     //id = member id(코치의 id)
-    public void coachBoxUpdate(Long id, String boxCode) {
+    public MemberDetResDto coachBoxUpdate(Long id, String boxCode) {
         //유효한 박스 코드인지 확인하기
         Box box = boxRepository.findByCode(boxCode).orElseThrow(()->new IllegalArgumentException("memberBoxUpdate() : 박스코드가 유효하지 않습니다."));
         Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("memberBoxUpdate() : id에 맞는 member가 없습니다."));
@@ -108,6 +108,7 @@ public class MemberService {
 
         //box 변경
         member.memberBoxUpdate(box);
+        return member.detFromEntity();
 
     }
 

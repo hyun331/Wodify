@@ -1,5 +1,6 @@
 package com.soocompany.wodify.member.controller;
 
+import com.soocompany.wodify.common.dto.CommonResDto;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.dto.MemberDetResDto;
 import com.soocompany.wodify.member.dto.MemberListResDto;
@@ -11,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/member")
@@ -45,45 +48,53 @@ public class MemberController {
 
     //회원가입
     @PostMapping("/register")
-    public MemberDetResDto memberRegister(@RequestBody MemberSaveReqDto memberSaveReqDto){
-        return memberService.memberRegister(memberSaveReqDto);
+    public ResponseEntity<CommonResDto>  memberRegister(@RequestBody MemberSaveReqDto memberSaveReqDto){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "회원가입 완료", memberService.memberRegister(memberSaveReqDto));
+        return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 
     //멤버 리스트
     @GetMapping("/list")
-    public Page<MemberListResDto> memberList(@PageableDefault(size=10, sort="createdTime", direction = Sort.Direction.ASC) Pageable pageable){
-        return memberService.memberList(pageable);
+    public ResponseEntity<CommonResDto> memberList(Pageable pageable){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 전체 리스트 출력", memberService.memberList(pageable));
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
     //멤버 상세정보
     @GetMapping("/detail/{id}")
-    public MemberDetResDto memberDetail(@PathVariable Long id){
-        return memberService.memberDetail(id);
+    public ResponseEntity<CommonResDto> memberDetail(@PathVariable Long id){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member id에 맞는 멤버 상세 정보 출력", memberService.memberDetail(id));
+
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
-    //멤버 개인정보 수정
+
+        //멤버 개인정보 수정
     @PatchMapping("/update/{id}")
-    public MemberDetResDto memberUpdate(@PathVariable Long id, @RequestBody MemberUpdateDto memberUpdateDto){
-        return memberService.memberUpdate(id, memberUpdateDto);
+    public ResponseEntity<CommonResDto> memberUpdate(@PathVariable Long id, @RequestBody MemberUpdateDto memberUpdateDto){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 정보 수정 완료",memberService.memberUpdate(id, memberUpdateDto));
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
     //멤버 삭제
     @PatchMapping("/delete/{id}")
-    public String memberDelete(@PathVariable Long id){
+    public ResponseEntity<CommonResDto> memberDelete(@PathVariable Long id){
         memberService.memberDelete(id);
-        return "delete success";
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 삭제 완료", null);
+
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
 
     //코치의 박스 가입 및 변경. 코치 박스 코드 입력 후 submit하면 동작
     @PatchMapping("/coach/box/update/{id}")
-    public String coachBoxUpdate(@PathVariable Long id, @RequestParam(value = "code")String boxCode){
-        memberService.coachBoxUpdate(id, boxCode);
-        return "coach box update success";
+    public ResponseEntity<CommonResDto> coachBoxUpdate(@PathVariable Long id, @RequestParam(value = "code")String boxCode){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치의 box 수정 성공", memberService.coachBoxUpdate(id, boxCode));
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
     //박스의 회원 등록하기
-    //등록정보 입력도 새로 추가
+    //member의 boxid 변경과 등록정보에 추가 -> 등록정보에서 맡아서 하는게 맞을듯?
 //    @PostMapping("/user/box/update/{id}")
 
 
