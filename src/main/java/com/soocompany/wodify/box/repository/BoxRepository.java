@@ -15,4 +15,6 @@ public interface BoxRepository extends JpaRepository<Box, Long> {
 
     List<Box> findByMember_IdAndDelYn(Long memberId, String delYn);
 
+    Optional<Box> findByMember_Id(Long memberId);
 }
+

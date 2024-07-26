@@ -27,7 +27,7 @@ public class MemberController {
     @GetMapping("/afterKakaoLogin/{email}")
     public MemberDetResDto afterLogin(@PathVariable String email){
         //email 받아옴.. redirect 사용해서 email 받아옴. vue에서 rest인 경우 redirect 처리 필요
-
+        //email 받아오지 말고 토큰 값 가져와서 email 가져오기!
         //회원가입한 유저인지 확인해야함. email과 delyn=n인 사람찾기
         MemberDetResDto memberDetResDto = memberService.isMemberExist(email, "N");
         if(memberDetResDto !=null){
@@ -73,5 +73,23 @@ public class MemberController {
         memberService.memberDelete(id);
         return "delete success";
     }
+
+
+    //코치의 박스 가입 및 변경. 코치 박스 코드 입력 후 submit하면 동작
+    @PatchMapping("/coach/box/update/{id}")
+    public String coachBoxUpdate(@PathVariable Long id, @RequestParam(value = "code")String boxCode){
+        memberService.coachBoxUpdate(id, boxCode);
+        return "coach box update success";
+    }
+
+    //박스의 회원 등록하기
+    //등록정보 입력도 새로 추가
+//    @PostMapping("/user/box/update/{id}")
+
+
+
+    //
+    //멤버의 박스 삭제하기
+    //박스별 멤버 리스트 조회
 
 }

@@ -1,6 +1,6 @@
 package com.soocompany.wodify.record.domain;
 
-import com.soocompany.wodify.common.BaseEntity;
+import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.record.dto.RecordDetResDto;
 import com.soocompany.wodify.record.dto.RecordUpdateReqDto;
 import com.soocompany.wodify.reservation_detail.domain.ReservationDetail;

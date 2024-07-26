@@ -35,7 +35,7 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findByIdAndDelYn(reservationId,"N").orElseThrow(()-> new EntityNotFoundException("해당 id의 예약이 없습니다."));
         return reservation.detailResDtoFromEntity();
     }
-
+  
     public Page<ReservationListResDto> reservationList(Long boxId, Pageable pageable) {
         Box box = boxRepository.findById(boxId).orElseThrow(()-> new EntityNotFoundException("해당하는 id의 박스가 존재하지 않습니다."));
         Page<Reservation> reservationList = reservationRepository.findByBoxAndAndDelYn(box, "N",pageable);
@@ -51,3 +51,4 @@ public class ReservationService {
 
     }
 }
+

@@ -1,4 +1,4 @@
-package com.soocompany.wodify.common.exception;
+package com.soocompany.wodify.common.controller;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
