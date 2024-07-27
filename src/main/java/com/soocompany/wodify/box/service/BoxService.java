@@ -32,10 +32,10 @@ public class BoxService {
     @Transactional
     public Box boxCreate(BoxSaveReqDto dto) {
         // 코드가 유일한지 확인
-        List<Box> existingBoxesByCode = boxRepository.findByCodeAndDelYn(dto.getCode(), "N");
-        if (!existingBoxesByCode.isEmpty()) {
-            throw new RuntimeException("boxCreate() : 코드가 " + dto.getCode() + "인 Box가 이미 존재합니다");
-        }
+//        List<Box> existingBoxesByCode = boxRepository.findByCodeAndDelYn(dto.getCode(), "N");
+//        if (!existingBoxesByCode.isEmpty()) {
+//            throw new RuntimeException("boxCreate() : 코드가 " + dto.getCode() + "인 Box가 이미 존재합니다");
+//        }
 
         // 대표 ID가 유일한지 확인
         List<Box> existingBoxesByMember = boxRepository.findByMember_IdAndDelYn(dto.getRepresentativeId(), "N");

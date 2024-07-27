@@ -30,7 +30,7 @@ public class RecordService {
 
     @Transactional
     public RecordDetResDto recordCreate(RecordSaveReqDto dto){
-//        생길 수 있는 예외를 더 생각해보자.
+//        생길 수 있는 예외를 더 생각해보자. : delYN으로 따지기  // 예약내역 id를 fk한 운동기록이 delYN에서 N으로 있으면 앞단에서 생성버튼을 막겠지.??? 수정버튼이랑 삭제버튼만 남기겠지.
         ReservationDetail reservationDetail = reservationDetailRepository.findById(dto.getReservationDetailId()).orElseThrow(()->new EntityNotFoundException("recordCreate(RecordSaveReqDto dto) : 예약내역이 없습닌다.")); // 예약내역 레포 말고 서비스에서 가져올 수 있도록 하자.
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -41,14 +41,14 @@ public class RecordService {
     }
 
     public RecordDetResDto recordDetail(Long id){
-//        생길 수 있는 예외를 더 생각해보자.
+//        생길 수 있는 예외를 더 생각해보자. : delYN으로 따지기 // 디비에 없는 것도 없는거지만, del_YN
         Record record = recordReository.findById(id).orElseThrow(()->new EntityNotFoundException("recordDetail(Long id) : 운동기록이 없습니다."));
         return record.detFromEntity();
     }
 
     @Transactional
     public RecordDetResDto recordUpdate(Long id, RecordUpdateReqDto dto){
-//        생길 수 있는 예외를 더 생각해보자.
+//        생길 수 있는 예외를 더 생각해보자. : delYN으로 따지기
         Record record = recordReository.findById(id).orElseThrow(()->new EntityNotFoundException("recordUpdate(RecordUpdateReqDto dto) : 운동기록이 없습니다."));
         record.recordUpdateEntity(dto);
         recordReository.save(record);
@@ -57,7 +57,7 @@ public class RecordService {
 
     @Transactional
     public RecordDetResDto recordDelete(Long id){
-//        생길 수 있는 예외를 더 생각해보자.
+//        생길 수 있는 예외를 더 생각해보자. : delYN으로 따지기
         Record record = recordReository.findById(id).orElseThrow(()->new EntityNotFoundException("recordDelete(Long id) : 운동기록이 없습니다."));
         record.updateDelYn();
         return record.detFromEntity();
