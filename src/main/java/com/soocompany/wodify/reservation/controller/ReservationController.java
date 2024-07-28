@@ -1,6 +1,6 @@
 package com.soocompany.wodify.reservation.controller;
 
-import com.soocompany.wodify.common.CommonResDto;
+import com.soocompany.wodify.common.dto.CommonResDto;
 import com.soocompany.wodify.reservation.dto.ReservationCreateReqDto;
 import com.soocompany.wodify.reservation.dto.ReservationDetailResDto;
 import com.soocompany.wodify.reservation.dto.ReservationListReqDto;
