@@ -70,6 +70,7 @@ public class Reservation extends BaseEntity {
     public void update(ReservationUpdateReqDto dto, Member coach) {
         this.date = dto.getDate();
         this.time = dto.getTime();
+        this.availablePeople = dto.getMaximumPeople() - this.maximumPeople + this.availablePeople;
         this.maximumPeople = dto.getMaximumPeople();
         this.coach = coach;
     }
