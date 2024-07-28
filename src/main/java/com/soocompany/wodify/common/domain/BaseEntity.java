@@ -21,4 +21,7 @@ public abstract class BaseEntity {
     public void updateDelYn(){
         this.delYn = "Y";
     }
+    public void updateDelyN(){
+        this.delYn = "N";
+    }
 }

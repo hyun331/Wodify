@@ -21,7 +21,7 @@ public class RecordSaveReqDto { // 앞단에서 받아와 저장하는 값이에
     private String comments;
     private String visibilityYN;
 
-    private Long reservationDetailId; // 이거 앞단에서 어떻게 받나..는 나중에 생각해~
+    private Long reservationDetailId; // 이거 앞단에서 받겠징
 
     public Record toEntity(ReservationDetail reservationDetail, LocalTime exerciseTime){
         return Record.builder()
