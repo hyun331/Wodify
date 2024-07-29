@@ -16,7 +16,7 @@ public interface BoxRepository extends JpaRepository<Box, Long> {
 //    추후 boxcode의 생성방법에 따라 변동.
 //    Optional<Box> findByCodeAndDelYn(String code, String delYn);
 
-    List<Box> findByMemberIdAndDelYn(Long memberId, String delYn);
+    Optional<Box> findByMemberIdAndDelYn(Long memberId, String delYn);
 
     Optional<Box> findByCode(String boxCode);
 
