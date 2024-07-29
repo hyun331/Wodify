@@ -180,9 +180,9 @@ public class MemberController {
     }
 
     //멤버 상세정보
-    @GetMapping("/detail/{id}")
-    public ResponseEntity<CommonResDto> memberDetail(@PathVariable Long id){
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member id에 맞는 멤버 상세 정보 출력", memberService.memberDetail(id));
+    @GetMapping("/detail")
+    public ResponseEntity<CommonResDto> memberDetail(){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member id에 맞는 멤버 상세 정보 출력", memberService.memberDetail());
 
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }

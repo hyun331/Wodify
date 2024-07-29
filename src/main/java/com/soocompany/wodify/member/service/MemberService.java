@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,8 +77,9 @@ public class MemberService {
 
     }
 
-    public MemberDetResDto memberDetail(Long id) {
-        Member member = memberRepository.findByIdAndDelYn(id, "N").orElseThrow(()->new EntityNotFoundException("member is not found"));
+    public MemberDetResDto memberDetail() {
+        String id = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(()->new EntityNotFoundException("member is not found"));
         return member.detFromEntity();
     }
 
