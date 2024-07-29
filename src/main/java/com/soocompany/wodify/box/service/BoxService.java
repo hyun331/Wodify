@@ -9,6 +9,8 @@ import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,10 +18,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class BoxService {
 
     private final BoxRepository boxRepository;
-    private final MemberRepository memberRepository; // 추가된 필드
+    private final MemberRepository memberRepository;
 
     @Autowired
     public BoxService(BoxRepository boxRepository, MemberRepository memberRepository) {
@@ -29,24 +32,17 @@ public class BoxService {
 
 
 
-    @Transactional
     public Box boxCreate(BoxSaveReqDto dto) {
-        // 코드가 유일한지 확인
-//        List<Box> existingBoxesByCode = boxRepository.findByCodeAndDelYn(dto.getCode(), "N");
-//        if (!existingBoxesByCode.isEmpty()) {
-//            throw new RuntimeException("boxCreate() : 코드가 " + dto.getCode() + "인 Box가 이미 존재합니다");
-//        }
-
         // 대표 ID가 유일한지 확인
-        List<Box> existingBoxesByMember = boxRepository.findByMember_IdAndDelYn(dto.getRepresentativeId(), "N");
-        if (!existingBoxesByMember.isEmpty()) {
-            throw new RuntimeException("boxCreate() : id가 " + dto.getRepresentativeId() + "인 대표가 이미 다른 Box를 운영중입니다");
+        Optional<Box> existingBoxByMember = boxRepository.findByMemberIdAndDelYn(dto.getRepresentativeId(), "N").stream().findFirst();
+        if (existingBoxByMember.isPresent()) {
+            throw new IllegalArgumentException("id가 " + dto.getRepresentativeId() + "인 Member가 이미 다른 Box와 연관되어 있습니다");
         }
 
         // 멤버 찾기
         Optional<Member> optionalMember = memberRepository.findById(dto.getRepresentativeId());
         if (optionalMember.isEmpty()) {
-            throw new RuntimeException("boxCreate() : id가 " + dto.getRepresentativeId() + "인 대표를 찾을 수 없습니다");
+            throw new IllegalArgumentException("id가 " + dto.getRepresentativeId() + "인 Member를 찾을 수 없습니다");
         }
 
         Member member = optionalMember.get();
@@ -56,7 +52,6 @@ public class BoxService {
 
 
 
-    @Transactional
     public Box boxUpdate(Long id, BoxUpdateReqDto dto) {
         Optional<Box> optionalBox = boxRepository.findByIdAndDelYn(id, "N");
         if (optionalBox.isPresent()) {
@@ -70,22 +65,33 @@ public class BoxService {
             );
             return boxRepository.save(box);
         } else {
-            throw new RuntimeException("boxUpdate() : id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다");
+            throw new IllegalArgumentException("id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다");
         }
     }
 
 
 
-
-    @Transactional
-    public Box boxDelete(Long id) {
+    public void boxDelete(Long id) {
         Optional<Box> optionalBox = boxRepository.findByIdAndDelYn(id, "N");
         if (optionalBox.isPresent()) {
             Box box = optionalBox.get();
             box.updateDelYn();
-            return boxRepository.save(box);
+            boxRepository.save(box);
         } else {
-            throw new RuntimeException("boxDelete() : id가 " + id + "인 박스를 찾을 수 없거나 이미 삭제되었습니다");
+            throw new IllegalArgumentException("id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다");
         }
+    }
+
+
+
+    public Page<Box> boxList(Pageable pageable) {
+        return boxRepository.findAllByDelYn("N", pageable);
+    }
+
+
+
+    public Box boxDetail(Long id) {
+        return boxRepository.findByIdAndDelYn(id, "N")
+                .orElseThrow(() -> new IllegalArgumentException("id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다"));
     }
 }

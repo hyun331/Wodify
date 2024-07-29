@@ -50,6 +50,7 @@ public class ReservationController {
 
     /**
      * 예약 수정
+     * 로그인된 사용자의 권한 확인해야함
      */
     @PatchMapping("/update/{id}")
     public ResponseEntity<CommonResDto> reservationUpdate(@PathVariable Long id,@RequestBody ReservationUpdateReqDto dto) {
@@ -59,6 +60,7 @@ public class ReservationController {
 
     /**
      * 예약 삭제
+     * 로그인된 사용자의 권한 확인해야함
      */
     @PatchMapping("/delete/{id}")
     public ResponseEntity<CommonResDto> reservationDelete(@PathVariable Long id) {
