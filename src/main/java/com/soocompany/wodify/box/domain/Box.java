@@ -31,7 +31,6 @@ public class Box extends BaseEntity {
 
     private String intro;
 
-    @Column(nullable = false, unique = true)
     private String code;
 
     @JoinColumn(name = "representative_id")
