@@ -18,6 +18,4 @@ public class ReservationUpdateReqDto {
     @JsonFormat(pattern = "kk:mm:ss")
     private LocalTime time;
     private int maximumPeople;
-    private String coachEmail;
-
 }
