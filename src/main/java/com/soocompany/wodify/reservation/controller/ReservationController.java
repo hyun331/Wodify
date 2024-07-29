@@ -1,10 +1,7 @@
 package com.soocompany.wodify.reservation.controller;
 
 import com.soocompany.wodify.common.dto.CommonResDto;
-import com.soocompany.wodify.reservation.dto.ReservationCreateReqDto;
-import com.soocompany.wodify.reservation.dto.ReservationDetailResDto;
-import com.soocompany.wodify.reservation.dto.ReservationListReqDto;
-import com.soocompany.wodify.reservation.dto.ReservationListResDto;
+import com.soocompany.wodify.reservation.dto.*;
 import com.soocompany.wodify.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +18,7 @@ public class ReservationController {
     @PostMapping("/create")
     public ResponseEntity<CommonResDto> reservationCreate(@RequestBody ReservationCreateReqDto dto){
         ReservationDetailResDto detailResDto = reservationService.reservationCreate(dto);
-        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약 등록 성공",detailResDto),HttpStatus.OK);
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.CREATED,"예약 등록 성공",detailResDto),HttpStatus.CREATED);
     }
 
     /**
