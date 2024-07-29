@@ -18,7 +18,7 @@ public class ReservationController {
     @PostMapping("/create")
     public ResponseEntity<CommonResDto> reservationCreate(@RequestBody ReservationCreateReqDto dto){
         ReservationDetailResDto detailResDto = reservationService.reservationCreate(dto);
-        return new ResponseEntity<>(new CommonResDto(HttpStatus.CREATED,"예약 등록 성공",detailResDto),HttpStatus.CREATED);
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약 등록 성공",detailResDto),HttpStatus.OK);
     }
 
     /**
