@@ -22,7 +22,7 @@ import java.util.Optional;
 public class BoxService {
 
     private final BoxRepository boxRepository;
-    private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository; // 추가된 필드
 
     @Autowired
     public BoxService(BoxRepository boxRepository, MemberRepository memberRepository) {
@@ -52,6 +52,7 @@ public class BoxService {
 
 
 
+    @Transactional
     public Box boxUpdate(Long id, BoxUpdateReqDto dto) {
         Optional<Box> optionalBox = boxRepository.findByIdAndDelYn(id, "N");
         if (optionalBox.isPresent()) {

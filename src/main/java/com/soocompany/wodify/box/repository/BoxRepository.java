@@ -14,11 +14,11 @@ public interface BoxRepository extends JpaRepository<Box, Long> {
     Optional<Box> findByIdAndDelYn(Long Id, String delYn);
 
 //    추후 boxcode의 생성방법에 따라 변동.
-//    Optional<Box> findByCodeAndDelYn(String code, String delYn);
+    Optional<Box> findByCodeAndDelYn(String code, String delYn);
 
     Optional<Box> findByMemberIdAndDelYn(Long memberId, String delYn);
 
-    Optional<Box> findByCode(String boxCode);
+
 
     Page<Box> findAllByDelYn(String delYn, Pageable pageable);
 }

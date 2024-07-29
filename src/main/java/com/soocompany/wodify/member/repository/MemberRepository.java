@@ -15,7 +15,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Page<Member> findAll(Pageable pageable);
 
-    Page<Member> findAllByDelYn(String delYn, Pageable pageable);
+    Page<Member> findAllByDelYn(Pageable pageable, String delYn);
 
     Optional<Member> findByIdAndDelYn(Long id, String delYn);
 }
