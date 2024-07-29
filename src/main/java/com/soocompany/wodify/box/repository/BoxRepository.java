@@ -20,6 +20,6 @@ public interface BoxRepository extends JpaRepository<Box, Long> {
 
     Optional<Box> findByCode(String boxCode);
 
-//    Page<Box> findAllByDelYn(String delYn, Pageable pageable);
+    Page<Box> findAllByDelYn(String delYn, Pageable pageable);
 }
 
