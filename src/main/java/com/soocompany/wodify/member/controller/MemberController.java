@@ -165,7 +165,6 @@ public class MemberController {
 //        }
 //    }
 
-
     //회원가입
     @PostMapping("/register")
     public ResponseEntity<CommonResDto>  memberRegister(@RequestBody MemberSaveReqDto memberSaveReqDto){
