@@ -47,4 +47,24 @@ public class ReservationController {
         return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약 조회 성공",resDto),HttpStatus.OK);
 
     }
+
+    /**
+     * 예약 수정
+     * 로그인된 사용자의 권한 확인해야함
+     */
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<CommonResDto> reservationUpdate(@PathVariable Long id,@RequestBody ReservationUpdateReqDto dto) {
+        ReservationDetailResDto detailResDto = reservationService.reservationUpdate(id,dto);
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약 수정 성공",detailResDto),HttpStatus.OK);
+    }
+
+    /**
+     * 예약 삭제
+     * 로그인된 사용자의 권한 확인해야함
+     */
+    @PatchMapping("/delete/{id}")
+    public ResponseEntity<CommonResDto> reservationDelete(@PathVariable Long id) {
+        reservationService.reservationDelete(id);
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"삭제 성공",null),HttpStatus.OK);
+    }
 }
