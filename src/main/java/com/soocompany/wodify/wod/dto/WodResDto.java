@@ -1,9 +1,10 @@
-package com.soocompany.wodify.wod.domain;
+package com.soocompany.wodify.wod.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
+import com.soocompany.wodify.wod.domain.WodDetail;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,37 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Wod extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class WodResDto extends BaseEntity {
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "box_id")
-    private Box box;
-
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-    @Column(nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
-
-    @Column(nullable = false)
     private Time timeCap;
-
-    @Column(nullable = false)
     private int rounds;
-
-    @Column(length = 3000)
     private String info;
-
-    @OneToMany(mappedBy = "wod", cascade = CascadeType.PERSIST)
     @Builder.Default
-    private List<WodDetail> wodDetails = new ArrayList<>();
+    private List<WodDetResDto> wodDetResDtoList = new ArrayList<>();
 }

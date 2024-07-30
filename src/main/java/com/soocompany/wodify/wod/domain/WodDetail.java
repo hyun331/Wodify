@@ -1,7 +1,6 @@
-package com.soocompany.wodify.wodDetail.domain;
+package com.soocompany.wodify.wod.domain;
 
 import com.soocompany.wodify.common.BaseEntity;
-import com.soocompany.wodify.wod.domain.Wod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
