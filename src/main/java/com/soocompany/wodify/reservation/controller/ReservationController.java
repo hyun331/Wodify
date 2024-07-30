@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/reservation")
 public class ReservationController {
     private final ReservationService reservationService;
+    @PreAuthorize("hasRole('COACH')")
     @PostMapping("/create")
     public ResponseEntity<CommonResDto> reservationCreate(@RequestBody ReservationCreateReqDto dto){
         ReservationDetailResDto detailResDto = reservationService.reservationCreate(dto);
@@ -24,6 +26,7 @@ public class ReservationController {
     /**
      * 박스별 전체 예약 목록 조회
      */
+    @PreAuthorize("hasRole('COACH')")
     @GetMapping("/box/list/{id}")
     public ResponseEntity<CommonResDto> reservationList(@PathVariable(value = "id") Long boxId, Pageable pageable) {
         Page<ReservationListResDto> listResDtos = reservationService.reservationList(boxId,pageable);
@@ -32,6 +35,7 @@ public class ReservationController {
     /**
      * 박스별 날짜별 예약 목록 조회
      */
+    @PreAuthorize("hasRole('COACH')")
     @PostMapping("/box/list/{id}")
     public ResponseEntity<CommonResDto> reservationListByDate(@PathVariable(value = "id") Long boxId, @RequestBody ReservationListReqDto dto, Pageable pageable) {
         Page<ReservationListResDto> listResDtos = reservationService.reservationListByDate(boxId, dto,pageable);
@@ -41,6 +45,7 @@ public class ReservationController {
     /**
      * 예약 상세 조회
      */
+    @PreAuthorize("hasRole('COACH')")
     @GetMapping("/detail/{id}")
     public ResponseEntity<CommonResDto> reservationDetail(@PathVariable Long id) {
         ReservationDetailResDto resDto = reservationService.reservationDetail(id);
@@ -52,6 +57,7 @@ public class ReservationController {
      * 예약 수정
      * 로그인된 사용자의 권한 확인해야함
      */
+    @PreAuthorize("hasRole('COACH')")
     @PatchMapping("/update/{id}")
     public ResponseEntity<CommonResDto> reservationUpdate(@PathVariable Long id,@RequestBody ReservationUpdateReqDto dto) {
         ReservationDetailResDto detailResDto = reservationService.reservationUpdate(id,dto);
@@ -62,6 +68,7 @@ public class ReservationController {
      * 예약 삭제
      * 로그인된 사용자의 권한 확인해야함
      */
+    @PreAuthorize("hasRole('COACH')")
     @PatchMapping("/delete/{id}")
     public ResponseEntity<CommonResDto> reservationDelete(@PathVariable Long id) {
         reservationService.reservationDelete(id);
