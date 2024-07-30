@@ -1,7 +1,6 @@
 package com.soocompany.wodify.holding_info.controller;
 
 import com.soocompany.wodify.common.dto.CommonResDto;
-import com.soocompany.wodify.holding_info.dto.HoldingInfoCreateReqDto;
 import com.soocompany.wodify.holding_info.dto.HoldingInfoListResDto;
 import com.soocompany.wodify.holding_info.dto.HoldingInfoResDto;
 import com.soocompany.wodify.holding_info.service.HoldingInfoService;
@@ -16,16 +15,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HoldingInfoController {
     private final HoldingInfoService holdingInfoService;
-    @PostMapping("/holding-info/create")
-    public ResponseEntity<CommonResDto> holdingInfoCreate(@RequestBody HoldingInfoCreateReqDto dto) {
-        HoldingInfoResDto resDto = holdingInfoService.holdingInfoCreate(dto);
+    @GetMapping("/holding-info/create")
+    public ResponseEntity<CommonResDto> holdingInfoCreate() {
+        HoldingInfoResDto resDto = holdingInfoService.holdingInfoCreate();
         return new ResponseEntity<>(new CommonResDto(HttpStatus.CREATED, "정지정보가 성공적으로 등록되었습니다.", resDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/holding-info/{id}")
-    public ResponseEntity<CommonResDto> holdingInfoList(@PathVariable Long id) {
-        List<HoldingInfoListResDto> resDto = holdingInfoService.holdingInfoList(id);
+    public ResponseEntity<CommonResDto> holdingInfoList(@PathVariable(value = "id") Long memberId) {
+        List<HoldingInfoListResDto> resDto = holdingInfoService.holdingInfoList(memberId);
         return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "정지정보가 성공적으로 조회되었습니다.", resDto), HttpStatus.OK);
+    }
+
+    @PatchMapping("/unholding/{id}")
+    public ResponseEntity<CommonResDto> unholding(@PathVariable Long id) {
+        holdingInfoService.unholding(id);
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "정지가 성공적으로 삭제되었습니다.", null), HttpStatus.OK);
     }
 
 }

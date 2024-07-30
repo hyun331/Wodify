@@ -33,8 +33,10 @@ public class HoldingInfo extends BaseEntity {
     private Box box;
 
     private LocalDate holdingStart;
+
     private LocalDate holdingEnd;
 
+    private boolean isOnHold;
 
     public HoldingInfoResDto fromEntity() {
         return HoldingInfoResDto.builder()
@@ -42,6 +44,7 @@ public class HoldingInfo extends BaseEntity {
                 .memberId(this.member.getId())
                 .memberName(this.member.getName())
                 .memberEmail(this.member.getEmail())
+                .isOnHold(this.isOnHold)
                 .holdingStart(this.holdingStart)
                 .holdingEnd(this.holdingEnd)
                 .build();
@@ -52,5 +55,10 @@ public class HoldingInfo extends BaseEntity {
                 .id(this.id)
                 .holdingStart(this.holdingStart)
                 .holdingEnd(this.holdingEnd).build();
+    }
+
+    public void updateHoldingInfo() {
+        this.holdingEnd = LocalDate.now();
+        this.isOnHold = false;
     }
 }
