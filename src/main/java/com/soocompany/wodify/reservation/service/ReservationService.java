@@ -33,6 +33,7 @@ public class ReservationService {
     private final BoxRepository boxRepository;
     private final MemberRepository memberRepository;
     private final WodRepository wodRepository;
+    private final ReservationManagementService reservationManagementService;
 
     public ReservationDetailResDto reservationCreate(ReservationCreateReqDto dto) {
         Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -49,9 +50,16 @@ public class ReservationService {
             log.error("reservationCreate() : 박스에 대한 권한이 없습니다.");
             throw new IllegalArgumentException("박스에 대한 권한이 없습니다.");
         }
+        if (dto.getDate().isBefore(LocalDate.now())) {
+            log.error("reservationCreate() : 오늘 이전에 대한 예약은 생성이 불가합니다.");
+            throw new IllegalArgumentException("오늘 이전에 대한 예약은 생성이 불가합니다.");
+        }
 
         Reservation reservation = dto.toEntity(box, member);
-        return reservationRepository.save(reservation).detailResDtoFromEntity();
+        int maximumPeople = dto.getMaximumPeople();
+        Reservation savedReservation = reservationRepository.save(reservation);
+        reservationManagementService.increaseAvailable(savedReservation.getId(), maximumPeople);
+        return savedReservation.detailResDtoFromEntity();
     }
 
     public ReservationDetailResDto reservationDetail(Long reservationId) {

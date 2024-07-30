@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReservationDetCreateReqDto {
     private Long reservationId;
-    private String memberEmail;
 
     public ReservationDetail toEntity(Reservation reservation, Member member) {
         return ReservationDetail.builder()
