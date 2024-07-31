@@ -47,6 +47,10 @@ public class Wod extends BaseEntity {
     private String info;
 
     @OneToMany(mappedBy = "wod", cascade = CascadeType.PERSIST)
-    @Builder.Default
-    private List<WodDetail> wodDetails = new ArrayList<>();
+    private List<WodDetail> wodDetails;
+
+    public Wod wodDelete() {
+        this.updateDelYn();
+        return this;
+    }
 }

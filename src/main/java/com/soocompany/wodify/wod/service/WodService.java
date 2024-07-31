@@ -1,58 +1,69 @@
 package com.soocompany.wodify.wod.service;
-
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.box.repository.BoxRepository;
 import com.soocompany.wodify.member.domain.Member;
+import com.soocompany.wodify.member.domain.Role;
 import com.soocompany.wodify.member.repository.MemberRepository;
+import com.soocompany.wodify.reservation.repository.ReservationRepository;
 import com.soocompany.wodify.wod.domain.Wod;
 import com.soocompany.wodify.wod.domain.WodDetail;
+import com.soocompany.wodify.wod.dto.WodDetResDto;
 import com.soocompany.wodify.wod.dto.WodDetSaveReqDto;
+import com.soocompany.wodify.wod.dto.WodResDto;
 import com.soocompany.wodify.wod.dto.WodSaveReqDto;
 import com.soocompany.wodify.wod.repository.WodRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Date;
-
+import java.time.LocalDate;
+import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class WodService {
     private final WodRepository wodRepository;
     private final MemberRepository memberRepository;
     private final BoxRepository boxRepository;
+    private final ReservationRepository reservationRepository;
 
     public Wod wodSave(WodSaveReqDto wodSaveReqDto, String memberEmail) {
 //        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmailAndDelYn(memberEmail, "N").orElseThrow(() -> new EntityNotFoundException("member is not found"));
-        Box box = boxRepository.findByMember_Id(member.getId()).orElseThrow(() -> new EntityNotFoundException("box is not found"));
-        Wod wod = Wod.builder()
-                .box(box)
-                .member(member)
-                .date(wodSaveReqDto.getDate())
-                .timeCap(wodSaveReqDto.getTimeCap())
-                .rounds(wodSaveReqDto.getRounds())
-                .info(wodSaveReqDto.getInfo())
-                .build();
-        for (WodDetSaveReqDto wodDetSaveReqDto : wodSaveReqDto.getWodDetSaveReqDtoList()) {
-            WodDetail wodDetail = WodDetail.builder()
-                    .name(wodDetSaveReqDto.getName())
-                    .contents(wodDetSaveReqDto.getContents())
-                    .build();
-            wod.getWodDetails().add(wodDetail);
-        }
+        Member member = memberRepository.findByEmailAndDelYn(memberEmail, "N")
+            .orElseThrow(() -> new EntityNotFoundException("해당 ID의 멤버를 찾을 수 없습니다."));
+        if (member.getRole() == Role.USER) {throw new IllegalArgumentException("WOD 생성 권한이 없습니다.");}
+        Box box = member.getBox();
+        if (box == null) {throw new IllegalArgumentException("소속된 박스가 없습니다.");}
+        Optional<Wod> savedWod = wodRepository.findByBoxIdAndDateAndDelYn(box.getId(), wodSaveReqDto.getDate(), "N");
+        if (savedWod.isPresent()) {throw new IllegalArgumentException("이미 WOD 가 존재합니다.");}
+        Wod wod = wodSaveReqDto.toEntity(member, box);
+        for (WodDetSaveReqDto wodDetSaveReqDto : wodSaveReqDto.getWodDetSaveReqDtoList())
+            wod.getWodDetails().add(wodDetSaveReqDto.toEntity(wod));
         return wodRepository.save(wod);
     }
-//
-//    public WodResDto wod(Date date) {
+
+    public WodResDto wodFind(String email, LocalDate date) {
 //        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-//        Member member = memberRepository.findByEmailAndDelYn(memberEmail, "N").orElseThrow(() -> new EntityNotFoundException("member is not found"));
-//        Box box = boxRepository.findByMember_Id(member.getId()).orElseThrow(() -> new EntityNotFoundException("box is not found"));
-//        Long boxId = box.getId();
-//        Wod wod = wodRepository.findByBoxIdAndDateAndDelYn(date).orElseThrow(() -> new EntityNotFoundException("Wod is not found"));
-//        return new WodResDto().fromEntity(wod);
-//    }
-//
-//    public Wod wodDelete(Long id) {
-//        Wod wod = wodRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("order is not found")); ordering.updateOrderStatus(OrderStatus.CANCELED); return ordering; }
+        Member member = memberRepository.findByEmailAndDelYn(email, "N")
+            .orElseThrow(() -> new EntityNotFoundException("해당 이메일의 멤버를 찾을 수 없습니다."));
+        Box box = boxRepository.findByMember_Id(member.getBox().getId())
+            .orElseThrow(() -> new EntityNotFoundException("해당 ID의 박스를 찾을 수 없습니다."));
+        Wod wod = wodRepository.findByBoxIdAndDateAndDelYn(box.getId(), date, "N")
+            .orElseThrow(() -> new EntityNotFoundException("해당 날짜에 등록된 WOD가 없습니다."));
+        WodResDto wodResDto = WodResDto.fromEntity(wod);
+        for (WodDetail wodDetail : wod.getWodDetails()) {
+            wodResDto.getWodDetResDtoList().add(WodDetResDto.fromEntity(wodDetail));
+        }
+        return wodResDto;
+    }
+
+    public Wod wodDelete(String email, LocalDate date) {
+        Member member = memberRepository.findByEmailAndDelYn(email, "N")
+            .orElseThrow(() -> new EntityNotFoundException("해당 이메일의 멤버를 찾을 수 없습니다."));
+        Box box = boxRepository.findByMember_Id(member.getBox().getId())
+            .orElseThrow(() -> new EntityNotFoundException("해당 ID의 박스를 찾을 수 없습니다."));
+        Wod wod = wodRepository.findByBoxIdAndDateAndDelYn(box.getId(), date, "N")
+            .orElseThrow(() -> new EntityNotFoundException("해당 날짜에 등록된 WOD가 없습니다."));
+        //  예약 여부 확인 후 예약이 생성되어 있으면 예외 발생. reservationRepository.findByWodId 함수 필요
+        return wod.wodDelete();
+    }
 }
