@@ -34,16 +34,16 @@ public class WodService {
     public Wod wodSave(WodSaveReqDto wodSaveReqDto) {
 //        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         String email = wodSaveReqDto.getEmail();
-        log.info("wodSave() : 해당 Email 의 멤버를 찾을 수 없습니다.");
+        log.error("wodSave() : 해당 Email 의 멤버를 찾을 수 없습니다.");
         Member member = memberRepository.findByEmailAndDelYn(email, "N")
             .orElseThrow(() -> new EntityNotFoundException("해당 Email 의 멤버를 찾을 수 없습니다."));
-        log.info("wodSave() : WOD 생성 권한이 없습니다.");
+        log.error("wodSave() : WOD 생성 권한이 없습니다.");
         if (member.getRole() == Role.USER) {throw new IllegalArgumentException("WOD 생성 권한이 없습니다.");}
         Box box = member.getBox();
-        log.info("wodSave() : 소속된 박스가 없습니다.");
+        log.error("wodSave() : 소속된 박스가 없습니다.");
         if (box == null) {throw new IllegalArgumentException("소속된 박스가 없습니다.");}
         Optional<Wod> savedWod = wodRepository.findByBoxIdAndDateAndDelYn(box.getId(), wodSaveReqDto.getDate(), "N");
-        log.info("wodSave() : 이미 WOD 가 존재합니다.");
+        log.error("wodSave() : 이미 WOD 가 존재합니다.");
         if (savedWod.isPresent()) {throw new IllegalArgumentException("이미 WOD 가 존재합니다.");}
         Wod wod = wodSaveReqDto.toEntity(member, box);
         for (WodDetSaveReqDto wodDetSaveReqDto : wodSaveReqDto.getWodDetSaveReqDtoList())
@@ -53,13 +53,13 @@ public class WodService {
 
     public WodResDto wodFind(String email, LocalDate date) {
 //        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        log.info("wodFind() : 해당 이메일의 멤버를 찾을 수 없습니다.");
+        log.error("wodFind() : 해당 이메일의 멤버를 찾을 수 없습니다.");
         Member member = memberRepository.findByEmailAndDelYn(email, "N")
             .orElseThrow(() -> new EntityNotFoundException("해당 이메일의 멤버를 찾을 수 없습니다."));
-        log.info("wodFind() : 해당 ID의 박스를 찾을 수 없습니다.");
+        log.error("wodFind() : 해당 ID의 박스를 찾을 수 없습니다.");
         Box box = boxRepository.findByMember_Id(member.getBox().getId())
             .orElseThrow(() -> new EntityNotFoundException("해당 ID의 박스를 찾을 수 없습니다."));
-        log.info("wodFind() : 해당 날짜에 등록된 WOD 가 없습니다.");
+        log.error("wodFind() : 해당 날짜에 등록된 WOD 가 없습니다.");
         Wod wod = wodRepository.findByBoxIdAndDateAndDelYn(box.getId(), date, "N")
             .orElseThrow(() -> new EntityNotFoundException("해당 날짜에 등록된 WOD 가 없습니다."));
         WodResDto wodResDto = WodResDto.fromEntity(wod);

@@ -28,6 +28,7 @@ public class PostDetResDto {
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
     List<CommentResDto> comments;
+    List<ImageResDto> files;
 
     static public PostDetResDto fromEntity(Post post) {
         return PostDetResDto.builder()
@@ -41,6 +42,9 @@ public class PostDetResDto {
                 .comments(post.getComments().stream()
                         .filter(comment -> comment.getDelYn().equals("N"))
                         .map(CommentResDto::fromEntity).collect(Collectors.toList()))
+                .files(post.getFiles().stream()
+                        .filter(image -> image.getDelYn().equals("N"))
+                        .map(ImageResDto::fromEntity).collect(Collectors.toList()))
                 .build();
     }
 }

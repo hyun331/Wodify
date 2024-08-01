@@ -16013,3 +16013,184 @@ java.sql.SQLSyntaxErrorException: (conn=575) Data too long for column 'data' at 
 16:52 o.s.web.servlet.DispatcherServlet-Initializing Servlet 'dispatcherServlet'
 16:52 o.s.web.servlet.DispatcherServlet-Completed initialization in 1 ms
 16:52 c.s.wodify.post.service.PostService-postCreate() : Email 에 해당하는 member 가 없습니다.
+17:40 c.s.wodify.WodifyApplication-Starting WodifyApplication using Java 11.0.22 on LAPTOP-4VMQR0JF with PID 5976 (C:\Users\Playdata\Downloads\main\build\classes\java\main started by Playdata in C:\Users\Playdata\Downloads\main)
+17:40 c.s.wodify.WodifyApplication-The following 1 profile is active: "local"
+17:40 o.s.d.r.c.RepositoryConfigurationDelegate-Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+17:40 o.s.d.r.c.RepositoryConfigurationDelegate-Finished Spring Data repository scanning in 180 ms. Found 11 JPA repository interfaces.
+17:40 o.s.b.w.e.tomcat.TomcatWebServer-Tomcat initialized with port(s): 8090 (http)
+17:40 o.a.coyote.http11.Http11NioProtocol-Initializing ProtocolHandler ["http-nio-8090"]
+17:40 o.a.catalina.core.StandardService-Starting service [Tomcat]
+17:40 o.a.catalina.core.StandardEngine-Starting Servlet engine: [Apache Tomcat/9.0.74]
+17:40 o.a.c.c.C.[Tomcat].[localhost].[/]-Initializing Spring embedded WebApplicationContext
+17:40 o.s.b.w.s.c.ServletWebServerApplicationContext-Root WebApplicationContext: initialization completed in 1860 ms
+17:40 o.h.jpa.internal.util.LogHelper-HHH000204: Processing PersistenceUnitInfo [name: default]
+17:40 org.hibernate.Version-HHH000412: Hibernate ORM core version 5.6.15.Final
+17:40 o.h.annotations.common.Version-HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+17:40 com.zaxxer.hikari.HikariDataSource-HikariPool-1 - Starting...
+17:40 com.zaxxer.hikari.HikariDataSource-HikariPool-1 - Start completed.
+17:40 org.hibernate.dialect.Dialect-HHH000400: Using dialect: org.hibernate.dialect.MariaDBDialect
+17:40 o.h.e.t.j.p.i.JtaPlatformInitiator-HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+17:40 o.s.o.j.LocalContainerEntityManagerFactoryBean-Initialized JPA EntityManagerFactory for persistence unit 'default'
+17:40 o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration-spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+17:40 o.a.coyote.http11.Http11NioProtocol-Starting ProtocolHandler ["http-nio-8090"]
+17:40 o.s.b.w.e.tomcat.TomcatWebServer-Tomcat started on port(s): 8090 (http) with context path ''
+17:40 c.s.wodify.WodifyApplication-Started WodifyApplication in 5.193 seconds (JVM running for 5.633)
+17:40 o.a.c.c.C.[Tomcat].[localhost].[/]-Initializing Spring DispatcherServlet 'dispatcherServlet'
+17:40 o.s.web.servlet.DispatcherServlet-Initializing Servlet 'dispatcherServlet'
+17:40 o.s.web.servlet.DispatcherServlet-Completed initialization in 1 ms
+17:40 c.s.wodify.post.service.PostService-postDetail() : 해당 id의 게시글을 찾을 수 없습니다.
+17:41 c.s.wodify.post.service.PostService-commentCreate() : 해당 id의 게시글을 찾을 수 없습니다.
+17:41 c.s.wodify.post.service.PostService-commentCreate() : 삭제된 게시글 입니다.
+17:41 c.s.wodify.post.service.PostService-commentCreate() : Email 에 해당하는 member 가 없습니다.
+17:41 c.s.wodify.post.service.PostService-commentCreate() : 해당 id의 게시글을 찾을 수 없습니다.
+17:41 c.s.wodify.post.service.PostService-commentCreate() : 삭제된 게시글 입니다.
+17:41 c.s.wodify.post.service.PostService-commentCreate() : Email 에 해당하는 member 가 없습니다.
+17:41 c.s.wodify.post.service.PostService-commentCreate() : 해당 id의 게시글을 찾을 수 없습니다.
+17:41 c.s.wodify.post.service.PostService-commentCreate() : 삭제된 게시글 입니다.
+17:41 c.s.wodify.post.service.PostService-commentCreate() : Email 에 해당하는 member 가 없습니다.
+17:41 c.s.wodify.post.service.PostService-postDetail() : 해당 id의 게시글을 찾을 수 없습니다.
+18:22 c.s.wodify.WodifyApplication-Starting WodifyApplication using Java 11.0.22 on LAPTOP-4VMQR0JF with PID 15892 (C:\Users\Playdata\Downloads\main\build\classes\java\main started by Playdata in C:\Users\Playdata\Downloads\main)
+18:22 c.s.wodify.WodifyApplication-The following 1 profile is active: "local"
+18:22 o.s.d.r.c.RepositoryConfigurationDelegate-Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+18:22 o.s.d.r.c.RepositoryConfigurationDelegate-Finished Spring Data repository scanning in 173 ms. Found 11 JPA repository interfaces.
+18:22 o.s.b.w.e.tomcat.TomcatWebServer-Tomcat initialized with port(s): 8090 (http)
+18:22 o.a.coyote.http11.Http11NioProtocol-Initializing ProtocolHandler ["http-nio-8090"]
+18:22 o.a.catalina.core.StandardService-Starting service [Tomcat]
+18:22 o.a.catalina.core.StandardEngine-Starting Servlet engine: [Apache Tomcat/9.0.74]
+18:22 o.a.c.c.C.[Tomcat].[localhost].[/]-Initializing Spring embedded WebApplicationContext
+18:22 o.s.b.w.s.c.ServletWebServerApplicationContext-Root WebApplicationContext: initialization completed in 1877 ms
+18:22 o.h.jpa.internal.util.LogHelper-HHH000204: Processing PersistenceUnitInfo [name: default]
+18:22 org.hibernate.Version-HHH000412: Hibernate ORM core version 5.6.15.Final
+18:22 o.h.annotations.common.Version-HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+18:22 com.zaxxer.hikari.HikariDataSource-HikariPool-1 - Starting...
+18:22 com.zaxxer.hikari.HikariDataSource-HikariPool-1 - Start completed.
+18:22 org.hibernate.dialect.Dialect-HHH000400: Using dialect: org.hibernate.dialect.MariaDBDialect
+18:22 o.h.e.t.j.p.i.JtaPlatformInitiator-HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+18:22 o.s.o.j.LocalContainerEntityManagerFactoryBean-Initialized JPA EntityManagerFactory for persistence unit 'default'
+18:22 o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration-spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+18:22 o.a.coyote.http11.Http11NioProtocol-Starting ProtocolHandler ["http-nio-8090"]
+18:22 o.s.b.w.e.tomcat.TomcatWebServer-Tomcat started on port(s): 8090 (http) with context path ''
+18:22 c.s.wodify.WodifyApplication-Started WodifyApplication in 5.497 seconds (JVM running for 5.963)
+18:22 c.s.wodify.WodifyApplication-Starting WodifyApplication using Java 11.0.22 on LAPTOP-4VMQR0JF with PID 14332 (C:\Users\Playdata\Downloads\main\build\classes\java\main started by Playdata in C:\Users\Playdata\Downloads\main)
+18:22 c.s.wodify.WodifyApplication-The following 1 profile is active: "local"
+18:22 o.s.d.r.c.RepositoryConfigurationDelegate-Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+18:22 o.s.d.r.c.RepositoryConfigurationDelegate-Finished Spring Data repository scanning in 191 ms. Found 11 JPA repository interfaces.
+18:22 o.s.b.w.e.tomcat.TomcatWebServer-Tomcat initialized with port(s): 8090 (http)
+18:22 o.a.coyote.http11.Http11NioProtocol-Initializing ProtocolHandler ["http-nio-8090"]
+18:22 o.a.catalina.core.StandardService-Starting service [Tomcat]
+18:22 o.a.catalina.core.StandardEngine-Starting Servlet engine: [Apache Tomcat/9.0.74]
+18:22 o.a.c.c.C.[Tomcat].[localhost].[/]-Initializing Spring embedded WebApplicationContext
+18:22 o.s.b.w.s.c.ServletWebServerApplicationContext-Root WebApplicationContext: initialization completed in 1891 ms
+18:22 o.h.jpa.internal.util.LogHelper-HHH000204: Processing PersistenceUnitInfo [name: default]
+18:22 org.hibernate.Version-HHH000412: Hibernate ORM core version 5.6.15.Final
+18:22 o.h.annotations.common.Version-HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+18:22 com.zaxxer.hikari.HikariDataSource-HikariPool-1 - Starting...
+18:22 com.zaxxer.hikari.HikariDataSource-HikariPool-1 - Start completed.
+18:22 org.hibernate.dialect.Dialect-HHH000400: Using dialect: org.hibernate.dialect.MariaDBDialect
+18:23 o.h.e.t.j.p.i.JtaPlatformInitiator-HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+18:23 o.s.o.j.LocalContainerEntityManagerFactoryBean-Initialized JPA EntityManagerFactory for persistence unit 'default'
+18:23 o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration-spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+18:23 o.a.coyote.http11.Http11NioProtocol-Starting ProtocolHandler ["http-nio-8090"]
+18:23 o.s.b.w.e.tomcat.TomcatWebServer-Tomcat started on port(s): 8090 (http) with context path ''
+18:23 c.s.wodify.WodifyApplication-Started WodifyApplication in 5.343 seconds (JVM running for 5.773)
+18:30 c.s.wodify.WodifyApplication-Starting WodifyApplication using Java 11.0.22 on LAPTOP-4VMQR0JF with PID 16484 (C:\Users\Playdata\Downloads\main\build\classes\java\main started by Playdata in C:\Users\Playdata\Downloads\main)
+18:30 c.s.wodify.WodifyApplication-The following 1 profile is active: "local"
+18:31 o.s.d.r.c.RepositoryConfigurationDelegate-Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+18:31 o.s.d.r.c.RepositoryConfigurationDelegate-Finished Spring Data repository scanning in 172 ms. Found 11 JPA repository interfaces.
+18:31 o.s.b.w.e.tomcat.TomcatWebServer-Tomcat initialized with port(s): 8090 (http)
+18:31 o.a.coyote.http11.Http11NioProtocol-Initializing ProtocolHandler ["http-nio-8090"]
+18:31 o.a.catalina.core.StandardService-Starting service [Tomcat]
+18:31 o.a.catalina.core.StandardEngine-Starting Servlet engine: [Apache Tomcat/9.0.74]
+18:31 o.a.c.c.C.[Tomcat].[localhost].[/]-Initializing Spring embedded WebApplicationContext
+18:31 o.s.b.w.s.c.ServletWebServerApplicationContext-Root WebApplicationContext: initialization completed in 1889 ms
+18:31 o.h.jpa.internal.util.LogHelper-HHH000204: Processing PersistenceUnitInfo [name: default]
+18:31 org.hibernate.Version-HHH000412: Hibernate ORM core version 5.6.15.Final
+18:31 o.h.annotations.common.Version-HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+18:31 com.zaxxer.hikari.HikariDataSource-HikariPool-1 - Starting...
+18:31 com.zaxxer.hikari.HikariDataSource-HikariPool-1 - Start completed.
+18:31 org.hibernate.dialect.Dialect-HHH000400: Using dialect: org.hibernate.dialect.MariaDBDialect
+18:31 o.h.e.t.j.p.i.JtaPlatformInitiator-HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+18:31 o.s.o.j.LocalContainerEntityManagerFactoryBean-Initialized JPA EntityManagerFactory for persistence unit 'default'
+18:31 o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration-spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+18:31 o.a.coyote.http11.Http11NioProtocol-Starting ProtocolHandler ["http-nio-8090"]
+18:31 o.s.b.w.e.tomcat.TomcatWebServer-Tomcat started on port(s): 8090 (http) with context path ''
+18:31 c.s.wodify.WodifyApplication-Started WodifyApplication in 5.309 seconds (JVM running for 5.749)
+18:32 o.a.c.c.C.[Tomcat].[localhost].[/]-Initializing Spring DispatcherServlet 'dispatcherServlet'
+18:32 o.s.web.servlet.DispatcherServlet-Initializing Servlet 'dispatcherServlet'
+18:32 o.s.web.servlet.DispatcherServlet-Completed initialization in 0 ms
+18:32 c.s.wodify.post.service.PostService-postDetail() : 해당 id의 게시글을 찾을 수 없습니다.
+18:33 c.s.wodify.post.service.PostService-imageDelete() : 해당 id의 image 를 찾을 수 없습니다.
+18:33 c.s.wodify.post.service.PostService-imageDelete() : 삭제된 image 입니다.
+18:33 c.s.wodify.post.service.PostService-imageDelete() : Email 에 해당하는 member 가 없습니다.
+18:33 c.s.wodify.post.service.PostService-imageDelete() : 본인의 image 가 아닙니다.
+18:33 o.a.c.c.C.[.[.[.[dispatcherServlet]-Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.lang.NullPointerException] with root cause
+java.lang.NullPointerException: null
+	at com.soocompany.wodify.post.service.PostService.imageDelete(PostService.java:137)
+	at com.soocompany.wodify.post.service.PostService$$FastClassBySpringCGLIB$$6f440735.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:793)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:763)
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:763)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708)
+	at com.soocompany.wodify.post.service.PostService$$EnhancerBySpringCGLIB$$c6553d45.imageDelete(<generated>)
+	at com.soocompany.wodify.post.controller.PostController.imageDelete(PostController.java:64)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1072)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:965)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:880)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:623)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:209)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:481)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:130)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:389)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:926)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1791)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:834)
+18:33 c.s.wodify.post.service.PostService-postCreate() : Email 에 해당하는 member 가 없습니다.
+18:33 c.s.wodify.post.service.PostService-postDetail() : 해당 id의 게시글을 찾을 수 없습니다.
+18:34 c.s.wodify.post.service.PostService-imageDelete() : 해당 id의 image 를 찾을 수 없습니다.
+18:34 c.s.wodify.post.service.PostService-imageDelete() : 삭제된 image 입니다.
+18:34 c.s.wodify.post.service.PostService-imageDelete() : Email 에 해당하는 member 가 없습니다.
+18:34 c.s.wodify.post.service.PostService-imageDelete() : 본인의 image 가 아닙니다.
+18:34 c.s.wodify.post.service.PostService-postDetail() : 해당 id의 게시글을 찾을 수 없습니다.

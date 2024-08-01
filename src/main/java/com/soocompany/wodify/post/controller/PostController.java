@@ -19,7 +19,6 @@ public class PostController {
     private final PostService postService;
 
     // 좋아요 (Like) : 게시글의 좋아요는 Redis 를 통해 집계한다.
-    // 글, 이미지, 영상을 올릴 수 있어야 한다. => 구현해야함
     @PostMapping("/create")
     public ResponseEntity<?> postCreate(@RequestParam String email, @ModelAttribute PostSaveReqDto dto) {
         Post post = postService.postCreate(email, dto);
@@ -30,7 +29,6 @@ public class PostController {
     }
 
     // 키워드 검색이 가능하다. => 구현해야함.
-    // 모든 유저가 조회할 수 있다.
     @GetMapping("/list")
     public ResponseEntity<?> postListPage(Pageable pageable) {
         Page<PostListResDto> posts = postService.postListPage(pageable);
@@ -55,6 +53,15 @@ public class PostController {
         postService.postDelete(id, email);
         HttpStatus code = HttpStatus.OK;
         String msg = "게시글 삭제에 성공하였습니다.";
+        CommonResDto commonResDto = new CommonResDto(code, msg, null);
+        return new ResponseEntity<>(commonResDto, code);
+    }
+
+    @PatchMapping("/image/delete")
+    public ResponseEntity<?> imageDelete(@RequestParam Long id, @RequestParam String email) {
+        postService.imageDelete(id, email);
+        HttpStatus code = HttpStatus.OK;
+        String msg = "파일 삭제에 성공하였습니다.";
         CommonResDto commonResDto = new CommonResDto(code, msg, null);
         return new ResponseEntity<>(commonResDto, code);
     }

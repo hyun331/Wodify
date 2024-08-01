@@ -33,7 +33,8 @@ public class Post extends BaseEntity {
     private String contents;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> files;
+    @Builder.Default
+    private List<Image> files = new ArrayList<>();
 
     @UpdateTimestamp
     private LocalDateTime updatedTime;
@@ -50,5 +51,9 @@ public class Post extends BaseEntity {
         this.type = postUpdateReqDto.getType();
         this.title = postUpdateReqDto.getTitle();
         this.contents = postUpdateReqDto.getContents();
+    }
+
+    public void deletePost() {
+        this.updateDelYn();
     }
 }
