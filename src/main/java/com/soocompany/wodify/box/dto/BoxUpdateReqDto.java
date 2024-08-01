@@ -1,5 +1,6 @@
 package com.soocompany.wodify.box.dto;
 
+import com.soocompany.wodify.box.domain.Box;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +21,6 @@ public class BoxUpdateReqDto {
 
     private String intro;
 
-    private String adress;
+    private String address;
+
 }

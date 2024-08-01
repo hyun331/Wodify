@@ -37,7 +37,7 @@ public class Box extends BaseEntity {
     @Column(unique = true)
     private String code;
 
-    @JoinColumn(name = "representative_id")
+    @JoinColumn(name = "representative_id", unique = true)
     @OneToOne
     private Member member;
 
@@ -54,7 +54,12 @@ public class Box extends BaseEntity {
     }
 
 
-//    UUID생성
+    // boxcode 생성 메서드
+    public void updateBoxCode() {
+        this.code = UUID.randomUUID().toString();
+    }
+
+    // boxCode 분리
     public Box(String name, String logo, String operatingHours, String fee, String intro, String address, Member member) {
         this.name = name;
         this.logo = logo;
@@ -62,8 +67,8 @@ public class Box extends BaseEntity {
         this.fee = fee;
         this.intro = intro;
         this.address = address;
-        this.code = UUID.randomUUID().toString(); // boxcode의 UUID 생성
         this.member = member;
+        this.updateBoxCode(); // 코드 생성 호출
     }
 
 }
