@@ -7,9 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.util.ArrayList;
 
 @Data
 @Builder
@@ -17,10 +19,11 @@ import javax.persistence.Enumerated;
 @NoArgsConstructor
 public class PostSaveReqDto {
 
-    private String title;
-    private String contents;
     @Enumerated(EnumType.STRING)
     private Type type;
+    private String title;
+    private String contents;
+    private MultipartFile[] files;
 
     public Post toEntity(Member member) {
         return Post.builder()
@@ -28,6 +31,7 @@ public class PostSaveReqDto {
                 .contents(this.contents)
                 .type(this.type)
                 .member(member)
+                .files(new ArrayList<>())
                 .build();
     }
 }

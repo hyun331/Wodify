@@ -1,4 +1,4 @@
-package com.soocompany.wodify.wod.domain.dto;
+package com.soocompany.wodify.wod.dto;
 
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.member.domain.Member;

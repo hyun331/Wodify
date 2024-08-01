@@ -2,8 +2,8 @@ package com.soocompany.wodify.wod.controller;
 
 import com.soocompany.wodify.common.exception.CommonResDto;
 import com.soocompany.wodify.wod.domain.Wod;
-import com.soocompany.wodify.wod.domain.dto.WodResDto;
-import com.soocompany.wodify.wod.domain.dto.WodSaveReqDto;
+import com.soocompany.wodify.wod.dto.WodResDto;
+import com.soocompany.wodify.wod.dto.WodSaveReqDto;
 import com.soocompany.wodify.wod.service.WodService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

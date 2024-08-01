@@ -8,6 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -30,12 +32,19 @@ public class Post extends BaseEntity {
     @Column(length = 3000)
     private String contents;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> files;
+
     @UpdateTimestamp
     private LocalDateTime updatedTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Comment> comments = new ArrayList<>();
 
     public void updatePost(PostUpdateReqDto postUpdateReqDto) {
         this.type = postUpdateReqDto.getType();

@@ -1,5 +1,6 @@
 package com.soocompany.wodify.post.dto;
 
+import com.soocompany.wodify.post.domain.Comment;
 import com.soocompany.wodify.post.domain.Post;
 import com.soocompany.wodify.post.domain.Type;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -24,6 +27,7 @@ public class PostDetResDto {
     private String memberEmail;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
+    List<CommentResDto> comments;
 
     static public PostDetResDto fromEntity(Post post) {
         return PostDetResDto.builder()
@@ -34,6 +38,9 @@ public class PostDetResDto {
                 .memberEmail(post.getMember().getEmail())
                 .createdTime(post.getCreatedTime())
                 .updatedTime(post.getUpdatedTime())
+                .comments(post.getComments().stream()
+                        .filter(comment -> comment.getDelYn().equals("N"))
+                        .map(CommentResDto::fromEntity).collect(Collectors.toList()))
                 .build();
     }
 }

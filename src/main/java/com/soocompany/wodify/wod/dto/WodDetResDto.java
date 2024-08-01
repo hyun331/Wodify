@@ -1,4 +1,4 @@
-package com.soocompany.wodify.wod.domain.dto;
+package com.soocompany.wodify.wod.dto;
 
 import com.soocompany.wodify.wod.domain.WodDetail;
 import lombok.AllArgsConstructor;
