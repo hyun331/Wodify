@@ -9,16 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoxUpdateReqDto {
+public class BoxDetailResDto {
     private String name;
-
     private String logo;
-
     private String operatingHours;
-
     private String fee;
-
-    private String intro;
-
-    private String adress;
+    private String address;
 }

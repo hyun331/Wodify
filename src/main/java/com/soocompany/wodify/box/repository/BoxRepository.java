@@ -18,8 +18,6 @@ public interface BoxRepository extends JpaRepository<Box, Long> {
 
     Optional<Box> findByMemberIdAndDelYn(Long memberId, String delYn);
 
-
-
     Page<Box> findAllByDelYn(String delYn, Pageable pageable);
 }
 
