@@ -12,7 +12,6 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmailAndDelYn(String email, String delYn);
 
-
     Page<Member> findAll(Pageable pageable);
 
     Page<Member> findAllByDelYn(Pageable pageable, String n);

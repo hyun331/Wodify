@@ -1,4 +1,4 @@
-package com.soocompany.wodify.wod.dto;
+package com.soocompany.wodify.wod.domain.dto;
 
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.member.domain.Member;
@@ -19,6 +19,7 @@ import java.util.List;
 @Builder
 public class WodSaveReqDto {
     private LocalDate date;
+    private String email;
     private Time timeCap;
     private int rounds;
     private String info;

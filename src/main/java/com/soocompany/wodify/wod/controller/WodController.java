@@ -2,8 +2,8 @@ package com.soocompany.wodify.wod.controller;
 
 import com.soocompany.wodify.common.exception.CommonResDto;
 import com.soocompany.wodify.wod.domain.Wod;
-import com.soocompany.wodify.wod.dto.WodResDto;
-import com.soocompany.wodify.wod.dto.WodSaveReqDto;
+import com.soocompany.wodify.wod.domain.dto.WodResDto;
+import com.soocompany.wodify.wod.domain.dto.WodSaveReqDto;
 import com.soocompany.wodify.wod.service.WodService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,19 +19,18 @@ import java.time.LocalDate;
 public class WodController {
     private final WodService wodService;
 //    @PreAuthorize("hasRole('COACH')")
-    @PostMapping("/save/{memberEmail}")
-    public ResponseEntity<?> wodSave(@RequestBody WodSaveReqDto wodSaveReqDto
-            , @PathVariable String memberEmail) {
+    @PostMapping("/save/{email}")
+    public ResponseEntity<?> wodSave(@RequestBody WodSaveReqDto wodSaveReqDto) {
             HttpStatus code = HttpStatus.CREATED;
             String msg = "WOD 등록되었습니다.";
-            Long savedId = wodService.wodSave(wodSaveReqDto, memberEmail).getId();
+            Long savedId = wodService.wodSave(wodSaveReqDto).getId();
             CommonResDto commonResDto = new CommonResDto(code, msg, savedId);
             return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/find")
-    public ResponseEntity<?> wodFind(@RequestParam("email") String email
-            , @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    @GetMapping("/find/{date}/{email}")
+    public ResponseEntity<?> wodFind(@PathVariable String email
+            , @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
             HttpStatus code = HttpStatus.OK;
             String msg = "WOD 찾았습니다.";
             WodResDto wodResDto = wodService.wodFind(email, date);
@@ -40,9 +39,9 @@ public class WodController {
     }
 
 //    @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/order/cancel")
-    public ResponseEntity<?> orderCancel(@RequestParam("email") String email
-            , @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    @PatchMapping("/cancel/{date}/{email}")
+    public ResponseEntity<?> wodCancel(@PathVariable String email
+            , @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         String msg = "WOD 삭제했습니다.";
         HttpStatus code = HttpStatus.OK;
         Wod wod = wodService.wodDelete(email, date);

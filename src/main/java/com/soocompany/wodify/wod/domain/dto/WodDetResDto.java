@@ -1,14 +1,11 @@
-package com.soocompany.wodify.wod.dto;
+package com.soocompany.wodify.wod.domain.dto;
 
-import com.soocompany.wodify.common.BaseEntity;
-import com.soocompany.wodify.wod.domain.Wod;
 import com.soocompany.wodify.wod.domain.WodDetail;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
