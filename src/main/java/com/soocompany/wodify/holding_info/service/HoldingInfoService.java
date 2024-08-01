@@ -1,9 +1,7 @@
 package com.soocompany.wodify.holding_info.service;
 
 import com.soocompany.wodify.box.domain.Box;
-import com.soocompany.wodify.box.repository.BoxRepository;
 import com.soocompany.wodify.holding_info.domain.HoldingInfo;
-import com.soocompany.wodify.holding_info.dto.HoldingInfoCreateReqDto;
 import com.soocompany.wodify.holding_info.dto.HoldingInfoListResDto;
 import com.soocompany.wodify.holding_info.dto.HoldingInfoResDto;
 import com.soocompany.wodify.holding_info.repository.HoldingInfoRepository;
@@ -11,6 +9,7 @@ import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -27,21 +26,29 @@ public class HoldingInfoService {
     private final HoldingInfoRepository holdingInfoRepository;
     private final MemberRepository memberRepository;
 
-    public HoldingInfoResDto holdingInfoCreate(HoldingInfoCreateReqDto dto) {
-        Member member = memberRepository.findByIdAndDelYn(dto.getMemberId(), "N").orElseThrow(() -> new EntityNotFoundException("해당 id의 회원이 존재하지 않습니다."));
+    public HoldingInfoResDto holdingInfoCreate() {
+        Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
+            log.error("reservationList() : 해당 id의 회원을 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
+        });
         Box box = member.getBox();
         if (box==null){
             log.error("holdingInfoCreate() : box등록 정보가 없습니다. 정지 등록 불가능");
             throw new IllegalArgumentException("box등록 정보가 없습니다.");
         }
-        HoldingInfo holdingInfo = dto.toEntity(member, box);
-        HoldingInfo savedHoldingInfo = holdingInfoRepository.save(holdingInfo);
-        LocalDate holdingStart = dto.getHoldingStart();
-        LocalDate holdingEnd = dto.getHoldingEnd();
-        if (holdingStart.isAfter(holdingEnd)) {
-            throw new IllegalArgumentException("정지시작일은 정지종료일보다 빨라야합니다.");
+        List<HoldingInfo> holdingInfos = holdingInfoRepository.findByMemberAndBoxAndDelYn(member, box, "N");
+        if (holdingInfos.size()>=3) {
+            log.error("holdingInfoCreate() : 정지는 3회로 제한됩니다.");
+            throw new IllegalArgumentException("정지는 3회로 제한됩니다.");
         }
-
+        HoldingInfo holdingInfo = HoldingInfo.builder()
+                .member(member)
+                .box(box)
+                .holdingStart(LocalDate.now())
+                .isOnHold(true)
+                .build();
+        HoldingInfo savedHoldingInfo = holdingInfoRepository.save(holdingInfo);
         return savedHoldingInfo.fromEntity();
     }
 
@@ -57,5 +64,26 @@ public class HoldingInfoService {
             listResDtos.add(holdingInfo.ListfromEntity());
         }
         return listResDtos;
+    }
+
+    public void unholding(Long id) {
+        HoldingInfo holdingInfo = holdingInfoRepository.findByIdAndDelYn(id, "N").orElseThrow(() -> {
+            log.error("unholding() : 해당 id의 정지정보를 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 정지정보를 찾을 수 없습니다.");
+        });
+        Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
+            log.error("unholding() : 해당 id의 회원을 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
+        });
+        Box box = member.getBox();
+        if (box==null){
+            throw new IllegalArgumentException("box등록 정보가 없습니다.");
+        }
+        if (!holdingInfo.getMember().equals(member)||!holdingInfo.getBox().equals(box)) {
+            log.error("unholding() : 정지정보에 대한 접근이 잘못되었습니다.");
+            throw  new IllegalArgumentException("정지정보에 대한 접근이 잘못되었습니다.");
+        }
+        holdingInfo.updateHoldingInfo();
     }
 }

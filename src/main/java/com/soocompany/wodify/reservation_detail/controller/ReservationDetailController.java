@@ -1,7 +1,6 @@
 package com.soocompany.wodify.reservation_detail.controller;
 
 import com.soocompany.wodify.common.dto.CommonResDto;
-import com.soocompany.wodify.reservation.dto.ReservationDetailResDto;
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetCreateReqDto;
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetailDetResDto;
 import com.soocompany.wodify.reservation_detail.service.ReservationDetailService;
@@ -20,7 +19,7 @@ public class ReservationDetailController {
 
     @PostMapping("/create")
     public ResponseEntity<CommonResDto> reservationDetailCreate(@RequestBody ReservationDetCreateReqDto dto) {
-        ReservationDetailDetResDto detailResDto = reservationDetailService.create(dto);
+        ReservationDetailDetResDto detailResDto = reservationDetailService.reservationCreate(dto);
         return new ResponseEntity<>(new CommonResDto(HttpStatus.CREATED,"예약상세 등록 성공",detailResDto),HttpStatus.CREATED);
     }
 
