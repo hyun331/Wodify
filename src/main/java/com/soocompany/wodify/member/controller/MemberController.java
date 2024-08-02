@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -56,7 +57,7 @@ public class MemberController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "2d129c6af1317e9dc12a8669b1957416");    //Rest API 키
-        params.add("redirect_uri", "http://localhost:8081/member/auth/kakao/callback");
+        params.add("redirect_uri", "http://localhost:8090/member/auth/kakao/callback");
         params.add("code", code);
 
         //header body 합치기
@@ -104,7 +105,7 @@ public class MemberController {
             jsonNode = objectMapper.readTree(response2.getBody());
             email = jsonNode.get("kakao_account").get("email").asText();
         }catch (JsonProcessingException e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
 
 
@@ -172,14 +173,16 @@ public class MemberController {
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 
-    //멤버 리스트
+    //코치가 다니는 박스의 회원 리스트
+    @PreAuthorize("hasAnyRole('COACH', 'CEO')")
     @GetMapping("/list")
-    public ResponseEntity<CommonResDto> memberList(Pageable pageable){
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 전체 리스트 출력", memberService.memberList(pageable));
+    public ResponseEntity<CommonResDto> nowMemberList(Pageable pageable){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치가 다니는 박스의 현재 멤버 리스트", memberService.nowMemberList(pageable));
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
     //멤버 상세정보
+//    @PreAuthorize("hasAnyRole('USER', 'COACH')")
     @GetMapping("/detail")
     public ResponseEntity<CommonResDto> memberDetail(){
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member id에 맞는 멤버 상세 정보 출력", memberService.memberDetail());
