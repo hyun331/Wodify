@@ -17,6 +17,7 @@ public class BoxSaveReqDto {
     private String operatingHours;
     private String fee;
     private String intro;
+    private String address;
     private Long representativeId;
 
     public Box toEntity(Member member) {
@@ -26,7 +27,9 @@ public class BoxSaveReqDto {
                 .operatingHours(this.operatingHours)
                 .fee(this.fee)
                 .intro(this.intro)
+                .address(this.address)
                 .member(member)
                 .build();
     }
 }
+

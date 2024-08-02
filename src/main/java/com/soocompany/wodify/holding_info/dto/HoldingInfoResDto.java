@@ -19,4 +19,5 @@ public class HoldingInfoResDto {
     private String memberEmail;
     private LocalDate holdingStart;
     private LocalDate holdingEnd;
+    private boolean isOnHold;
 }

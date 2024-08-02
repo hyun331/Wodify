@@ -1,28 +1,31 @@
 package com.soocompany.wodify.box.service;
 
-// BoxService.java
 import com.soocompany.wodify.box.domain.Box;
+import com.soocompany.wodify.box.dto.BoxDetailResDto;
+import com.soocompany.wodify.box.dto.BoxListResDto;
 import com.soocompany.wodify.box.dto.BoxSaveReqDto;
 import com.soocompany.wodify.box.dto.BoxUpdateReqDto;
 import com.soocompany.wodify.box.repository.BoxRepository;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.repository.MemberRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional
+@Slf4j
 public class BoxService {
 
     private final BoxRepository boxRepository;
-    private final MemberRepository memberRepository; // 추가된 필드
+    private final MemberRepository memberRepository;
 
     @Autowired
     public BoxService(BoxRepository boxRepository, MemberRepository memberRepository) {
@@ -31,68 +34,116 @@ public class BoxService {
     }
 
 
+    public BoxSaveReqDto boxCreate(BoxSaveReqDto dto) {
+        // 현재 로그인한 사용자 ID 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = authentication.getName();
 
-    public Box boxCreate(BoxSaveReqDto dto) {
         // 대표 ID가 유일한지 확인
-        Optional<Box> existingBoxByMember = boxRepository.findByMemberIdAndDelYn(dto.getRepresentativeId(), "N").stream().findFirst();
+        Optional<Box> existingBoxByMember = boxRepository.findByMemberIdAndDelYn(Long.parseLong(memberId), "N").stream().findFirst();
         if (existingBoxByMember.isPresent()) {
-            throw new IllegalArgumentException("id가 " + dto.getRepresentativeId() + "인 Member가 이미 다른 Box와 연관되어 있습니다");
+            String errorMessage = "id가 " + memberId + "인 Member가 이미 다른 Box를 가지고 있습니다";
+            log.error("boxCreate() : " + errorMessage);
+            throw new IllegalArgumentException(errorMessage);
         }
 
-        // 멤버 찾기
-        Optional<Member> optionalMember = memberRepository.findById(dto.getRepresentativeId());
-        if (optionalMember.isEmpty()) {
-            throw new IllegalArgumentException("id가 " + dto.getRepresentativeId() + "인 Member를 찾을 수 없습니다");
-        }
-
-        Member member = optionalMember.get();
-        Box box = dto.toEntity(member);
-        return boxRepository.save(box);
+        Member member = memberRepository.getReferenceById(Long.parseLong(memberId));
+        Box box = new Box(dto.getName(), dto.getLogo(), dto.getOperatingHours(), dto.getFee(), dto.getIntro(), dto.getAddress(), member);
+        boxRepository.save(box);
+        return dto;
     }
 
 
+    public BoxSaveReqDto boxUpdate(Long id, BoxUpdateReqDto dto) {
+        // 현재 로그인한 사용자 ID 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = authentication.getName();
 
-    @Transactional
-    public Box boxUpdate(Long id, BoxUpdateReqDto dto) {
-        Optional<Box> optionalBox = boxRepository.findByIdAndDelYn(id, "N");
-        if (optionalBox.isPresent()) {
-            Box box = optionalBox.get();
-            box.updateDetails(
-                    dto.getName(),
-                    dto.getLogo(),
-                    dto.getOperatingHours(),
-                    dto.getFee(),
-                    dto.getIntro()
-            );
-            return boxRepository.save(box);
-        } else {
-            throw new IllegalArgumentException("id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다");
+        // Box 조회 및 소유자 확인
+        Box box = boxRepository.findByIdAndDelYn(id, "N")
+                .orElseThrow(() -> {
+                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
+                    log.error("boxUpdate() : " + errorMessage);
+                    throw  new IllegalArgumentException(errorMessage);
+                });
+
+        if (!box.getMember().getId().toString().equals(memberId)) {
+            String errorMessage = "현재 사용자가 해당 Box를 수정할 권한이 없습니다.";
+            log.error("boxUpdate() : " + errorMessage);
+            throw new SecurityException(errorMessage);
         }
-    }
 
+        // Box 업데이트
+        box.updateDetails(dto.getName(),
+                dto.getLogo(),
+                dto.getOperatingHours(),
+                dto.getFee(),
+                dto.getIntro(),
+                dto.getAddress()
+        );
+        boxRepository.save(box);
+        return BoxSaveReqDto.builder()
+                .name(box.getName())
+                .logo(box.getLogo())
+                .operatingHours(box.getOperatingHours())
+                .fee(box.getFee())
+                .intro(box.getIntro())
+                .address(box.getAddress())
+                .build();
+    }
 
 
     public void boxDelete(Long id) {
-        Optional<Box> optionalBox = boxRepository.findByIdAndDelYn(id, "N");
-        if (optionalBox.isPresent()) {
-            Box box = optionalBox.get();
-            box.updateDelYn();
-            boxRepository.save(box);
-        } else {
-            throw new IllegalArgumentException("id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다");
+        // 현재 로그인한 사용자 ID 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = authentication.getName();
+
+        // Box 조회 및 소유자 확인
+        Box box = boxRepository.findByIdAndDelYn(id, "N")
+                .orElseThrow(() -> {
+                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
+                    log.error("boxDelete() : " + errorMessage);
+                    throw  new IllegalArgumentException(errorMessage);
+                });
+
+        if (!box.getMember().getId().toString().equals(memberId)) {
+            String errorMessage = "현재 사용자가 해당 Box를 삭제할 권한이 없습니다.";
+            log.error("boxDelete() : " + errorMessage);
+            throw new SecurityException(errorMessage);
         }
+
+        // Box 삭제
+        box.updateDelYn();
+        boxRepository.save(box);
     }
 
 
-
-    public Page<Box> boxList(Pageable pageable) {
-        return boxRepository.findAllByDelYn("N", pageable);
+    public Page<BoxListResDto> boxList(Pageable pageable) {
+        Page<Box> boxPage = boxRepository.findAllByDelYn("N", pageable);
+        return boxPage.map(box -> BoxListResDto.builder()
+                .name(box.getName())
+                .logo(box.getLogo())
+                .operatingHours(box.getOperatingHours())
+                .address(box.getAddress())
+                .build());
     }
 
 
+    public BoxDetailResDto boxDetail(Long id) {
+        Box box = boxRepository.findByIdAndDelYn(id, "N")
+                .orElseThrow(() -> {
+                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
+                    log.error("boxDetail() : " + errorMessage);
+                    throw  new IllegalArgumentException(errorMessage);
+                });
 
-    public Box boxDetail(Long id) {
-        return boxRepository.findByIdAndDelYn(id, "N")
-                .orElseThrow(() -> new IllegalArgumentException("id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다"));
+        return BoxDetailResDto.builder()
+                .name(box.getName())
+                .logo(box.getLogo())
+                .operatingHours(box.getOperatingHours())
+                .fee(box.getFee())
+                .address(box.getAddress())
+                .build();
     }
 }
+
