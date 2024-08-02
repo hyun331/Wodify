@@ -134,7 +134,7 @@ public class BoxService {
                 .orElseThrow(() -> {
                     String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
                     log.error("boxDetail() : " + errorMessage);
-                    return new IllegalArgumentException(errorMessage);
+                    throw  new IllegalArgumentException(errorMessage);
                 });
 
         return BoxDetailResDto.builder()
