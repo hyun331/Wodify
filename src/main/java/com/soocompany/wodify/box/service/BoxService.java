@@ -64,7 +64,7 @@ public class BoxService {
                 .orElseThrow(() -> {
                     String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
                     log.error("boxUpdate() : " + errorMessage);
-                    return new IllegalArgumentException(errorMessage);
+                    throw  new IllegalArgumentException(errorMessage);
                 });
 
         if (!box.getMember().getId().toString().equals(memberId)) {
@@ -103,7 +103,7 @@ public class BoxService {
                 .orElseThrow(() -> {
                     String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
                     log.error("boxDelete() : " + errorMessage);
-                    return new IllegalArgumentException(errorMessage);
+                    throw  new IllegalArgumentException(errorMessage);
                 });
 
         if (!box.getMember().getId().toString().equals(memberId)) {
