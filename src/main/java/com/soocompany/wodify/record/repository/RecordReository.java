@@ -10,7 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface RecordReository extends JpaRepository<Record, Long> {
-    Optional<Record> findByReservationDetailId(Long id);
     Optional<Record> findByReservationDetailIdAndDelYn(Long id, String delYn);
     Optional<Record> findByIdAndDelYn(Long id, String delYn);
     Page<Record> findByDelYn(String delYn, Pageable pageable);
