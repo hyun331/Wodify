@@ -2,6 +2,7 @@ package com.soocompany.wodify.member.repository;
 
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.member.domain.Member;
+import com.soocompany.wodify.member.domain.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Page<Member> findAllByDelYn(Pageable pageable, String delYn);
 
     Optional<Member> findByIdAndDelYn(Long id, String delYn);
+
+
+    Page<Member> findByBoxAndRoleAndDelYn(Pageable pageable, Box box, Role role, String n);
 }
