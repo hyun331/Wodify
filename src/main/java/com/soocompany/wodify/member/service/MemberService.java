@@ -142,4 +142,6 @@ public class MemberService {
         return memberListResDtos;
 
     }
+
+
 }
