@@ -5,10 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import com.soocompany.wodify.common.BaseEntity;
+import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
 import lombok.*;
 import javax.persistence.*;
+import java.util.UUID;
 
 @Getter
 @Entity
@@ -31,7 +32,9 @@ public class Box extends BaseEntity {
 
     private String intro;
 
-    @Column(nullable = false, unique = true)
+    private String address;
+
+    @Column(unique = true)
     private String code;
 
     @JoinColumn(name = "representative_id", unique = true)
@@ -40,24 +43,32 @@ public class Box extends BaseEntity {
 
 
 
-//    수정할 때 null값을 넣으면 그 값은 그냥 원래 값 그대로 저장
-    public void updateDetails(String name, String logo, String operatingHours, String fee, String intro) {
+    //    수정할 때 null값을 넣으면 그 값은 그냥 원래 값 그대로 저장
+    public void updateDetails(String name, String logo, String operatingHours, String fee, String intro, String address) {
         if (name != null) this.name = name;
         if (logo != null) this.logo = logo;
         if (operatingHours != null) this.operatingHours = operatingHours;
         if (fee != null) this.fee = fee;
         if (intro != null) this.intro = intro;
+        if (address != null) this.address = address;
     }
 
 
-    public void markAsDeleted() {
-        try {
-            java.lang.reflect.Field field = BaseEntity.class.getDeclaredField("delYn");
-            field.setAccessible(true);
-            field.set(this, "Y");
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException("Failed to mark box as deleted", e);
-        }
+    // boxcode 생성 메서드
+    public void updateBoxCode() {
+        this.code = UUID.randomUUID().toString();
+    }
+
+    // boxCode 분리
+    public Box(String name, String logo, String operatingHours, String fee, String intro, String address, Member member) {
+        this.name = name;
+        this.logo = logo;
+        this.operatingHours = operatingHours;
+        this.fee = fee;
+        this.intro = intro;
+        this.address = address;
+        this.member = member;
+        this.updateBoxCode(); // 코드 생성 호출
     }
 
 }

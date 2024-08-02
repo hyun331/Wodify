@@ -1,31 +1,40 @@
 package com.soocompany.wodify.member.service;
 
+import com.soocompany.wodify.box.domain.Box;
+import com.soocompany.wodify.box.repository.BoxRepository;
 import com.soocompany.wodify.member.domain.Member;
+import com.soocompany.wodify.member.domain.Role;
 import com.soocompany.wodify.member.dto.MemberDetResDto;
 import com.soocompany.wodify.member.dto.MemberListResDto;
 import com.soocompany.wodify.member.dto.MemberSaveReqDto;
 import com.soocompany.wodify.member.dto.MemberUpdateDto;
 import com.soocompany.wodify.member.repository.MemberRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.security.Security;
 import java.util.Optional;
 
 @Service
 @Transactional
+@Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final BoxRepository boxRepository;
 
     @Autowired
-    public MemberService(MemberRepository memberRepository){
+    public MemberService(MemberRepository memberRepository, BoxRepository boxRepository){
         this.memberRepository = memberRepository;
+        this.boxRepository = boxRepository;
     }
 
 
@@ -45,6 +54,7 @@ public class MemberService {
 
     public MemberDetResDto memberRegister(MemberSaveReqDto memberSaveReqDto){
         if(memberRepository.findByEmailAndDelYn(memberSaveReqDto.getEmail(), "N").isPresent()){
+            log.error("memberRegister() : 이미 존재하는 email 입니다. 회원가입 불가");
             throw  new IllegalArgumentException("이미 존재하는 email 입니다. 회원가입 불가");
         }
         if(memberSaveReqDto.getName()==null)
@@ -62,17 +72,17 @@ public class MemberService {
     }
 
 
-    public Page<MemberListResDto> memberList(Pageable pageable) {
-        Page<Member> members = memberRepository.findAllByDelYn(pageable, "N");
-        Page<MemberListResDto> memberListResDtos = members.map(a->a.listFromEntity());
-        return memberListResDtos;
 
-    }
 
-    public MemberDetResDto memberDetail(Long id) {
-        Member member = memberRepository.findByIdAndDelYn(id, "N").orElseThrow(()->new EntityNotFoundException("member is not found"));
+    public MemberDetResDto memberDetail() {
+        String id = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(()->{
+            log.error("memberDetail() : EntityNotFoundException");
+            throw new EntityNotFoundException("id에 맞는 회원이 존재하지 않습니다.");
+        });
         return member.detFromEntity();
     }
+
 
     public MemberDetResDto memberUpdate(Long id, MemberUpdateDto memberUpdateDto) {
         Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("member is not found"));
@@ -84,4 +94,54 @@ public class MemberService {
         Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("member is not found"));
         member.updateDelYn();
     }
+
+
+    //코치의 박스 가입/변경 메서드
+    //id = member id(코치의 id)
+    public MemberDetResDto coachBoxUpdate(Long id, String boxCode) {
+        //유효한 박스 코드인지 확인하기
+        Box box = boxRepository.findByCodeAndDelYn(boxCode, "N").orElseThrow(()->new IllegalArgumentException("memberBoxUpdate() : 박스코드가 유효하지 않습니다."));
+        Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("memberBoxUpdate() : id에 맞는 member가 없습니다."));
+
+        //이 코치가 대표면 박스 가입/변경 불가
+        if(member.getBox()!=null && member.equals(member.getBox().getMember())) {
+            throw new IllegalArgumentException("coachBoxUpdate() : 박스의 대표는 다른 박스로 변경 불가합니다.");
+        }
+
+        //box 변경
+        member.memberBoxUpdate(box);
+        return member.detFromEntity();
+
+    }
+
+
+
+    //이 서비스를 이용한 모든 사용자 중 유효한 사용자
+    public Page<MemberListResDto> memberList(Pageable pageable) {
+        Page<Member> members = memberRepository.findAllByDelYn(pageable, "N");
+        Page<MemberListResDto> memberListResDtos = members.map(a->a.listFromEntity());
+        return memberListResDtos;
+
+    }
+
+
+    public Page<MemberListResDto> nowMemberList(Pageable pageable) {
+        Long memberId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());   //코치나 ceo의 memberId
+        Member loginMember = memberRepository.findById(memberId).orElseThrow(()->{
+            log.error("nowMemberList() : id에 맞는 회원이 존재하지 않습니다.");
+            throw new EntityNotFoundException("id에 맞는 회원이 존재하지 않습니다.");
+        });
+
+        Box box = boxRepository.findByIdAndDelYn(loginMember.getBox().getId(), "N").orElseThrow(()->{
+            log.error("nowMemberList() : id에 맞는 박스가 존재하지 않습니다.");
+            throw new EntityNotFoundException("id에 맞는 박스가 존재하지 않습니다.");
+        });
+
+        Page<Member> members = memberRepository.findByBoxAndRoleAndDelYn(pageable, box, Role.USER, "N");
+        Page<MemberListResDto> memberListResDtos = members.map(a->a.listFromEntity());
+        return memberListResDtos;
+
+    }
+
+
 }
