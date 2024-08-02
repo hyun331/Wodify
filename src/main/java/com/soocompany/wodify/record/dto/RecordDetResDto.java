@@ -16,5 +16,5 @@ public class RecordDetResDto { // 뒷단에서 가져와 보여주는 값이에�
     private String snf; // 성공여부 success or failure
     private LocalTime exerciseTime; // 운동 수행 시간
     private String comments; // 코멘트
-    private String visibilityYN; // 공개 범위 Y공개, N비공개
+//    private String visibilityYN; // 공개 범위 Y공개, N비공개
 }

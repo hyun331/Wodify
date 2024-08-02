@@ -36,6 +36,7 @@ public class RecordService {
 
     @Transactional
     public RecordDetResDto recordCreate(RecordSaveReqDto dto){
+//        사람이 오
         ReservationDetail reservationDetail = reservationDetailRepository.findByIdAndDelYn(dto.getReservationDetailId(), "N").orElseThrow(()->{
             log.error("recordCreate() : EntityNotFoundException:reservationDetail");
             return new EntityNotFoundException("예약내역이 없습니다"); }
@@ -89,8 +90,7 @@ public class RecordService {
         return record.detFromEntity();
     }
 
-
-    public Page<RecordListResDto> recordList(Pageable pageable){ // 회원에 대해서 운동기록 조회할 때.
+    public Page<RecordListResDto> recordList(Pageable pageable){// 회원에 대해서 선택하면 운동기록을 조회할 수 있다.
         Page<Record> records = recordReository.findByDelYn("N", pageable);
         return records.map(Record::listFromEntity);
     } // 어떤 에외처리를 해야하나.

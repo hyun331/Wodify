@@ -29,8 +29,8 @@ public class Record extends BaseEntity {
     private LocalTime exerciseTime; // 운동 수행 시간
     @Column(length = 3000)
     private String comments; // 코멘트
-    @Column(nullable = false, columnDefinition = "char(1) default 'Y'")
-    private String visibilityYN; // 공개 범위 Y공개, N비공개
+//    @Column(nullable = false, columnDefinition = "char(1) default 'Y'")
+//    private String visibilityYN; // 공개 범위 Y공개, N비공개
 
 
     @OneToOne // 하나의 예약내역에 하나의 운동기록
@@ -42,14 +42,16 @@ public class Record extends BaseEntity {
         this.snf = dto.getSnf();
         this.exerciseTime = exerciseTime;
         this.comments = dto.getComments();
-        this.visibilityYN = dto.getVisibilityYN();
+//        this.visibilityYN = dto.getVisibilityYN();
         this.updateDelyN(); // delYN을 N으로 바꾼다.
     } // create
 
     public RecordDetResDto detFromEntity(){
         return RecordDetResDto.builder()
                 .snf(this.snf).exerciseTime(this.exerciseTime)
-                .comments(this.comments).visibilityYN(this.visibilityYN).build();
+                .comments(this.comments)
+//                .visibilityYN(this.visibilityYN)
+                .build();
     } // 단일 review
 
     public RecordListResDto listFromEntity(){
@@ -62,7 +64,7 @@ public class Record extends BaseEntity {
         this.snf = dto.getSnf();
         this.exerciseTime = exerciseTime;
         this.comments = dto.getComments();
-        this.visibilityYN = dto.getVisibilityYN();
+//        this.visibilityYN = dto.getVisibilityYN();
     } // update
 
 }
