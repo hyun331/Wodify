@@ -8,10 +8,7 @@ import com.soocompany.wodify.reservation.domain.Reservation;
 import com.soocompany.wodify.reservation.repository.ReservationRepository;
 import com.soocompany.wodify.wod.domain.Wod;
 import com.soocompany.wodify.wod.domain.WodDetail;
-import com.soocompany.wodify.wod.dto.WodDetResDto;
-import com.soocompany.wodify.wod.dto.WodDetSaveReqDto;
-import com.soocompany.wodify.wod.dto.WodResDto;
-import com.soocompany.wodify.wod.dto.WodSaveReqDto;
+import com.soocompany.wodify.wod.dto.*;
 import com.soocompany.wodify.wod.repository.WodRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +31,8 @@ public class WodService {
     private final ReservationRepository reservationRepository;
 
     public Wod wodSave(WodSaveReqDto wodSaveReqDto) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmailAndDelYn(email, "N").orElseThrow(() -> {
+        String id = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(() -> {
             log.error("wodSave() : 해당 Email 의 멤버를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 Email 의 멤버를 찾을 수 없습니다.");
         });
@@ -59,9 +56,9 @@ public class WodService {
         return wodRepository.save(wod);
     }
 
-    public WodResDto wodFind(LocalDate date) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmailAndDelYn(email, "N").orElseThrow(() -> {
+    public WodResDto wodFind(WodFindReqDto wodFindReqDto) {
+        String id = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(() -> {
             log.error("wodFind() : 해당 이메일의 멤버를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 이메일의 멤버를 찾을 수 없습니다.");
         });
@@ -69,7 +66,8 @@ public class WodService {
             log.error("wodFind() : 해당 ID의 박스를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 ID의 박스를 찾을 수 없습니다.");
         });
-        Wod wod = wodRepository.findByBoxIdAndDateAndDelYn(box.getId(), date, "N").orElseThrow(() -> {
+        System.out.println("wodFindReqDto.getDate() = " + wodFindReqDto.getDate());
+        Wod wod = wodRepository.findByBoxIdAndDateAndDelYn(box.getId(), wodFindReqDto.getDate(), "N").orElseThrow(() -> {
             log.error("wodFind() : 해당 날짜에 등록된 WOD 가 없습니다.");
             return new EntityNotFoundException("해당 날짜에 등록된 WOD 가 없습니다.");
         });
@@ -80,9 +78,9 @@ public class WodService {
         return wodResDto;
     }
 
-    public Wod wodDelete(LocalDate date) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmailAndDelYn(email, "N").orElseThrow(() -> {
+    public Wod wodDelete(WodCancelReqDto wodCancelReqDto) {
+        String id = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(() -> {
             log.error("wodDelete() : 해당 이메일의 멤버를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 이메일의 멤버를 찾을 수 없습니다.");
         });
@@ -90,11 +88,11 @@ public class WodService {
             log.error("wodDelete() : 해당 ID의 박스를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 ID의 박스를 찾을 수 없습니다.");
         });
-        Wod wod = wodRepository.findByBoxIdAndDateAndDelYn(box.getId(), date, "N").orElseThrow(() -> {
+        Wod wod = wodRepository.findByBoxIdAndDateAndDelYn(box.getId(), wodCancelReqDto.getDate(), "N").orElseThrow(() -> {
             log.error("wodDelete() : 해당 날짜에 등록된 WOD 가 없습니다.");
             return new EntityNotFoundException("해당 날짜에 등록된 WOD 가 없습니다.");
         });
-        if (!reservationRepository.findByBoxAndDateAndDelYn(box, date, "N", Pageable.unpaged()).isEmpty()) {
+        if (!reservationRepository.findByBoxAndDateAndDelYn(box, wodCancelReqDto.getDate(), "N", Pageable.unpaged()).isEmpty()) {
             log.error("wodDelete() : 해당 와드에 대한 예약이 있습니다.");
             throw new EntityNotFoundException("해당 와드에 대한 예약이 있습니다.");
         }

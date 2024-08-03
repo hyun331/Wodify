@@ -1,6 +1,8 @@
 package com.soocompany.wodify.wod.controller;
 import com.soocompany.wodify.common.dto.CommonResDto;
 import com.soocompany.wodify.wod.domain.Wod;
+import com.soocompany.wodify.wod.dto.WodCancelReqDto;
+import com.soocompany.wodify.wod.dto.WodFindReqDto;
 import com.soocompany.wodify.wod.dto.WodResDto;
 import com.soocompany.wodify.wod.dto.WodSaveReqDto;
 import com.soocompany.wodify.wod.service.WodService;
@@ -17,7 +19,7 @@ import java.time.LocalDate;
 @RequestMapping("/wod")
 public class WodController {
     private final WodService wodService;
-    @PreAuthorize("hasRole('CEO', 'COACH')")
+    @PreAuthorize("hasAnyRole('CEO', 'COACH')")
     @PostMapping("/save")
     public ResponseEntity<?> wodSave(@RequestBody WodSaveReqDto wodSaveReqDto) {
             HttpStatus code = HttpStatus.CREATED;
@@ -27,21 +29,21 @@ public class WodController {
             return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/find/{date}/{email}")
-    public ResponseEntity<?> wodFind(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    @GetMapping("/find")
+    public ResponseEntity<?> wodFind(@RequestBody WodFindReqDto wodFindReqDto) {
             HttpStatus code = HttpStatus.OK;
             String msg = "WOD 찾았습니다.";
-            WodResDto wodResDto = wodService.wodFind(date);
+            WodResDto wodResDto = wodService.wodFind(wodFindReqDto);
             CommonResDto commonResDto = new CommonResDto(code, msg, wodResDto);
             return new ResponseEntity<>(commonResDto, code);
     }
 
-    @PreAuthorize("hasRole('CEO', 'COACH')")
-    @PatchMapping("/cancel/{date}/{email}")
-    public ResponseEntity<?> wodCancel(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    @PreAuthorize("hasAnyRole('CEO', 'COACH')")
+    @PatchMapping("/cancel")
+    public ResponseEntity<?> wodCancel(@RequestBody WodCancelReqDto wodCancelReqDto) {
         String msg = "WOD 삭제했습니다.";
         HttpStatus code = HttpStatus.OK;
-        Wod wod = wodService.wodDelete(date);
+        Wod wod = wodService.wodDelete(wodCancelReqDto);
         return new ResponseEntity<>(new CommonResDto(code, msg, wod.getId()), code);
     }
 }
