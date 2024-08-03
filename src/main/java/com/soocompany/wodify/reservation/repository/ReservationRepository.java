@@ -14,6 +14,6 @@ import java.util.Optional;
 public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     Page<Reservation> findByBoxAndAndDelYn(Box box, String delYn, Pageable pageable);
 
-    Page<Reservation> findByBoxAndAndDateAndAndDelYn(Box box, LocalDate date, String delYn, Pageable pageable);
+    Page<Reservation> findByBoxAndDateAndDelYn(Box box, LocalDate date, String delYn, Pageable pageable);
     Optional<Reservation> findByIdAndDelYn(Long id,String delYn);
 }

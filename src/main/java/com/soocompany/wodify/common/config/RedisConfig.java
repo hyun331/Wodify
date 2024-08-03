@@ -37,24 +37,24 @@ public class RedisConfig {
         redisTemplate.setConnectionFactory(redisFactory);
         return redisTemplate;
     }
-
-    @Bean
-    @Qualifier("2")
-    public RedisConnectionFactory redisPostFactory() {
-        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
-        configuration.setHostName(host);
-        configuration.setPort(port);
-        configuration.setDatabase(2);
-        return new LettuceConnectionFactory(configuration);
-    }
-
-    @Bean
-    @Qualifier("2")
-    public RedisTemplate<String,Object> redisLikeTemplate(@Qualifier("2") RedisConnectionFactory redisFactory) {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        redisTemplate.setConnectionFactory(redisFactory);
-        return redisTemplate;
-    }
+//
+//    @Bean
+//    @Qualifier("2")
+//    public RedisConnectionFactory redisPostFactory() {
+//        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
+//        configuration.setHostName(host);
+//        configuration.setPort(port);
+//        configuration.setDatabase(2);
+//        return new LettuceConnectionFactory(configuration);
+//    }
+//
+//    @Bean
+//    @Qualifier("2")
+//    public RedisTemplate<String,Object> redisLikeTemplate(@Qualifier("2") RedisConnectionFactory redisFactory) {
+//        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+//        redisTemplate.setKeySerializer(new StringRedisSerializer());
+//        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+//        redisTemplate.setConnectionFactory(redisFactory);
+//        return redisTemplate;
+//    }
 }

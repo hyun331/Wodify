@@ -19,7 +19,6 @@ import java.util.List;
 @Builder
 public class WodSaveReqDto {
     private LocalDate date;
-    private String email;
     private Time timeCap;
     private int rounds;
     private String info;

@@ -3,16 +3,19 @@ import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.repository.MemberRepository;
 import com.soocompany.wodify.post.domain.Comment;
 import com.soocompany.wodify.post.domain.Image;
+import com.soocompany.wodify.post.domain.Likes;
 import com.soocompany.wodify.post.domain.Post;
 import com.soocompany.wodify.post.dto.*;
 import com.soocompany.wodify.post.repository.CommentRepository;
 import com.soocompany.wodify.post.repository.ImageRepository;
+import com.soocompany.wodify.post.repository.LikeRepository;
 import com.soocompany.wodify.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,26 +26,28 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class PostService {
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final ImageRepository imageRepository;
+    private final LikeRepository likeRepository;
     private final S3Client s3Client;
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
-    public Post postCreate(String email, PostSaveReqDto dto) {
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        log.error("postCreate() : Email 에 해당하는 member 가 없습니다.");
-        Member member = memberRepository.findByEmailAndDelYn(email, "N")
-            .orElseThrow(() -> new EntityNotFoundException("Email 에 해당하는 member 가 없습니다."));
+    public Post postCreate(PostSaveReqDto dto) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmailAndDelYn(email, "N").orElseThrow(() -> {
+            log.error("postCreate() : Email 에 해당하는 member 가 없습니다.");
+            return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
+        });
         Post post = postRepository.save(dto.toEntity(member));
         try {
             for (MultipartFile file : dto.getFiles()) {
@@ -68,6 +73,7 @@ public class PostService {
             }
             postRepository.save(post);
         } catch (IOException e) {
+            log.error("postCreate() : 이미지 저장 실패");
             throw new RuntimeException("이미지 저장 실패");
         }
         return post;
@@ -79,113 +85,173 @@ public class PostService {
     }
 
     public PostDetResDto postDetail(Long id) {
-        log.error("postDetail() : 해당 id의 게시글을 찾을 수 없습니다.");
-        Post post = postRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("해당 id의 게시글을 찾을 수 없습니다."));
-        if (post.getDelYn().equals("Y"))
+        Post post = postRepository.findById(id).orElseThrow(() -> {
+            log.error("postDetail() : 해당 id의 게시글을 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 게시글을 찾을 수 없습니다.");
+        });
+        if (post.getDelYn().equals("Y")) {
+            log.error("postDetail() : 삭제된 게시글 입니다.");
             throw new IllegalArgumentException("삭제된 게시글 입니다.");
+        }
         return PostDetResDto.fromEntity(post);
     }
 
-    public void postDelete(Long id, String email) {
-        log.error("postDelete() : 해당 id의 게시글을 찾을 수 없습니다.");
-        Post post = postRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("해당 id의 게시글을 찾을 수 없습니다."));
-        log.error("postDelete() : 삭제된 게시글 입니다.");
-        if (post.getDelYn().equals("Y"))
+    public void postDelete(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(() -> {
+            log.error("postDelete() : 해당 id의 게시글을 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 게시글을 찾을 수 없습니다.");
+        });
+        if (post.getDelYn().equals("Y")) {
+            log.error("postDelete() : 삭제된 게시글 입니다.");
             throw new IllegalArgumentException("삭제된 게시글 입니다.");
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        log.error("postDelete() : Email 에 해당하는 member 가 없습니다.");
-        Member member = memberRepository.findByEmailAndDelYn(email, "N")
-                .orElseThrow(() -> new EntityNotFoundException("Email 에 해당하는 member 가 없습니다."));
-        log.error("postDelete() : 본인의 게시글이 아닙니다.");
-        if (!post.getMember().getEmail().equals(email))
+        }
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmailAndDelYn(email, "N").orElseThrow(() -> {
+            log.error("postDelete() : Email 에 해당하는 member 가 없습니다.");
+            return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
+        });
+        if (!post.getMember().getEmail().equals(email)) {
+            log.error("postDelete() : 본인의 게시글이 아닙니다.");
             throw new IllegalArgumentException("본인의 게시글이 아닙니다.");
+        }
         post.deletePost();
     }
 
-    public PostDetResDto postUpdate(Long id, String email, PostUpdateReqDto postUpdateReqDto) {
-        log.error("postUpdate() : 해당 id의 게시글을 찾을 수 없습니다.");
-        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 id의 게시글을 찾을 수 없습니다."));
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        log.error("postUpdate() : 삭제된 게시글 입니다.");
-        if (post.getDelYn().equals("Y"))
+    public PostDetResDto postUpdate(Long id, PostUpdateReqDto postUpdateReqDto) {
+        Post post = postRepository.findById(id).orElseThrow(() -> {
+            log.error("postUpdate() : 해당 id의 게시글을 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 게시글을 찾을 수 없습니다.");
+        });
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (post.getDelYn().equals("Y")) {
+            log.error("postUpdate() : 삭제된 게시글 입니다.");
             throw new IllegalArgumentException("삭제된 게시글 입니다.");
-        log.error("postUpdate() : Email 에 해당하는 member 가 없습니다.");
-        Member member = memberRepository.findByEmailAndDelYn(email, "N")
-                .orElseThrow(() -> new EntityNotFoundException("Email 에 해당하는 member 가 없습니다."));
-        log.error("postUpdate() : 본인의 게시글이 아닙니다.");
-        if (!post.getMember().getEmail().equals(email))
+        }
+        Member member = memberRepository.findByEmailAndDelYn(email, "N").orElseThrow(() -> {
+            log.error("postUpdate() : Email 에 해당하는 member 가 없습니다.");
+            return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
+        });
+        if (!post.getMember().getEmail().equals(email)) {
+            log.error("postUpdate() : 본인의 게시글이 아닙니다.");
             throw new IllegalArgumentException("본인의 게시글이 아닙니다.");
+        }
         post.updatePost(postUpdateReqDto);
         Post savedPost = postRepository.save(post);
         return PostDetResDto.fromEntity(savedPost);
     }
 
-    public void imageDelete(Long id, String email) {
-        log.error("imageDelete() : 해당 id의 image 를 찾을 수 없습니다.");
-        Image image = imageRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("해당 id의 image 를 찾을 수 없습니다."));
-        log.error("imageDelete() : 삭제된 image 입니다.");
-        if (image.getDelYn().equals("Y"))
+    public void imageDelete(Long id) {
+        Image image = imageRepository.findById(id).orElseThrow(() -> {
+            log.error("imageDelete() : 해당 id의 image 를 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 image 를 찾을 수 없습니다.");
+        });
+        if (image.getDelYn().equals("Y")) {
+            log.error("imageDelete() : 삭제된 image 입니다.");
             throw new IllegalArgumentException("삭제된 image 입니다.");
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        log.error("imageDelete() : Email 에 해당하는 member 가 없습니다.");
-        Member member = memberRepository.findByEmailAndDelYn(email, "N")
-                .orElseThrow(() -> new EntityNotFoundException("Email 에 해당하는 member 가 없습니다."));
-        log.error("imageDelete() : 본인의 image 가 아닙니다.");
-        if (!image.getMember().getEmail().equals(email))
+        }
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmailAndDelYn(email, "N").orElseThrow(() -> {
+            log.error("imageDelete() : Email 에 해당하는 member 가 없습니다.");
+            return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
+        });
+        if (!image.getMember().getEmail().equals(email)) {
+            log.error("imageDelete() : 본인의 image 가 아닙니다.");
             throw new IllegalArgumentException("본인의 게시글이 아닙니다.");
+        }
         image.updateDelYn();
     }
 
-    public Post commentCreate(Long postId, String email, CommentSaveReqDto commentSaveReqDto) {
-        log.error("commentCreate() : 해당 id의 게시글을 찾을 수 없습니다.");
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 id의 게시글을 찾을 수 없습니다."));
-        log.error("commentCreate() : 삭제된 게시글 입니다.");
-        if (post.getDelYn().equals("Y"))
+    public Post commentCreate(Long postId, CommentSaveReqDto commentSaveReqDto) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> {
+            log.error("commentCreate() : 해당 id의 게시글을 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 게시글을 찾을 수 없습니다.");
+        });
+        if (post.getDelYn().equals("Y")) {
+            log.error("commentCreate() : 삭제된 게시글 입니다.");
             throw new IllegalArgumentException("삭제된 게시글 입니다.");
-        log.error("commentCreate() : Email 에 해당하는 member 가 없습니다.");
-        Member member = memberRepository.findByEmailAndDelYn(email, "N")
-                .orElseThrow(() -> new EntityNotFoundException("Email 에 해당하는 member 가 없습니다."));
+        }
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmailAndDelYn(email, "N").orElseThrow(() -> {
+            log.error("commentCreate() : Email 에 해당하는 member 가 없습니다.");
+            return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
+        });
         Comment comment = commentSaveReqDto.toEntity(member, post);
         Comment savedComment = commentRepository.save(comment);
         post.getComments().add(savedComment);
         return postRepository.save(post);
     }
 
-    public void commentDelete(Long id, String email) {
-        log.error("commentDelete() : 해당 id의 댓글을 찾을 수 없습니다.");
-        Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("해당 id의 댓글을 찾을 수 없습니다."));
-        log.error("commentDelete() : 삭제된 댓글 입니다.");
-        if (comment.getDelYn().equals("Y"))
+    public void commentDelete(Long id) {
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> {
+            log.error("commentDelete() : 해당 id의 댓글을 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 댓글을 찾을 수 없습니다.");
+        });
+        if (comment.getDelYn().equals("Y")) {
+            log.error("commentDelete() : 삭제된 댓글 입니다.");
             throw new IllegalArgumentException("삭제된 게시글 입니다.");
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        log.error("commentDelete() : 해당 Email 의 member 가 없습니다.");
-        Member member = memberRepository.findByEmailAndDelYn(email, "N")
-                .orElseThrow(() -> new EntityNotFoundException("Email 에 해당하는 member 가 없습니다."));
-        log.error("commentDelete() : 본인의 댓글이 아닙니다.");
-        if (!comment.getMember().getEmail().equals(email))
+        }
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmailAndDelYn(email, "N").orElseThrow(() -> {
+            log.error("commentDelete() : 해당 Email 의 member 가 없습니다.");
+            return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
+        });
+        if (!comment.getMember().getEmail().equals(email)) {
+            log.error("commentDelete() : 본인의 댓글이 아닙니다.");
             throw new IllegalArgumentException("본인의 댓글이 아닙니다.");
+        }
         comment.updateDelYn();
     }
 
-    public PostDetResDto commentUpdate(Long id, String email, CommentUpdateReqDto commentUpdateReqDto) {
-        log.error("commentUpdate() : 해당 id의 댓글을 찾을 수 없습니다.");
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 id의 댓글을 찾을 수 없습니다."));
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        log.error("commentUpdate() : 삭제된 댓글 입니다.");
-        if (comment.getDelYn().equals("Y"))
+    public PostDetResDto commentUpdate(Long id, CommentUpdateReqDto commentUpdateReqDto) {
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> {
+            log.error("commentUpdate() : 해당 id의 댓글을 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 댓글을 찾을 수 없습니다.");
+        });
+        if (comment.getDelYn().equals("Y")) {
+            log.error("commentUpdate() : 삭제된 댓글 입니다.");
             throw new IllegalArgumentException("삭제된 댓글 입니다.");
-        log.error("commentUpdate() : Email 에 해당하는 member 가 없습니다.");
-        Member member = memberRepository.findByEmailAndDelYn(email, "N")
-                .orElseThrow(() -> new EntityNotFoundException("Email 에 해당하는 member 가 없습니다."));
-        log.error("commentUpdate() : 본인의 댓글이 아닙니다.");
-        if (!comment.getMember().getEmail().equals(email))
+        }
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmailAndDelYn(email, "N").orElseThrow(() -> {
+            log.error("commentUpdate() : Email 에 해당하는 member 가 없습니다.");
+            return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
+        });
+        if (!comment.getMember().getEmail().equals(email)) {
+            log.error("commentUpdate() : 본인의 댓글이 아닙니다.");
             throw new IllegalArgumentException("본인의 댓글이 아닙니다.");
+        }
         comment.updateComment(commentUpdateReqDto);
         return PostDetResDto.fromEntity(comment.getPost());
+    }
+
+    public Long postLike(PostLikeReqDto postLikeReqDto) {
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        String email = postLikeReqDto.getEmail();
+        Member member = memberRepository.findByEmailAndDelYn(email, "N").orElseThrow(() -> {
+            log.error("postLike() : Email 에 해당하는 member 가 없습니다.");
+            return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
+        });
+        Post post = postRepository.findById(postLikeReqDto.getId()).orElseThrow(() -> {
+            log.error("postLike() : 해당 id의 게시글을 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 게시글을 찾을 수 없습니다.");
+        });
+        if (post.getDelYn().equals("Y")) {
+            log.error("postLike() : 삭제된 게시글 입니다.");
+            throw new IllegalArgumentException("삭제된 게시글 입니다.");
+        }
+        Optional<Likes> optionalLike = likeRepository.findById(postLikeReqDto.getId());
+        if (optionalLike.isPresent()) {
+                Likes likes = optionalLike.get();
+            if (likes.getDelYn().equals("N")) {
+                likes.updateDelYn();
+                return post.updateLikeCount(-1L);
+            } else {
+                likes.updateDelyN();
+                return post.updateLikeCount(+1L);
+            }
+        } else {
+            likeRepository.save(Likes.builder().member(member).post(post).build());
+            return post.updateLikeCount(+1L);
+        }
     }
 }

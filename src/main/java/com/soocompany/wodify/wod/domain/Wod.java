@@ -1,5 +1,4 @@
 package com.soocompany.wodify.wod.domain;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.domain.BaseEntity;
@@ -13,13 +12,13 @@ import javax.persistence.*;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.List;
-
 @Getter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Wod extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

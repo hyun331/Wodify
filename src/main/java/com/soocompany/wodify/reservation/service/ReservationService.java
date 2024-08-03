@@ -94,7 +94,7 @@ public class ReservationService {
             throw new IllegalArgumentException("박스에 대한 권한이 없습니다.");
         }
         LocalDate date = dto.getDate();
-        return reservationRepository.findByBoxAndAndDateAndAndDelYn(box,date,"N",pageable).map(Reservation::ListResDtoFromEntity);
+        return reservationRepository.findByBoxAndDateAndDelYn(box,date,"N",pageable).map(Reservation::ListResDtoFromEntity);
     }
 
     public ReservationDetailResDto reservationUpdate(Long id, ReservationUpdateReqDto dto) {
