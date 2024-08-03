@@ -1,6 +1,6 @@
 package com.soocompany.wodify.post.domain;
 
-import com.soocompany.wodify.common.BaseEntity;
+import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.post.dto.PostUpdateReqDto;
 import lombok.*;
@@ -23,6 +23,10 @@ public class Post extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Enumerated(EnumType.STRING)
     private Type type;
 
@@ -36,16 +40,14 @@ public class Post extends BaseEntity {
     @Builder.Default
     private List<Image> files = new ArrayList<>();
 
-    @UpdateTimestamp
-    private LocalDateTime updatedTime;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Comment> comments = new ArrayList<>();
+
+    private Long likeCount;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedTime;
 
     public void updatePost(PostUpdateReqDto postUpdateReqDto) {
         this.type = postUpdateReqDto.getType();
@@ -55,5 +57,10 @@ public class Post extends BaseEntity {
 
     public void deletePost() {
         this.updateDelYn();
+    }
+
+    public Long updateLikeCount(Long one) {
+        this.likeCount += one;
+        return this.likeCount;
     }
 }
