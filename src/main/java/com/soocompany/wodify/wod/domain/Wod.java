@@ -1,5 +1,6 @@
 package com.soocompany.wodify.wod.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
@@ -10,6 +11,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Entity
@@ -30,6 +33,10 @@ public class Wod extends BaseEntity {
     private Member member;
 
     @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate date;
+
+    @Column(nullable = false)
     private Time timeCap;
 
     @Column(nullable = false)
@@ -37,4 +44,12 @@ public class Wod extends BaseEntity {
 
     @Column(length = 3000)
     private String info;
+
+    @OneToMany(mappedBy = "wod", cascade = CascadeType.PERSIST)
+    private List<WodDetail> wodDetails;
+
+    public Wod wodDelete() {
+        updateDelYn();
+        return this;
+    }
 }
