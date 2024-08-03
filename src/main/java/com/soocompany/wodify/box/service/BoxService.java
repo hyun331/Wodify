@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
@@ -97,6 +98,13 @@ public class BoxService {
         // 현재 로그인한 사용자 ID 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
+//        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(memberId), "N").orElseThrow(()->{
+////            log.error("sddd");
+////            throw new EntityNotFoundException("ddd");
+////        });
+////        boxRepository.delete(member.getBox());
+
+
 
         // Box 조회 및 소유자 확인
         Box box = boxRepository.findByIdAndDelYn(id, "N")

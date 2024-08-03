@@ -146,26 +146,6 @@ public class MemberController {
 
     }
 
-
-    ///////////////////////////////////
-//    @GetMapping("/afterKakaoLogin/{email}")
-//    public MemberDetResDto afterLogin(@PathVariable String email){
-//        //email 받아옴.. redirect 사용해서 email 받아옴. vue에서 rest인 경우 redirect 처리 필요
-//        //email 받아오지 말고 토큰 값 가져와서 email 가져오기!
-//        //회원가입한 유저인지 확인해야함. email과 delyn=n인 사람찾기
-//        MemberDetResDto memberDetResDto = memberService.isMemberExist(email, "N");
-//        if(memberDetResDto !=null){
-//            //존재하는 회원 -> home화면으로
-//            /////////////////미구현
-//            return memberDetResDto;
-//        }else{
-//            //회원가입 화면으로.
-//            //줄 때 email 같이 줘야함
-//            /////////////////미구현
-//            return null;
-//        }
-//    }
-
     //회원가입
     @PostMapping("/register")
     public ResponseEntity<CommonResDto>  memberRegister(@RequestBody MemberSaveReqDto memberSaveReqDto){
@@ -186,22 +166,21 @@ public class MemberController {
     @GetMapping("/detail")
     public ResponseEntity<CommonResDto> memberDetail(){
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member id에 맞는 멤버 상세 정보 출력", memberService.memberDetail());
-
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
-
-        //멤버 개인정보 수정
-    @PatchMapping("/update/{id}")
-    public ResponseEntity<CommonResDto> memberUpdate(@PathVariable Long id, @RequestBody MemberUpdateDto memberUpdateDto){
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 정보 수정 완료",memberService.memberUpdate(id, memberUpdateDto));
+    //멤버 개인정보 수정
+//    @PreAuthorize("hasAnyRole('USER', 'COACH', 'CEO')")
+    @PatchMapping("/update")
+    public ResponseEntity<CommonResDto> memberUpdate(@RequestBody MemberUpdateDto memberUpdateDto){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 정보 수정 완료",memberService.memberUpdate(memberUpdateDto));
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
-    //멤버 삭제
-    @PatchMapping("/delete/{id}")
-    public ResponseEntity<CommonResDto> memberDelete(@PathVariable Long id){
-        memberService.memberDelete(id);
+    //회원 탈퇴
+    @PatchMapping("/delete")
+    public ResponseEntity<CommonResDto> memberDelete(){
+        memberService.memberDelete();
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 삭제 완료", null);
 
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
@@ -209,14 +188,15 @@ public class MemberController {
 
 
     //코치의 박스 가입 및 변경. 코치 박스 코드 입력 후 submit하면 동작
-    @PatchMapping("/coach/box/update/{id}")
-    public ResponseEntity<CommonResDto> coachBoxUpdate(@PathVariable Long id, @RequestParam(value = "code")String boxCode){
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치의 box 수정 성공", memberService.coachBoxUpdate(id, boxCode));
+    @PreAuthorize("hasRole('COACH')")
+    @PatchMapping("/coach/box/update")
+    public ResponseEntity<CommonResDto> coachBoxUpdate(@RequestParam(value = "code")String code){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치의 box 수정 성공", memberService.coachBoxUpdate(code));
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
-    //박스의 회원 등록하기
-    //member의 boxid 변경과 등록정보에 추가 -> 등록정보에서 맡아서 하는게 맞을듯?
+//    //박스의 회원 등록하기
+//    //member의 boxid 변경과 등록정보에 추가 -> 등록정보에서 맡아서 하는게 맞을듯?
 //    @PostMapping("/user/box/update/{id}")
 
 
