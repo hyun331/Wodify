@@ -1,5 +1,5 @@
 package com.soocompany.wodify.post.controller;
-import com.soocompany.wodify.common.exception.CommonResDto;
+import com.soocompany.wodify.common.dto.CommonResDto;
 import com.soocompany.wodify.post.domain.Post;
 import com.soocompany.wodify.post.dto.*;
 import com.soocompany.wodify.post.service.PostService;

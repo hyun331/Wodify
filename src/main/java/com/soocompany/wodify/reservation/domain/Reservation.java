@@ -1,11 +1,13 @@
 package com.soocompany.wodify.reservation.domain;
 
 import com.soocompany.wodify.box.domain.Box;
-import com.soocompany.wodify.common.BaseEntity;
+import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.reservation.dto.ReservationDetailResDto;
 import com.soocompany.wodify.reservation.dto.ReservationListResDto;
+import com.soocompany.wodify.reservation.dto.ReservationUpdateReqDto;
 import com.soocompany.wodify.reservation.repository.ReservationRepository;
+import com.soocompany.wodify.wod.domain.Wod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +23,7 @@ import java.time.LocalTime;
 @Entity
 public class Reservation extends BaseEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -29,9 +31,9 @@ public class Reservation extends BaseEntity {
     @Column(nullable = false)
     private LocalTime time;
 
-//    @JoinColumn(name = "wod_id")
-//    @ManyToOne
-//    private Wod wod;
+    @JoinColumn(name = "wod_id")
+    @ManyToOne
+    private Wod wod;
 
     @ManyToOne
     @JoinColumn(name = "box_id")
@@ -45,7 +47,9 @@ public class Reservation extends BaseEntity {
     @Column(nullable = false)
     private int availablePeople;
 
-
+    public void decreaseAvailablePeople() {
+        this.availablePeople -= 1;
+    }
     public ReservationListResDto ListResDtoFromEntity() {
         return ReservationListResDto.builder()
                 .id(this.id)
@@ -61,7 +65,14 @@ public class Reservation extends BaseEntity {
                 .time(this.time)
                 .maximumPeople(this.maximumPeople)
                 .availablePeople(this.availablePeople)
+                .coach_id(this.coach.getId())
                 .build();
+    }
 
+    public void update(ReservationUpdateReqDto dto) {
+        this.date = dto.getDate();
+        this.time = dto.getTime();
+        this.availablePeople = dto.getMaximumPeople() - this.maximumPeople + this.availablePeople;
+        this.maximumPeople = dto.getMaximumPeople();
     }
 }

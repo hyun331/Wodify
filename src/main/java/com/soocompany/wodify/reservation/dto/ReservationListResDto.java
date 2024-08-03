@@ -19,8 +19,5 @@ public class ReservationListResDto {
     private LocalDate date;
     private LocalTime time;
     private Long wod_id;
-    private Long coach_id;
-    private int maximumPeople;
-    private int availablePeople;
 
 }

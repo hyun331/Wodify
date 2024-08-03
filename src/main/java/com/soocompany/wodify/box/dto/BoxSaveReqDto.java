@@ -13,13 +13,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BoxSaveReqDto {
     private String name;
-    private String code;
+    private String logo;
+    private String operatingHours;
+    private String fee;
+    private String intro;
+    private String address;
     private Long representativeId;
 
     public Box toEntity(Member member) {
         return Box.builder()
                 .name(this.name)
-                .code(this.code)
+                .logo(this.logo)
+                .operatingHours(this.operatingHours)
+                .fee(this.fee)
+                .intro(this.intro)
+                .address(this.address)
                 .member(member)
                 .build();
     }

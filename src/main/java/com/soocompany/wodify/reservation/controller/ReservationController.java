@@ -1,30 +1,77 @@
 package com.soocompany.wodify.reservation.controller;
 
-import com.soocompany.wodify.reservation.dto.ReservationCreateReqDto;
-import com.soocompany.wodify.reservation.dto.ReservationDetailResDto;
-import com.soocompany.wodify.reservation.dto.ReservationListResDto;
+import com.soocompany.wodify.common.dto.CommonResDto;
+import com.soocompany.wodify.reservation.dto.*;
 import com.soocompany.wodify.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/reservation")
 public class ReservationController {
     private final ReservationService reservationService;
+    @PreAuthorize("hasRole('COACH')")
     @PostMapping("/create")
-    public String reservationCreate(@RequestBody ReservationCreateReqDto dto){
-        reservationService.reservationCreate(dto);
-        return "ok";
+    public ResponseEntity<CommonResDto> reservationCreate(@RequestBody ReservationCreateReqDto dto){
+        ReservationDetailResDto detailResDto = reservationService.reservationCreate(dto);
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약 등록 성공",detailResDto),HttpStatus.OK);
     }
+
+    /**
+     * 박스별 전체 예약 목록 조회
+     */
+    @PreAuthorize("hasRole('COACH')")
     @GetMapping("/box/list/{id}")
-    public List<ReservationListResDto> reservationList(@PathVariable Long id) {
-        return reservationService.reservationList(id);
+    public ResponseEntity<CommonResDto> reservationList(@PathVariable(value = "id") Long boxId, Pageable pageable) {
+        Page<ReservationListResDto> listResDtos = reservationService.reservationList(boxId,pageable);
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약 리스트 조회 성공",listResDtos),HttpStatus.OK);
     }
-    @GetMapping("detail/{id}")
-    public ReservationDetailResDto reservationDetail(@PathVariable Long id) {
-        return reservationService.reservationDetail(id);
+    /**
+     * 박스별 날짜별 예약 목록 조회
+     */
+    @PreAuthorize("hasRole('COACH')")
+    @PostMapping("/box/list/{id}")
+    public ResponseEntity<CommonResDto> reservationListByDate(@PathVariable(value = "id") Long boxId, @RequestBody ReservationListReqDto dto, Pageable pageable) {
+        Page<ReservationListResDto> listResDtos = reservationService.reservationListByDate(boxId, dto,pageable);
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"날짜별 예약 리스트 조회 성공",listResDtos),HttpStatus.OK);
+    }
+
+    /**
+     * 예약 상세 조회
+     */
+    @PreAuthorize("hasRole('COACH')")
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<CommonResDto> reservationDetail(@PathVariable Long id) {
+        ReservationDetailResDto resDto = reservationService.reservationDetail(id);
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약 조회 성공",resDto),HttpStatus.OK);
+
+    }
+
+    /**
+     * 예약 수정
+     * 로그인된 사용자의 권한 확인해야함
+     */
+    @PreAuthorize("hasRole('COACH')")
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<CommonResDto> reservationUpdate(@PathVariable Long id,@RequestBody ReservationUpdateReqDto dto) {
+        ReservationDetailResDto detailResDto = reservationService.reservationUpdate(id,dto);
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약 수정 성공",detailResDto),HttpStatus.OK);
+    }
+
+    /**
+     * 예약 삭제
+     * 로그인된 사용자의 권한 확인해야함
+     */
+    @PreAuthorize("hasRole('COACH')")
+    @PatchMapping("/delete/{id}")
+    public ResponseEntity<CommonResDto> reservationDelete(@PathVariable Long id) {
+        reservationService.reservationDelete(id);
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"삭제 성공",null),HttpStatus.OK);
     }
 }
