@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,4 +25,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Page<Member> findByBoxAndRoleAndDelYn(Pageable pageable, Box box, Role role, String delYn);
 
     Optional<Member> findByEmailAndBoxAndDelYn(String email, Box box, String delYn);
+
+    List<Member> findByBoxAndDelYn(Box box, String n);
 }
