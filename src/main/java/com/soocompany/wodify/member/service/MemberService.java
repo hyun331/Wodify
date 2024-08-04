@@ -159,4 +159,18 @@ public class MemberService {
     }
 
 
+    public Page<MemberListResDto> boxCoachList(Pageable pageable) {
+        Member loginMember = memberRepository.findByIdAndDelYn(Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName()), "N").orElseThrow(()->{
+            log.error("boxCoachList() : id에 맞는 회원이 존재하지 않습니다.");
+            throw new EntityNotFoundException("id에 맞는 회원이 존재하지 않습니다.");
+        });
+        Box  box = loginMember.getBox();
+        if(box == null || box.getCode() == null){
+            log.error("boxCoachList() : 로그인한 대표의 박스가 존재하지 않습니다.");
+            throw new EntityNotFoundException("로그인한 대표의 박스가 존재하지 않습니다.");
+        }
+
+        Page<Member> members = memberRepository.findByBoxAndRoleAndDelYn(pageable, box, Role.COACH, "N");
+        return members.map(a-> a.listFromEntity());
+    }
 }
