@@ -21,5 +21,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByIdAndDelYn(Long id, String delYn);
 
 
-    Page<Member> findByBoxAndRoleAndDelYn(Pageable pageable, Box box, Role role, String n);
+    Page<Member> findByBoxAndRoleAndDelYn(Pageable pageable, Box box, Role role, String delYn);
+
+    Optional<Member> findByEmailAndBoxAndDelYn(String email, Box box, String delYn);
 }

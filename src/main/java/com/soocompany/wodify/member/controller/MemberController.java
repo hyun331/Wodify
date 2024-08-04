@@ -188,7 +188,6 @@ public class MemberController {
     public ResponseEntity<CommonResDto> memberDelete(){
         memberService.memberDelete();
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 삭제 완료", null);
-
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
@@ -199,6 +198,16 @@ public class MemberController {
     public ResponseEntity<CommonResDto> coachBoxUpdate(@RequestParam(value = "code")String code){
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치의 box 수정 성공", memberService.coachBoxUpdate(code));
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
+
+
+    //박스 회원 탈퇴
+    @PreAuthorize("hasRole('CEO')")
+    @PatchMapping("/leave/box")
+    public ResponseEntity<?> leaveBox(@RequestParam(value = "userEmail") String userEmail){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "박스내 회원 탈퇴", memberService.userLeaveBox(userEmail));
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+
     }
 
 

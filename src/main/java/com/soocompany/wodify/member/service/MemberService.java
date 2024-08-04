@@ -159,6 +159,7 @@ public class MemberService {
     }
 
 
+    //박스내 코치 리스트
     public Page<MemberListResDto> boxCoachList(Pageable pageable) {
         Member loginMember = memberRepository.findByIdAndDelYn(Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName()), "N").orElseThrow(()->{
             log.error("boxCoachList() : id에 맞는 회원이 존재하지 않습니다.");
@@ -172,5 +173,28 @@ public class MemberService {
 
         Page<Member> members = memberRepository.findByBoxAndRoleAndDelYn(pageable, box, Role.COACH, "N");
         return members.map(a-> a.listFromEntity());
+    }
+
+    //박스 회원 탈퇴
+    public String userLeaveBox(String userEmail) {
+        Member loginMember = memberRepository.findByIdAndDelYn(Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName()), "N").orElseThrow(()->{
+            log.error("userLeaveBox() : id에 맞는 회원이 존재하지 않습니다.");
+            throw new EntityNotFoundException("id에 맞는 회원이 존재하지 않습니다.");
+        });
+        Box  box = loginMember.getBox();
+        if(box == null || box.getCode() == null){
+            log.error("userLeaveBox() : 로그인한 대표의 박스가 존재하지 않습니다.");
+            throw new EntityNotFoundException("로그인한 대표의 박스가 존재하지 않습니다.");
+        }
+
+        //탈퇴할 멤버
+        Member leaveUser = memberRepository.findByEmailAndBoxAndDelYn(userEmail, box, "N").orElseThrow(()->{
+            log.error("userLeaveBox() : 탈퇴할 회원이 조회되지 않습니다.");
+            throw new EntityNotFoundException("탈퇴할 회원이 조회되지 않습니다.");
+        });
+        leaveUser.memberBoxUpdate(null);
+
+
+        return "성공적으로 회원을 탈퇴시켰습니다.";
     }
 }
