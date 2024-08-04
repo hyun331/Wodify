@@ -78,7 +78,7 @@ public class ReservationService {
             log.error("reservationCreate() : 박스에 대한 권한이 없습니다.");
             throw new IllegalArgumentException("박스에 대한 권한이 없습니다.");
         }
-        Page<Reservation> reservationList = reservationRepository.findByBoxAndAndDelYn(box, "N",pageable);
+        Page<Reservation> reservationList = reservationRepository.findByBoxAndDelYn(box, "N",pageable);
         return reservationList.map(Reservation::ListResDtoFromEntity);
     }
 
@@ -110,6 +110,12 @@ public class ReservationService {
         }
         if (dto.getMaximumPeople() < reservation.getMaximumPeople()- reservation.getAvailablePeople()) {
             throw new IllegalArgumentException("현재 예약된 인원보다 적은 인원수로 수정을 불가합니다.");
+        }
+        int updateNum = dto.getMaximumPeople() - reservation.getMaximumPeople();
+        if (updateNum > 0) {
+            reservationManagementService.increaseAvailable(reservation.getId(), updateNum);
+        } else {
+            reservationManagementService.decreaseAvailable(reservation.getId(), Math.abs(updateNum));
         }
         reservation.update(dto);
         return reservationRepository.save(reservation).detailResDtoFromEntity();
