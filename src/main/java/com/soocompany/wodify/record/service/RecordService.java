@@ -1,7 +1,6 @@
 package com.soocompany.wodify.record.service;
 
 import com.soocompany.wodify.record.dto.RecordDetResDto;
-import com.soocompany.wodify.record.dto.RecordListResDto;
 import com.soocompany.wodify.record.dto.RecordSaveReqDto;
 import com.soocompany.wodify.record.dto.RecordUpdateReqDto;
 import com.soocompany.wodify.record.repository.RecordReository;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,7 +34,6 @@ public class RecordService {
 
     @Transactional
     public RecordDetResDto recordCreate(RecordSaveReqDto dto){
-//        사람이 오
         ReservationDetail reservationDetail = reservationDetailRepository.findByIdAndDelYn(dto.getReservationDetailId(), "N").orElseThrow(()->{
             log.error("recordCreate() : EntityNotFoundException:reservationDetail");
             return new EntityNotFoundException("예약내역이 없습니다"); }
@@ -90,10 +87,10 @@ public class RecordService {
         return record.detFromEntity();
     }
 
-    public Page<RecordListResDto> recordList(Pageable pageable){// 회원에 대해서 선택하면 운동기록을 조회할 수 있다.
-        Page<Record> records = recordReository.findByDelYn("N", pageable);
-        return records.map(Record::listFromEntity);
-    } // 어떤 에외처리를 해야하나.
+//    public Page<RecordDetResDto> recordList(Pageable pageable){
+//        Page<Record> records = recordReository.findByDelYn("N", pageable);
+//        return records.map(Record::detFromEntity);
+//    } // 예외처리, 누구 기준으로 보는 리스트인가. 운동기록은 예약내역을 통해 보기때문에 리스트업할 일이 없다.
 
 
     @Transactional
