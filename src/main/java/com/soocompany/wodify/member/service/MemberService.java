@@ -75,33 +75,46 @@ public class MemberService {
 
 
     public MemberDetResDto memberDetail() {
-        String id = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(()->{
-            log.error("memberDetail() : EntityNotFoundException");
+        String memberId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(memberId), "N").orElseThrow(()->{
+            log.error("memberDetail() : id에 맞는 회원이 존재하지 않습니다.");
             throw new EntityNotFoundException("id에 맞는 회원이 존재하지 않습니다.");
         });
         return member.detFromEntity();
     }
 
 
-    public MemberDetResDto memberUpdate(Long id, MemberUpdateDto memberUpdateDto) {
-        Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("member is not found"));
+    public MemberDetResDto memberUpdate(MemberUpdateDto memberUpdateDto) {
+        String memberId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(memberId), "N").orElseThrow(()->{
+            log.error("memberUpdate() : id에 맞는 회원이 존재하지 않습니다.");
+            throw new EntityNotFoundException("id에 맞는 회원이 존재하지 않습니다.");
+        });
         member.memberInfoUpdate(memberUpdateDto);
         return member.detFromEntity();
     }
 
-    public void memberDelete(Long id) {
-        Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("member is not found"));
+    public void memberDelete() {
+        String memberId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(memberId), "N").orElseThrow(()->{
+            log.error("memberDelete() : id에 맞는 회원이 존재하지 않습니다.");
+            throw new EntityNotFoundException("id에 맞는 회원이 존재하지 않습니다.");
+        });
         member.updateDelYn();
     }
 
 
     //코치의 박스 가입/변경 메서드
     //id = member id(코치의 id)
-    public MemberDetResDto coachBoxUpdate(Long id, String boxCode) {
+    public MemberDetResDto coachBoxUpdate(String boxCode) {
         //유효한 박스 코드인지 확인하기
         Box box = boxRepository.findByCodeAndDelYn(boxCode, "N").orElseThrow(()->new IllegalArgumentException("memberBoxUpdate() : 박스코드가 유효하지 않습니다."));
-        Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("memberBoxUpdate() : id에 맞는 member가 없습니다."));
+
+        String memberId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(memberId), "N").orElseThrow(()->{
+            log.error("coachBoxUpdate() : id에 맞는 회원이 존재하지 않습니다.");
+            throw new EntityNotFoundException("id에 맞는 회원이 존재하지 않습니다.");
+        });
 
         //이 코치가 대표면 박스 가입/변경 불가
         if(member.getBox()!=null && member.equals(member.getBox().getMember())) {
@@ -125,6 +138,7 @@ public class MemberService {
     }
 
 
+    //코치, 대표가 다니는 박스의 회원 리스트
     public Page<MemberListResDto> nowMemberList(Pageable pageable) {
         Long memberId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());   //코치나 ceo의 memberId
         Member loginMember = memberRepository.findById(memberId).orElseThrow(()->{
