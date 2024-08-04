@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+@Transactional
 public class RegistrationService {
     private final MemberRepository memberRepository;
     private final RegistrationInfoRepository registrationInfoRepository;
@@ -67,6 +69,10 @@ public class RegistrationService {
         }
         LocalDate endDate = dto.getRegistrationDate().plusMonths(dto.getRegistrationMonth());
         RegistrationInfo newRegistration = registrationInfoRepository.save(dto.toEntity(userMember, box, endDate));
+
+
+        //member table에도 적용되야함
+        userMember.memberBoxUpdate(box);
 
         return newRegistration.fromEntity() ;
     }

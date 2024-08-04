@@ -139,17 +139,18 @@ public class MemberService {
 
 
     //코치, 대표가 다니는 박스의 회원 리스트
-    public Page<MemberListResDto> nowMemberList(Pageable pageable) {
+    public Page<MemberListResDto> boxUserList(Pageable pageable) {
         Long memberId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());   //코치나 ceo의 memberId
         Member loginMember = memberRepository.findById(memberId).orElseThrow(()->{
             log.error("nowMemberList() : id에 맞는 회원이 존재하지 않습니다.");
             throw new EntityNotFoundException("id에 맞는 회원이 존재하지 않습니다.");
         });
 
-        Box box = boxRepository.findByIdAndDelYn(loginMember.getBox().getId(), "N").orElseThrow(()->{
-            log.error("nowMemberList() : id에 맞는 박스가 존재하지 않습니다.");
-            throw new EntityNotFoundException("id에 맞는 박스가 존재하지 않습니다.");
-        });
+        Box box = loginMember.getBox();
+        if(box == null){
+            log.error("nowMemberList() : 로그인한 코치, 대표가 가입한 박스가 존재하지 않습니다.");
+            throw new EntityNotFoundException("로그인한 코치, 대표가 가입한 박스가 존재하지 않습니다.");
+        }
 
         Page<Member> members = memberRepository.findByBoxAndRoleAndDelYn(pageable, box, Role.USER, "N");
         Page<MemberListResDto> memberListResDtos = members.map(a->a.listFromEntity());

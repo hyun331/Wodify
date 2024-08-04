@@ -157,7 +157,7 @@ public class MemberController {
     @PreAuthorize("hasAnyRole('COACH', 'CEO')")
     @GetMapping("/list")
     public ResponseEntity<CommonResDto> nowMemberList(Pageable pageable){
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치가 다니는 박스의 현재 멤버 리스트", memberService.nowMemberList(pageable));
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치가 다니는 박스의 현재 멤버 리스트", memberService.boxUserList(pageable));
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
