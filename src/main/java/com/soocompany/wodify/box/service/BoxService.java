@@ -52,6 +52,7 @@ public class BoxService {
         Member member = memberRepository.getReferenceById(Long.parseLong(memberId));
         Box box = new Box(dto.getName(), dto.getLogo(), dto.getOperatingHours(), dto.getFee(), dto.getIntro(), dto.getAddress(), member);
         boxRepository.save(box);
+        member.memberBoxUpdate(box);
         return dto;
     }
 
