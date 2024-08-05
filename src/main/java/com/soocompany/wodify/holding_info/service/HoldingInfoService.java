@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,7 +91,7 @@ public class HoldingInfoService {
         holdingInfo.updateHoldingInfo();
         LocalDate start = holdingInfo.getHoldingStart();
         LocalDate end = holdingInfo.getHoldingEnd();
-        int holdingPeriod = start.compareTo(end);
+        long holdingPeriod = ChronoUnit.DAYS.between(start, end);
         List<RegistrationInfo> registrationInfos = registrationInfoRepository.findByMemberAndBoxAndDelYnOrderByRegistrationDateDesc(member, box, "N");
         if (registrationInfos.isEmpty()) {
             log.error("unholding() : 박스에 등록되어있지 않은 회원입니다.");
