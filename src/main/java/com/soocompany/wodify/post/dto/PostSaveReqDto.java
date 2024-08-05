@@ -23,13 +23,15 @@ public class PostSaveReqDto {
     private Type type;
     private String title;
     private String contents;
+    private Long likeCount;
     private MultipartFile[] files;
 
     public Post toEntity(Member member) {
         return Post.builder()
+                .type(this.type)
                 .title(this.title)
                 .contents(this.contents)
-                .type(this.type)
+                .likeCount(0L)
                 .member(member)
                 .files(new ArrayList<>())
                 .build();

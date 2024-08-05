@@ -14,13 +14,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CommentSaveReqDto {
 
+    private Long postId;
     private String comment;
+    private String parentId;
 
-    public Comment toEntity(Member member, Post post) {
+    public Comment toEntity(Member member, Post post, Comment parentComment) {
         return Comment.builder()
                 .comment(this.comment)
                 .post(post)
                 .member(member)
+                .parent(parentComment)
                 .build();
     }
 }
