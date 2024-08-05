@@ -15,5 +15,4 @@ public class RecordUpdateReqDto { // 앞단에서 가져와 수정하는 값이�
     private String snf;
     private String exerciseTime;
     private String comments;
-//    private String visibilityYN;
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/wod")
