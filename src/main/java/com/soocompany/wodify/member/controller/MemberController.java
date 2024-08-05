@@ -153,16 +153,23 @@ public class MemberController {
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 
-    //코치가 다니는 박스의 회원 리스트
+    //박스의 회원 리스트 - 코치, 대표
     @PreAuthorize("hasAnyRole('COACH', 'CEO')")
-    @GetMapping("/list")
-    public ResponseEntity<CommonResDto> nowMemberList(Pageable pageable){
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치가 다니는 박스의 현재 멤버 리스트", memberService.nowMemberList(pageable));
+    @GetMapping("/list/user")
+    public ResponseEntity<CommonResDto> boxUserList(Pageable pageable){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치가 다니는 박스의 현재 멤버 리스트", memberService.boxUserList(pageable));
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
+
+    //박스의 코치 리스트 - 대표
+    @PreAuthorize("hasRole('CEO')")
+    @GetMapping("/list/coach")
+    public ResponseEntity<?> boxCoachList(Pageable pageable){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "박스내 코치 리스트", memberService.boxCoachList(pageable));
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
     //멤버 상세정보
-//    @PreAuthorize("hasAnyRole('USER', 'COACH')")
     @GetMapping("/detail")
     public ResponseEntity<CommonResDto> memberDetail(){
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member id에 맞는 멤버 상세 정보 출력", memberService.memberDetail());
@@ -170,7 +177,6 @@ public class MemberController {
     }
 
     //멤버 개인정보 수정
-//    @PreAuthorize("hasAnyRole('USER', 'COACH', 'CEO')")
     @PatchMapping("/update")
     public ResponseEntity<CommonResDto> memberUpdate(@RequestBody MemberUpdateDto memberUpdateDto){
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 정보 수정 완료",memberService.memberUpdate(memberUpdateDto));
@@ -182,7 +188,6 @@ public class MemberController {
     public ResponseEntity<CommonResDto> memberDelete(){
         memberService.memberDelete();
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 삭제 완료", null);
-
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
@@ -195,9 +200,17 @@ public class MemberController {
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
-//    //박스의 회원 등록하기
-//    //member의 boxid 변경과 등록정보에 추가 -> 등록정보에서 맡아서 하는게 맞을듯?
-//    @PostMapping("/user/box/update/{id}")
+
+    //박스 회원 탈퇴
+    @PreAuthorize("hasRole('CEO')")
+    @PatchMapping("/leave/box")
+    public ResponseEntity<?> leaveBox(@RequestParam(value = "userEmail") String userEmail){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "박스내 회원 탈퇴", memberService.userLeaveBox(userEmail));
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+
+    }
+
+
 
 
 

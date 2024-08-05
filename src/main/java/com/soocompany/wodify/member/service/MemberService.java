@@ -4,11 +4,10 @@ import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.box.repository.BoxRepository;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.domain.Role;
-import com.soocompany.wodify.member.dto.MemberDetResDto;
-import com.soocompany.wodify.member.dto.MemberListResDto;
-import com.soocompany.wodify.member.dto.MemberSaveReqDto;
-import com.soocompany.wodify.member.dto.MemberUpdateDto;
+import com.soocompany.wodify.member.dto.*;
 import com.soocompany.wodify.member.repository.MemberRepository;
+import com.soocompany.wodify.registration_info.domain.RegistrationInfo;
+import com.soocompany.wodify.registration_info.repository.RegistrationInfoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.Registration;
 import java.security.Security;
 import java.util.Optional;
 
@@ -30,11 +30,13 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final BoxRepository boxRepository;
+    private final RegistrationInfoRepository registrationInfoRepository;
 
     @Autowired
-    public MemberService(MemberRepository memberRepository, BoxRepository boxRepository){
+    public MemberService(MemberRepository memberRepository, BoxRepository boxRepository, RegistrationInfoRepository registrationInfoRepository){
         this.memberRepository = memberRepository;
         this.boxRepository = boxRepository;
+        this.registrationInfoRepository = registrationInfoRepository;
     }
 
 
@@ -139,23 +141,65 @@ public class MemberService {
 
 
     //코치, 대표가 다니는 박스의 회원 리스트
-    public Page<MemberListResDto> nowMemberList(Pageable pageable) {
+    public Page<MemberManagementListDto> boxUserList(Pageable pageable) {
         Long memberId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());   //코치나 ceo의 memberId
         Member loginMember = memberRepository.findById(memberId).orElseThrow(()->{
             log.error("nowMemberList() : id에 맞는 회원이 존재하지 않습니다.");
             throw new EntityNotFoundException("id에 맞는 회원이 존재하지 않습니다.");
         });
 
-        Box box = boxRepository.findByIdAndDelYn(loginMember.getBox().getId(), "N").orElseThrow(()->{
-            log.error("nowMemberList() : id에 맞는 박스가 존재하지 않습니다.");
-            throw new EntityNotFoundException("id에 맞는 박스가 존재하지 않습니다.");
-        });
+        Box box = loginMember.getBox();
+        if(box == null){
+            log.error("nowMemberList() : 로그인한 코치, 대표가 가입한 박스가 존재하지 않습니다.");
+            throw new EntityNotFoundException("로그인한 코치, 대표가 가입한 박스가 존재하지 않습니다.");
+        }
 
-        Page<Member> members = memberRepository.findByBoxAndRoleAndDelYn(pageable, box, Role.USER, "N");
-        Page<MemberListResDto> memberListResDtos = members.map(a->a.listFromEntity());
-        return memberListResDtos;
+        Page<Member> members = memberRepository.findAllByBoxAndRoleAndDelYn(pageable, box, Role.USER, "N");
+        Page<MemberManagementListDto> memberManagementListDtos = members.map(a->{
+            RegistrationInfo registrationInfo = registrationInfoRepository.findByMemberAndBoxAndDelYnOrderByRegistrationDateDesc(a, box, "N").get(0);
+            return a.managementListFromEntity(registrationInfo.getRegistrationDate(), registrationInfo.getEndDate());
+        });
+        return memberManagementListDtos;
 
     }
 
 
+    //박스내 코치 리스트
+    public Page<MemberListResDto> boxCoachList(Pageable pageable) {
+        Member loginMember = memberRepository.findByIdAndDelYn(Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName()), "N").orElseThrow(()->{
+            log.error("boxCoachList() : id에 맞는 회원이 존재하지 않습니다.");
+            throw new EntityNotFoundException("id에 맞는 회원이 존재하지 않습니다.");
+        });
+        Box  box = loginMember.getBox();
+        if(box == null || box.getCode() == null){
+            log.error("boxCoachList() : 로그인한 대표의 박스가 존재하지 않습니다.");
+            throw new EntityNotFoundException("로그인한 대표의 박스가 존재하지 않습니다.");
+        }
+
+        Page<Member> members = memberRepository.findAllByBoxAndRoleAndDelYn(pageable, box, Role.COACH, "N");
+        return members.map(a-> a.listFromEntity());
+    }
+
+    //박스 회원 탈퇴
+    public String userLeaveBox(String userEmail) {
+        Member loginMember = memberRepository.findByIdAndDelYn(Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName()), "N").orElseThrow(()->{
+            log.error("userLeaveBox() : id에 맞는 회원이 존재하지 않습니다.");
+            throw new EntityNotFoundException("id에 맞는 회원이 존재하지 않습니다.");
+        });
+        Box  box = loginMember.getBox();
+        if(box == null || box.getCode() == null){
+            log.error("userLeaveBox() : 로그인한 대표의 박스가 존재하지 않습니다.");
+            throw new EntityNotFoundException("로그인한 대표의 박스가 존재하지 않습니다.");
+        }
+
+        //탈퇴할 멤버
+        Member leaveUser = memberRepository.findByEmailAndBoxAndDelYn(userEmail, box, "N").orElseThrow(()->{
+            log.error("userLeaveBox() : 탈퇴할 회원이 조회되지 않습니다.");
+            throw new EntityNotFoundException("탈퇴할 회원이 조회되지 않습니다.");
+        });
+        leaveUser.memberBoxUpdate(null);
+
+
+        return "성공적으로 회원을 탈퇴시켰습니다.";
+    }
 }
