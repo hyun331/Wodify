@@ -44,4 +44,8 @@ public class RegistrationInfo extends BaseEntity {
                 .endDate(this.endDate)
                 .build();
     }
+
+    public void updateEndDate(long holdingPeriod) {
+        this.endDate = this.endDate.plusDays(holdingPeriod);
+    }
 }
