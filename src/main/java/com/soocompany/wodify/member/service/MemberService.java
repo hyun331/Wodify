@@ -154,7 +154,7 @@ public class MemberService {
             throw new EntityNotFoundException("로그인한 코치, 대표가 가입한 박스가 존재하지 않습니다.");
         }
 
-        Page<Member> members = memberRepository.findByBoxAndRoleAndDelYn(pageable, box, Role.USER, "N");
+        Page<Member> members = memberRepository.findAllByBoxAndRoleAndDelYn(pageable, box, Role.USER, "N");
         Page<MemberManagementListDto> memberManagementListDtos = members.map(a->{
             RegistrationInfo registrationInfo = registrationInfoRepository.findByMemberAndBoxAndDelYnOrderByRegistrationDateDesc(a, box, "N").get(0);
             return a.managementListFromEntity(registrationInfo.getRegistrationDate(), registrationInfo.getEndDate());
@@ -176,7 +176,7 @@ public class MemberService {
             throw new EntityNotFoundException("로그인한 대표의 박스가 존재하지 않습니다.");
         }
 
-        Page<Member> members = memberRepository.findByBoxAndRoleAndDelYn(pageable, box, Role.COACH, "N");
+        Page<Member> members = memberRepository.findAllByBoxAndRoleAndDelYn(pageable, box, Role.COACH, "N");
         return members.map(a-> a.listFromEntity());
     }
 
