@@ -105,12 +105,12 @@ public class PostService {
             log.error("postDelete() : 삭제된 게시글 입니다.");
             throw new IllegalArgumentException("삭제된 게시글 입니다.");
         }
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmailAndDelYn(email, "N").orElseThrow(() -> {
+        String id = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(() -> {
             log.error("postDelete() : Email 에 해당하는 member 가 없습니다.");
             return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
         });
-        if (!post.getMember().getEmail().equals(email)) {
+        if (!post.getMember().getId().equals(Long.parseLong(id))) {
             log.error("postDelete() : 본인의 게시글이 아닙니다.");
             throw new IllegalArgumentException("본인의 게시글이 아닙니다.");
         }
@@ -126,14 +126,14 @@ public class PostService {
             log.error("imageDelete() : 삭제된 image 입니다.");
             throw new IllegalArgumentException("삭제된 image 입니다.");
         }
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmailAndDelYn(email, "N").orElseThrow(() -> {
+        String id = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(() -> {
             log.error("imageDelete() : Email 에 해당하는 member 가 없습니다.");
             return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
         });
-        if (!image.getMember().getEmail().equals(email)) {
+        if (!image.getMember().getId().equals(Long.parseLong(id))) {
             log.error("imageDelete() : 본인의 image 가 아닙니다.");
-            throw new IllegalArgumentException("본인의 게시글이 아닙니다.");
+            throw new IllegalArgumentException("본인의 image 가 아닙니다.");
         }
         image.updateDelYn();
     }
@@ -161,7 +161,7 @@ public class PostService {
         return PostDetResDto.fromEntity(savedPost);
     }
 
-    public Post commentCreate(CommentSaveReqDto commentSaveReqDto) {
+    public Comment commentCreate(CommentSaveReqDto commentSaveReqDto) {
         Post post = postRepository.findById(commentSaveReqDto.getPostId()).orElseThrow(() -> {
             log.error("commentCreate() : 해당 id의 게시글을 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 id의 게시글을 찾을 수 없습니다.");
@@ -183,11 +183,12 @@ public class PostService {
             Comment savedComment = commentRepository.save(commentSaveReqDto.toEntity(member, post, parentComment));
             parentComment.getReplies().add(savedComment);
             commentRepository.save(parentComment);
+            return savedComment;
         } else {
             Comment savedComment = commentRepository.save(commentSaveReqDto.toEntity(member, post, null));
             post.getComments().add(savedComment);
+            return savedComment;
         }
-        return post;
     }
 
     public void commentDelete(CommentDelReqDto commentDelReqDto) {

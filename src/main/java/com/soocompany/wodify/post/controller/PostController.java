@@ -1,6 +1,7 @@
 package com.soocompany.wodify.post.controller;
 import com.soocompany.wodify.common.dto.CommonErrorDto;
 import com.soocompany.wodify.common.dto.CommonResDto;
+import com.soocompany.wodify.post.domain.Comment;
 import com.soocompany.wodify.post.domain.Post;
 import com.soocompany.wodify.post.dto.*;
 import com.soocompany.wodify.post.service.PostService;
@@ -77,10 +78,10 @@ public class PostController {
 
     @PostMapping("/comment/create")
     public ResponseEntity<?> commentCreate(@RequestBody CommentSaveReqDto commentSaveReqDto) {
-        Post post = postService.commentCreate(commentSaveReqDto);
+        Comment savedComment = postService.commentCreate(commentSaveReqDto);
         HttpStatus code = HttpStatus.CREATED;
         String msg = "댓글 생성에 성공하였습니다.";
-        CommonResDto commonResDto = new CommonResDto(code, msg, post.getId());
+        CommonResDto commonResDto = new CommonResDto(code, msg, savedComment.getId());
         return new ResponseEntity<>(commonResDto, code);
     }
 
