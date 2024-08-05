@@ -1,13 +1,10 @@
 package com.soocompany.wodify.record.contrlloer;
 
 import com.soocompany.wodify.common.dto.CommonResDto;
-import com.soocompany.wodify.record.dto.RecordListResDto;
 import com.soocompany.wodify.record.dto.RecordSaveReqDto;
 import com.soocompany.wodify.record.dto.RecordUpdateReqDto;
 import com.soocompany.wodify.record.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,12 +30,12 @@ public class RecordController {
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
-    @GetMapping("/record/list")
-    public ResponseEntity<?> memberList(Pageable pageable){
-        Page<RecordListResDto> dtos = recordService.recordList(pageable);
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "운동기록리스트가 조회되었습니다.", dtos);
-        return new ResponseEntity<>(commonResDto,HttpStatus.OK);
-    }
+//    @GetMapping("/record/list")
+//    public ResponseEntity<?> memberList(Pageable pageable){
+//        Page<RecordListResDto> dtos = recordService.recordList(pageable);
+//        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "운동기록리스트가 조회되었습니다.", dtos);
+//        return new ResponseEntity<>(commonResDto,HttpStatus.OK);
+//    }
 
     @PatchMapping("/record/update/{id}")
     public ResponseEntity<Object> recordUpdate(@PathVariable Long id, @RequestBody RecordUpdateReqDto dto){  // 운동기록의 id와 운동기록의 수정사항

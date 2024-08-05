@@ -5,6 +5,7 @@ import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.member.dto.MemberDetResDto;
 import com.soocompany.wodify.member.dto.MemberListResDto;
+import com.soocompany.wodify.member.dto.MemberManagementListDto;
 import com.soocompany.wodify.member.dto.MemberUpdateDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Entity
@@ -89,6 +91,19 @@ public class Member extends BaseEntity {
                 .email(this.email)
                 .phone(this.phone)
                 .address(this.address)
+                .build();
+    }
+
+
+    public MemberManagementListDto managementListFromEntity(LocalDate registrationDate, LocalDate endDate) {
+        return MemberManagementListDto.builder()
+                .id(this.id)
+                .name(this.name)
+                .email(this.email)
+                .phone(this.phone)
+                .address(this.address)
+                .registrationDate(registrationDate)
+                .endDate(endDate)
                 .build();
     }
 

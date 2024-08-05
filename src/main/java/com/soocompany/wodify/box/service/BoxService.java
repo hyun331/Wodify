@@ -16,7 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -92,29 +94,28 @@ public class BoxService {
                 .build();
     }
 
+    //박스 폐업 -> 대표, 코치, 회원의 box 정보 null변경
+    public void boxDelete() {
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName()), "N").orElseThrow(()->{
+            log.error("boxDelete() : id에 맞는 member가 존재하지 않습니다.");
+            throw new EntityNotFoundException("id에 맞는 member가 존재하지 않습니다.");
+        });
 
-    public void boxDelete(Long id) {
-        // 현재 로그인한 사용자 ID 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String memberId = authentication.getName();
-
-        // Box 조회 및 소유자 확인
-        Box box = boxRepository.findByIdAndDelYn(id, "N")
-                .orElseThrow(() -> {
-                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
-                    log.error("boxDelete() : " + errorMessage);
-                    throw  new IllegalArgumentException(errorMessage);
-                });
-
-        if (!box.getMember().getId().toString().equals(memberId)) {
-            String errorMessage = "현재 사용자가 해당 Box를 삭제할 권한이 없습니다.";
-            log.error("boxDelete() : " + errorMessage);
-            throw new SecurityException(errorMessage);
+        Box box = member.getBox();
+        if(box==null){
+            log.error("boxDelete() : 대표의 box가 존재하지 않습니다.");
+            throw new EntityNotFoundException("대표의 box가 존재하지 않습니다.");
         }
-
         // Box 삭제
         box.updateDelYn();
-        boxRepository.save(box);
+
+
+        //박스에 연관된 코치, 회원 리스트
+        List<Member> boxMemberList = memberRepository.findByBoxAndDelYn(box, "N");
+        for(Member m: boxMemberList){
+            m.memberBoxUpdate(null);
+        }
+
     }
 
 
