@@ -27,7 +27,7 @@ public class HallOfFameScheduler {
     @Autowired
     private HallOfFameRepository hallOfFameRepository;
 
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void updateHallOfFame(){
         for(Box box : boxRepository.findByDelYn("N")){
