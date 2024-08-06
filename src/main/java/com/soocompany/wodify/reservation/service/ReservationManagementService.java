@@ -1,5 +1,6 @@
 package com.soocompany.wodify.reservation.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Service;
 public class ReservationManagementService {
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public ReservationManagementService(RedisTemplate<String, Object> redisTemplate) {
+    public ReservationManagementService(@Qualifier("redisTemplate") RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 

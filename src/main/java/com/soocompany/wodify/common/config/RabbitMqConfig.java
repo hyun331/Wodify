@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMqConfig {
     public static final String RESERVATION_MANAGE_QUEUE = "reservationManageQueue";
+    public static final String LIKE_EVENT_QUEUE = "likeEventQueue";
     @Value("${spring.rabbitmq.host}")
     private String host;
     @Value("${spring.rabbitmq.port}")
@@ -26,6 +27,10 @@ public class RabbitMqConfig {
     @Bean
     public Queue stockDecreaseQueue() {
         return new Queue(RESERVATION_MANAGE_QUEUE, true);
+    }
+    @Bean
+    public Queue likeEventsQueue() {
+        return new Queue(LIKE_EVENT_QUEUE, true);
     }
     @Bean
     public ConnectionFactory connectionFactory() {
