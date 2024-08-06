@@ -31,7 +31,7 @@ public class CommonExceptionHandler {
         e.printStackTrace();
         return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
     }
-
+  
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonErrorDto> exceptionHandler(Exception e){
         CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.INTERNAL_SERVER_ERROR, "server error");
