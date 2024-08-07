@@ -39,23 +39,27 @@ public class BoxController {
     // Box 생성
     @PostMapping("/create")
     @PreAuthorize("hasRole('CEO')")
-    public ResponseEntity<?> boxCreate(@ModelAttribute BoxSaveReqDto boxSaveReqDto) {
+    public ResponseEntity<CommonResDto> boxCreate(@ModelAttribute BoxSaveReqDto boxSaveReqDto) {
         // 현재 로그인한 사용자의 ID를 가져옴
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserId = authentication.getName(); // 토큰에서 가져온 ID
+        String currentUserId = authentication.getName();
 
         // representativeId를 로그인한 사용자 ID로 설정
         boxSaveReqDto.setRepresentativeId(Long.parseLong(currentUserId));
 
         try {
             Box box = boxService.boxCreate(boxSaveReqDto);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "Box 생성 완료", box);
+
+            BoxSaveReqDto responseDto = BoxSaveReqDto.fromEntity(box);
+
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "Box 생성 완료", responseDto);
             return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
         } catch (Exception e) {
             CommonResDto commonResDto = new CommonResDto(HttpStatus.INTERNAL_SERVER_ERROR, "Box 생성 중 오류 발생: " + e.getMessage(), null);
             return new ResponseEntity<>(commonResDto, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 
 

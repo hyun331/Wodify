@@ -18,12 +18,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,6 +59,9 @@ public class BoxService {
 
         Member member = memberRepository.getReferenceById(Long.parseLong(memberId));
 
+        //맴버에 박스 넣어주기
+        Member newMember = memberRepository.findByEmailAndDelYn(member.getEmail(), "N").orElseThrow(()->new EntityNotFoundException("Test Ceo Initial Data Loader Exception"));
+
 
         // MultipartFile에서 파일 저장 경로 얻기
         MultipartFile logoFile = dto.getLogoPath();
@@ -74,6 +79,8 @@ public class BoxService {
             boxRepository.save(box);
         }
 
+        newMember.memberBoxUpdate(box);
+        memberRepository.save(newMember);
         return box;
     }
 
