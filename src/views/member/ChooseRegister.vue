@@ -1,7 +1,11 @@
 <template>
     <div class="background">
-        <p class="rubikMonoOne">MEMBER 한글 지원할까..?</p>
+        <v-container >
+            <p class="rubikMonoOne">회원가입 선택 창</p>
+        </v-container>
     </div>
+    
+
 
 </template>
 

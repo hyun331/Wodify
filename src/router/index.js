@@ -1,7 +1,16 @@
 import {createRouter, createWebHistory} from 'vue-router';
-import { memberRouter } from './member/MemberRouter';
+import { memberRouter } from './MemberRouter';
+import HelloWorld from '@/components/HelloWorld.vue';
 const routes = [
-    ...memberRouter
+    ...memberRouter,
+    
+
+    // 홈화면
+    {
+        path:"/",
+        name: "HelloWorld",
+        component: HelloWorld
+    }
     
 
 ]
