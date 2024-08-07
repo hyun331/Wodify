@@ -4,7 +4,6 @@ import com.soocompany.wodify.member.domain.Member;
 import lombok.*;
 
 import javax.persistence.*;
-
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data

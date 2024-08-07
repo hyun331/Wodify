@@ -11,15 +11,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ImageResDto {
     private Long id;
-    private String fileName;
-    private String s3Path;
+    private String url;
     private LocalDateTime createdTime;
 
     public static ImageResDto fromEntity(Image image) {
         return ImageResDto.builder()
                 .id(image.getId())
-                .fileName(image.getFileName())
-                .s3Path(image.getS3Path())
+                .url(image.getUrl())
                 .createdTime(image.getCreatedTime())
                 .build();
     }

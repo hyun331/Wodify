@@ -62,10 +62,8 @@ public class PostService {
                 PutObjectResponse putObjectResponse = s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes));
                 String s3Path = s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(fileName)).toExternalForm();
                 Image image = Image.builder()
-                        .member(member)
                         .post(post)
-                        .fileName(fileName)
-                        .s3Path(s3Path)
+                        .url(s3Path)
                         .build();
 
                 imageRepository.save(image);
@@ -131,10 +129,6 @@ public class PostService {
             log.error("imageDelete() : Email 에 해당하는 member 가 없습니다.");
             return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
         });
-        if (!image.getMember().getId().equals(Long.parseLong(id))) {
-            log.error("imageDelete() : 본인의 image 가 아닙니다.");
-            throw new IllegalArgumentException("본인의 image 가 아닙니다.");
-        }
         image.updateDelYn();
     }
 
@@ -234,33 +228,4 @@ public class PostService {
         return PostDetResDto.fromEntity(comment.getPost());
     }
 
-    public Long postLike(PostLikeReqDto postLikeReqDto) {
-        String id = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(() -> {
-            log.error("postLike() : Email 에 해당하는 member 가 없습니다.");
-            return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
-        });
-        Post post = postRepository.findById(postLikeReqDto.getId()).orElseThrow(() -> {
-            log.error("postLike() : 해당 id의 게시글을 찾을 수 없습니다.");
-            return new EntityNotFoundException("해당 id의 게시글을 찾을 수 없습니다.");
-        });
-        if (post.getDelYn().equals("Y")) {
-            log.error("postLike() : 삭제된 게시글 입니다.");
-            throw new IllegalArgumentException("삭제된 게시글 입니다.");
-        }
-        Optional<Likes> optionalLike = likeRepository.findByPostIdAndMemberId(postLikeReqDto.getId(), member.getId());
-        if (optionalLike.isPresent()) {
-                Likes likes = optionalLike.get();
-            if (likes.getDelYn().equals("N")) {
-                likes.updateDelYn();
-                return post.updateLikeCount(-1L);
-            } else {
-                likes.updateDelyN();
-                return post.updateLikeCount(+1L);
-            }
-        } else {
-            likeRepository.save(Likes.builder().member(member).post(post).build());
-            return post.updateLikeCount(+1L);
-        }
-    }
 }

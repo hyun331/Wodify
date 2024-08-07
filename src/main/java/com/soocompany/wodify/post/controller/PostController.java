@@ -1,9 +1,9 @@
 package com.soocompany.wodify.post.controller;
-import com.soocompany.wodify.common.dto.CommonErrorDto;
 import com.soocompany.wodify.common.dto.CommonResDto;
 import com.soocompany.wodify.post.domain.Comment;
 import com.soocompany.wodify.post.domain.Post;
 import com.soocompany.wodify.post.dto.*;
+import com.soocompany.wodify.post.service.LikeService;
 import com.soocompany.wodify.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +13,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
-import java.io.IOException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/post")
 public class PostController {
     private final PostService postService;
+    private final LikeService likeService;
 
     @PostMapping("/create")
     public ResponseEntity<?> postCreate(@ModelAttribute PostSaveReqDto dto) {
@@ -105,7 +104,7 @@ public class PostController {
 
     @PostMapping("/like")
     public ResponseEntity<?> postLike(@RequestBody PostLikeReqDto postLikeReqDto) {
-        Long likeCount = postService.postLike(postLikeReqDto);
+        Long likeCount = likeService.postLike(postLikeReqDto);
         HttpStatus code = HttpStatus.OK;
         String msg = "좋아요 업데이트에 성공하였습니다.";
         CommonResDto commonResDto = new CommonResDto(code, msg, likeCount);
