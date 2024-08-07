@@ -92,10 +92,10 @@ public class BoxController {
 
 
     // Box 삭제
-    @PatchMapping("/delete/{id}")
+    @PatchMapping("/delete")
     @PreAuthorize("hasRole('CEO')")
-    public ResponseEntity<CommonResDto> boxDelete(@PathVariable Long id) {
-        boxService.boxDelete(id);
+    public ResponseEntity<CommonResDto> boxDelete() {
+        boxService.boxDelete();
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box 삭제 완료", null);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }

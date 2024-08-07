@@ -3,6 +3,7 @@ package com.soocompany.wodify.registration_info.domain;
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
+import com.soocompany.wodify.registration_info.dto.RegistrationResDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,4 +34,18 @@ public class RegistrationInfo extends BaseEntity {
     //화면에서 등록날짜와 등록할 개월 수를 정하면 endDate는 자동으로 등록
     private LocalDate registrationDate;
     private LocalDate endDate;
+
+    public RegistrationResDto fromEntity(){
+        return RegistrationResDto.builder()
+                .id(this.id)
+                .memberName(this.member.getName())
+                .memberEmail(this.member.getEmail())
+                .registrationDate(this.registrationDate)
+                .endDate(this.endDate)
+                .build();
+    }
+
+    public void updateEndDate(long holdingPeriod) {
+        this.endDate = this.endDate.plusDays(holdingPeriod);
+    }
 }

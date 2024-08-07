@@ -19,14 +19,16 @@ public class PostListResDto {
     @Enumerated(EnumType.STRING)
     private Type type;
     private String title;
-    private String memberEmail;
+    private Long likeCount;
+    private String name;
 
     public PostListResDto listFromEntity(Post post) {
         return PostListResDto.builder()
                 .id(post.getId())
                 .type(post.getType())
                 .title(post.getTitle())
-                .memberEmail(post.getMember().getEmail())
+                .likeCount(post.getLikeCount())
+                .name(post.getMember().getName())
                 .build();
     }
 

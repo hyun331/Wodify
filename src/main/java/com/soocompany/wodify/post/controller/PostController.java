@@ -1,5 +1,7 @@
 package com.soocompany.wodify.post.controller;
+import com.soocompany.wodify.common.dto.CommonErrorDto;
 import com.soocompany.wodify.common.dto.CommonResDto;
+import com.soocompany.wodify.post.domain.Comment;
 import com.soocompany.wodify.post.domain.Post;
 import com.soocompany.wodify.post.dto.*;
 import com.soocompany.wodify.post.service.PostService;
@@ -10,6 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -36,8 +41,8 @@ public class PostController {
     }
 
     @GetMapping("/detail")
-    public ResponseEntity<?> postDetail(@RequestParam Long id) {
-        PostDetResDto postDetResDto = postService.postDetail(id);
+    public ResponseEntity<?> postDetail(@RequestBody PostDetReqDto postDetReqDto) {
+        PostDetResDto postDetResDto = postService.postDetail(postDetReqDto);
         HttpStatus code = HttpStatus.OK;
         String msg = "게시글 상세 조회에 성공하였습니다.";
         CommonResDto commonResDto = new CommonResDto(code, msg, postDetResDto);
@@ -45,8 +50,8 @@ public class PostController {
     }
 
     @PatchMapping("/delete")
-    public ResponseEntity<?> postDelete(@RequestParam Long id) {
-        postService.postDelete(id);
+    public ResponseEntity<?> postDelete(@RequestBody PostDelReqDto postDelReqDto) {
+        postService.postDelete(postDelReqDto);
         HttpStatus code = HttpStatus.OK;
         String msg = "게시글 삭제에 성공하였습니다.";
         CommonResDto commonResDto = new CommonResDto(code, msg, null);
@@ -54,8 +59,8 @@ public class PostController {
     }
 
     @PatchMapping("/image/delete")
-    public ResponseEntity<?> imageDelete(@RequestParam Long id) {
-        postService.imageDelete(id);
+    public ResponseEntity<?> imageDelete(@RequestBody ImageDelReqDto imageDelReqDto) {
+        postService.imageDelete(imageDelReqDto);
         HttpStatus code = HttpStatus.OK;
         String msg = "파일 삭제에 성공하였습니다.";
         CommonResDto commonResDto = new CommonResDto(code, msg, null);
@@ -63,8 +68,8 @@ public class PostController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<?> postUpdate(@RequestParam Long id, @RequestBody PostUpdateReqDto postUpdateReqDto) {
-        PostDetResDto postDetResDto = postService.postUpdate(id, postUpdateReqDto);
+    public ResponseEntity<?> postUpdate(@RequestBody PostUpdateReqDto postUpdateReqDto) {
+        PostDetResDto postDetResDto = postService.postUpdate(postUpdateReqDto);
         HttpStatus code = HttpStatus.OK;
         String msg = "게시글 수정에 성공하였습니다.";
         CommonResDto commonResDto = new CommonResDto(code, msg, postDetResDto);
@@ -72,17 +77,17 @@ public class PostController {
     }
 
     @PostMapping("/comment/create")
-    public ResponseEntity<?> commentCreate(@RequestParam Long postId, @RequestBody CommentSaveReqDto commentSaveReqDto) {
-        Post post = postService.commentCreate(postId, commentSaveReqDto);
+    public ResponseEntity<?> commentCreate(@RequestBody CommentSaveReqDto commentSaveReqDto) {
+        Comment savedComment = postService.commentCreate(commentSaveReqDto);
         HttpStatus code = HttpStatus.CREATED;
         String msg = "댓글 생성에 성공하였습니다.";
-        CommonResDto commonResDto = new CommonResDto(code, msg, post.getId());
+        CommonResDto commonResDto = new CommonResDto(code, msg, savedComment.getId());
         return new ResponseEntity<>(commonResDto, code);
     }
 
     @PatchMapping("/comment/delete")
-    public ResponseEntity<?> commentDelete(@RequestParam Long id) {
-        postService.commentDelete(id);
+    public ResponseEntity<?> commentDelete(@RequestBody CommentDelReqDto commentDelReqDto) {
+        postService.commentDelete(commentDelReqDto);
         HttpStatus code = HttpStatus.OK;
         String msg = "댓글 삭제에 성공하였습니다.";
         CommonResDto commonResDto = new CommonResDto(code, msg, null);
@@ -90,15 +95,15 @@ public class PostController {
     }
 
     @PatchMapping("/comment/update")
-    public ResponseEntity<?> commentUpdate(@RequestParam Long id, @RequestBody CommentUpdateReqDto commentUpdateReqDto) {
-        PostDetResDto postDetResDto = postService.commentUpdate(id, commentUpdateReqDto);
+    public ResponseEntity<?> commentUpdate(@RequestBody CommentUpdateReqDto commentUpdateReqDto) {
+        PostDetResDto postDetResDto = postService.commentUpdate(commentUpdateReqDto);
         HttpStatus code = HttpStatus.OK;
         String msg = "댓글 수정에 성공하였습니다.";
         CommonResDto commonResDto = new CommonResDto(code, msg, postDetResDto);
         return new ResponseEntity<>(commonResDto, code);
     }
 
-    @PatchMapping("/like")
+    @PostMapping("/like")
     public ResponseEntity<?> postLike(@RequestBody PostLikeReqDto postLikeReqDto) {
         Long likeCount = postService.postLike(postLikeReqDto);
         HttpStatus code = HttpStatus.OK;
