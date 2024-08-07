@@ -28,7 +28,7 @@ public class Wod extends BaseEntity {
     private Box box;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "coach_id")
     private Member member;
 
     @Column(nullable = false)

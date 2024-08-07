@@ -62,10 +62,8 @@ public class PostService {
                 PutObjectResponse putObjectResponse = s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes));
                 String s3Path = s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(fileName)).toExternalForm();
                 Image image = Image.builder()
-                        .member(member)
                         .post(post)
-                        .fileName(fileName)
-                        .s3Path(s3Path)
+                        .url(s3Path)
                         .build();
 
                 imageRepository.save(image);
@@ -131,10 +129,6 @@ public class PostService {
             log.error("imageDelete() : Email 에 해당하는 member 가 없습니다.");
             return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
         });
-        if (!image.getMember().getId().equals(Long.parseLong(id))) {
-            log.error("imageDelete() : 본인의 image 가 아닙니다.");
-            throw new IllegalArgumentException("본인의 image 가 아닙니다.");
-        }
         image.updateDelYn();
     }
 
