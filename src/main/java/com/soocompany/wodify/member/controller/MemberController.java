@@ -99,7 +99,7 @@ public class MemberController {
                 kakaoProfileRequest2,
                 String.class
         );
-        System.out.println("body \n"+response2.getBody());
+//        System.out.println("body \n"+response2.getBody());
         JsonNode jsonNode = null;
         String email = null;
         try{
@@ -110,7 +110,7 @@ public class MemberController {
         }
 
 
-        System.out.println(email+"\n\n\n\n\n\n\n");
+//        System.out.println(email+"\n\n\n\n\n\n\n");
 
         //현재 데이터베이스에 있는지 확인
         MemberDetResDto member = memberService.isMemberExist(email, "N");
@@ -118,13 +118,16 @@ public class MemberController {
         if(member!=null){
             //회원으로 존재하면
             String jwtToken = jwtTokenProvider.createToken(member.getId().toString(), member.getRole().toString());
+            String refreshToken = jwtTokenProvider.createRefreshToken(member.getId().toString(), member.getRole().toString());
 
             CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, member.getName()+"회원님 login 완료", jwtToken);
+            System.out.println("로그인화면");
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 
         }else{
             //회원가입 해야함
             CommonResDto commonResDto = new CommonResDto(HttpStatus.UNAUTHORIZED, email+" 이메일이 존재하지 않습니다. 회원가입 필요", email);
+            System.out.println("회원가입 화면");
             return new ResponseEntity<>(commonResDto, HttpStatus.UNAUTHORIZED);
         }
 
