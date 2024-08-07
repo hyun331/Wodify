@@ -26,6 +26,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +47,8 @@ public class MemberController {
     ////////////////////////////////////////////////
     //kakao login
     @GetMapping("/auth/kakao/callback")
-    public ResponseEntity<?> kakaoLogin(String code) {
+    public ResponseEntity<?> kakaoLogin(@RequestParam(value = "code")String code) {
+        System.out.println("왜 안돼...");
         RestTemplate rt = new RestTemplate();   //Post방식으로 key=value 데이터를 요청 //이때 필요한 라이브러리가 RestTemplate. http 요청을 용이하게
 
         //토큰
@@ -57,7 +59,7 @@ public class MemberController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "2d129c6af1317e9dc12a8669b1957416");    //Rest API 키
-        params.add("redirect_uri", "http://localhost:8090/member/auth/kakao/callback");
+        params.add("redirect_uri", "http://localhost:8091/member/auth/kakao/callback");
         params.add("code", code);
 
         //header body 합치기
@@ -79,8 +81,7 @@ public class MemberController {
         }catch (JsonProcessingException e){
             e.printStackTrace();
         }
-        System.out.println("tokken");
-        System.out.println(oAuthToken+"\n\n\n\n\n");
+
         ///////////////////////////////////////////
 
         //member의 이메일 가져오기
@@ -108,6 +109,8 @@ public class MemberController {
             e.printStackTrace();
         }
 
+
+        System.out.println(email+"\n\n\n\n\n\n\n");
 
         //현재 데이터베이스에 있는지 확인
         MemberDetResDto member = memberService.isMemberExist(email, "N");
@@ -212,10 +215,5 @@ public class MemberController {
 
 
 
-
-
-    //
-    //멤버의 박스 삭제하기
-    //박스별 멤버 리스트 조회
 
 }
