@@ -4,6 +4,8 @@ import com.soocompany.wodify.post.domain.Comment;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -13,6 +15,7 @@ public class CommentResDto{
     private Long id;
     private String email;
     private String comment;
+    private List<CommentResDto> replies;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
 
@@ -21,6 +24,11 @@ public class CommentResDto{
                 .id(comment.getId())
                 .email(comment.getMember().getEmail())
                 .comment(comment.getComment())
+                .replies(comment.getReplies().stream()
+                        .filter(comment1 -> comment1.getDelYn().equals("N"))
+                        .map(CommentResDto::fromEntity)
+                        .collect(Collectors.toList())
+                )
                 .createdTime(comment.getCreatedTime())
                 .updatedTime(comment.getUpdatedTime())
                 .build();

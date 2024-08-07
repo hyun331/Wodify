@@ -1,13 +1,14 @@
 package com.soocompany.wodify.box.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.soocompany.wodify.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.soocompany.wodify.common.domain.BaseEntity;
-import com.soocompany.wodify.member.domain.Member;
-import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.persistence.*;
 import java.util.UUID;
 
@@ -38,7 +39,8 @@ public class Box extends BaseEntity {
     private String code;
 
     @JoinColumn(name = "representative_id", unique = true)
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Member member;
 
 
@@ -69,6 +71,12 @@ public class Box extends BaseEntity {
         this.address = address;
         this.member = member;
         this.updateBoxCode(); // 코드 생성 호출
+    }
+
+
+    // 로고
+    public void updateLogo(String logo){
+        this.logo =logo;
     }
 
 }

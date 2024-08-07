@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -13,23 +14,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BoxSaveReqDto {
     private String name;
-    private String logo;
+    private MultipartFile logoPath;
     private String operatingHours;
     private String fee;
     private String intro;
     private String address;
     private Long representativeId;
 
+
+
     public Box toEntity(Member member) {
-        return Box.builder()
+        Box box = Box.builder()
                 .name(this.name)
-                .logo(this.logo)
                 .operatingHours(this.operatingHours)
                 .fee(this.fee)
                 .intro(this.intro)
                 .address(this.address)
                 .member(member)
                 .build();
+
+        box.updateBoxCode();
+
+        return box;
     }
 }
 

@@ -1,5 +1,8 @@
 package com.soocompany.wodify.box.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.box.dto.BoxDetailResDto;
 import com.soocompany.wodify.box.dto.BoxListResDto;
 import com.soocompany.wodify.box.dto.BoxSaveReqDto;
@@ -15,6 +18,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/box")
@@ -32,18 +39,55 @@ public class BoxController {
     // Box 생성
     @PostMapping("/create")
     @PreAuthorize("hasRole('CEO')")
-    public ResponseEntity<CommonResDto> boxCreate(@RequestBody BoxSaveReqDto boxSaveReqDto) {
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "Box 생성 완료", boxService.boxCreate(boxSaveReqDto));
-        return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
+    public ResponseEntity<?> boxCreate(@ModelAttribute BoxSaveReqDto boxSaveReqDto) {
+        // 현재 로그인한 사용자의 ID를 가져옴
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserId = authentication.getName(); // 토큰에서 가져온 ID
+
+        // representativeId를 로그인한 사용자 ID로 설정
+        boxSaveReqDto.setRepresentativeId(Long.parseLong(currentUserId));
+
+        try {
+            Box box = boxService.boxCreate(boxSaveReqDto);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "Box 생성 완료", box);
+            return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
+        } catch (Exception e) {
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.INTERNAL_SERVER_ERROR, "Box 생성 중 오류 발생: " + e.getMessage(), null);
+            return new ResponseEntity<>(commonResDto, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
 
 
     // Box 수정
     @PatchMapping("/update/{id}")
     @PreAuthorize("hasRole('CEO')")
-    public ResponseEntity<CommonResDto> boxUpdate(@PathVariable Long id, @RequestBody BoxUpdateReqDto boxUpdateReqDto) {
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box 수정 완료", boxService.boxUpdate(id, boxUpdateReqDto));
-        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    public ResponseEntity<CommonResDto> boxUpdate(
+            @PathVariable Long id,
+            @RequestPart("name") String name,
+            @RequestPart(value = "logo", required = false) MultipartFile logo,
+            @RequestPart("operatingHours") String operatingHours,
+            @RequestPart("fee") String fee,
+            @RequestPart("intro") String intro,
+            @RequestPart("address") String address) {
+
+        BoxUpdateReqDto boxUpdateReqDto = BoxUpdateReqDto.builder()
+                .name(name)
+                .logo(logo)
+                .operatingHours(operatingHours)
+                .fee(fee)
+                .intro(intro)
+                .address(address)
+                .build();
+
+        try {
+            Box updatedBox = boxService.boxUpdate(id, boxUpdateReqDto);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box 수정 완료", updatedBox);
+            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+        } catch (Exception e) {
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.INTERNAL_SERVER_ERROR, "Box 수정 중 오류 발생: " + e.getMessage(), null);
+            return new ResponseEntity<>(commonResDto, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
