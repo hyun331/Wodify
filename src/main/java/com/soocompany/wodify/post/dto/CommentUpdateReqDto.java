@@ -13,5 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentUpdateReqDto {
+    private Long id;
     private String comment;
 }

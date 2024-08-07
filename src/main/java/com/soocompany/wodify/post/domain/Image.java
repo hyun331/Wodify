@@ -1,6 +1,5 @@
 package com.soocompany.wodify.post.domain;
 import com.soocompany.wodify.common.domain.BaseEntity;
-import com.soocompany.wodify.member.domain.Member;
 import lombok.*;
 import javax.persistence.*;
 
@@ -17,13 +16,8 @@ public class Image extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
-    private String fileName;
-    private String s3Path;
+    private String url;
 }

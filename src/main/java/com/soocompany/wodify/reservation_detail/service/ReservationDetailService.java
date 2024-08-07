@@ -7,6 +7,8 @@ import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.repository.MemberRepository;
 import com.soocompany.wodify.registration_info.domain.RegistrationInfo;
 import com.soocompany.wodify.registration_info.repository.RegistrationInfoRepository;
+import com.soocompany.wodify.reservation.dto.ReservationManageEvent;
+import com.soocompany.wodify.reservation.service.ReservationManageEventHandler;
 import com.soocompany.wodify.reservation.service.ReservationManagementService;
 import com.soocompany.wodify.reservation.domain.Reservation;
 import com.soocompany.wodify.reservation.repository.ReservationRepository;
@@ -39,6 +41,7 @@ public class ReservationDetailService {
     private final RegistrationInfoRepository registrationInfoRepository;
     private final HoldingInfoRepository holdingInfoRepository;
     private final ReservationManagementService reservationManagementService;
+    private final ReservationManageEventHandler reservationManageEventHandler;
 
     public ReservationDetailDetResDto reservationCreate(ReservationDetCreateReqDto dto) {
         Reservation reservation = reservationRepository.findByIdAndDelYn(dto.getReservationId(), "N").orElseThrow(() -> new EntityNotFoundException("해당 id의 예약이 존재하지 않습니다."));
@@ -76,9 +79,11 @@ public class ReservationDetailService {
             }
         }
 
-        if (reservationManagementService.decreaseAvailable(reservation.getId()) < 0) {
+        if (reservationManagementService.decreaseAvailable(reservation.getId(),1) < 0) {
             throw new IllegalStateException("예약 인원이 초과되어 예약이 불가능합니다.");
         }
+        reservationManageEventHandler.publish(new ReservationManageEvent(reservation.getId(), 1));
+
         ReservationDetail reservationDetail = dto.toEntity(reservation, member);
         ReservationDetail savedDetail = reservationDetailRepository.save(reservationDetail);
         return savedDetail.detFromEntity();

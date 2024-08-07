@@ -26,6 +26,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +47,8 @@ public class MemberController {
     ////////////////////////////////////////////////
     //kakao login
     @GetMapping("/auth/kakao/callback")
-    public ResponseEntity<?> kakaoLogin(String code) {
+    public ResponseEntity<?> kakaoLogin(@RequestParam(value = "code")String code) {
+        System.out.println("왜 안돼...");
         RestTemplate rt = new RestTemplate();   //Post방식으로 key=value 데이터를 요청 //이때 필요한 라이브러리가 RestTemplate. http 요청을 용이하게
 
         //토큰
@@ -57,7 +59,7 @@ public class MemberController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "2d129c6af1317e9dc12a8669b1957416");    //Rest API 키
-        params.add("redirect_uri", "http://localhost:8090/member/auth/kakao/callback");
+        params.add("redirect_uri", "http://localhost:8091/member/auth/kakao/callback");
         params.add("code", code);
 
         //header body 합치기
@@ -79,8 +81,7 @@ public class MemberController {
         }catch (JsonProcessingException e){
             e.printStackTrace();
         }
-        System.out.println("tokken");
-        System.out.println(oAuthToken+"\n\n\n\n\n");
+
         ///////////////////////////////////////////
 
         //member의 이메일 가져오기
@@ -108,6 +109,8 @@ public class MemberController {
             e.printStackTrace();
         }
 
+
+        System.out.println(email+"\n\n\n\n\n\n\n");
 
         //현재 데이터베이스에 있는지 확인
         MemberDetResDto member = memberService.isMemberExist(email, "N");
@@ -146,26 +149,6 @@ public class MemberController {
 
     }
 
-
-    ///////////////////////////////////
-//    @GetMapping("/afterKakaoLogin/{email}")
-//    public MemberDetResDto afterLogin(@PathVariable String email){
-//        //email 받아옴.. redirect 사용해서 email 받아옴. vue에서 rest인 경우 redirect 처리 필요
-//        //email 받아오지 말고 토큰 값 가져와서 email 가져오기!
-//        //회원가입한 유저인지 확인해야함. email과 delyn=n인 사람찾기
-//        MemberDetResDto memberDetResDto = memberService.isMemberExist(email, "N");
-//        if(memberDetResDto !=null){
-//            //존재하는 회원 -> home화면으로
-//            /////////////////미구현
-//            return memberDetResDto;
-//        }else{
-//            //회원가입 화면으로.
-//            //줄 때 email 같이 줘야함
-//            /////////////////미구현
-//            return null;
-//        }
-//    }
-
     //회원가입
     @PostMapping("/register")
     public ResponseEntity<CommonResDto>  memberRegister(@RequestBody MemberSaveReqDto memberSaveReqDto){
@@ -173,56 +156,64 @@ public class MemberController {
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 
-    //코치가 다니는 박스의 회원 리스트
+    //박스의 회원 리스트 - 코치, 대표
     @PreAuthorize("hasAnyRole('COACH', 'CEO')")
-    @GetMapping("/list")
-    public ResponseEntity<CommonResDto> nowMemberList(Pageable pageable){
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치가 다니는 박스의 현재 멤버 리스트", memberService.nowMemberList(pageable));
+    @GetMapping("/list/user")
+    public ResponseEntity<CommonResDto> boxUserList(Pageable pageable){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치가 다니는 박스의 현재 멤버 리스트", memberService.boxUserList(pageable));
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
+
+    //박스의 코치 리스트 - 대표
+    @PreAuthorize("hasRole('CEO')")
+    @GetMapping("/list/coach")
+    public ResponseEntity<?> boxCoachList(Pageable pageable){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "박스내 코치 리스트", memberService.boxCoachList(pageable));
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
     //멤버 상세정보
-//    @PreAuthorize("hasAnyRole('USER', 'COACH')")
     @GetMapping("/detail")
     public ResponseEntity<CommonResDto> memberDetail(){
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member id에 맞는 멤버 상세 정보 출력", memberService.memberDetail());
-
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
-
-        //멤버 개인정보 수정
-    @PatchMapping("/update/{id}")
-    public ResponseEntity<CommonResDto> memberUpdate(@PathVariable Long id, @RequestBody MemberUpdateDto memberUpdateDto){
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 정보 수정 완료",memberService.memberUpdate(id, memberUpdateDto));
+    //멤버 개인정보 수정
+    @PatchMapping("/update")
+    public ResponseEntity<CommonResDto> memberUpdate(@RequestBody MemberUpdateDto memberUpdateDto){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 정보 수정 완료",memberService.memberUpdate(memberUpdateDto));
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
-    //멤버 삭제
-    @PatchMapping("/delete/{id}")
-    public ResponseEntity<CommonResDto> memberDelete(@PathVariable Long id){
-        memberService.memberDelete(id);
+    //회원 탈퇴
+    @PatchMapping("/delete")
+    public ResponseEntity<CommonResDto> memberDelete(){
+        memberService.memberDelete();
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 삭제 완료", null);
-
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
 
     //코치의 박스 가입 및 변경. 코치 박스 코드 입력 후 submit하면 동작
-    @PatchMapping("/coach/box/update/{id}")
-    public ResponseEntity<CommonResDto> coachBoxUpdate(@PathVariable Long id, @RequestParam(value = "code")String boxCode){
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치의 box 수정 성공", memberService.coachBoxUpdate(id, boxCode));
+    @PreAuthorize("hasRole('COACH')")
+    @PatchMapping("/coach/box/update")
+    public ResponseEntity<CommonResDto> coachBoxUpdate(@RequestParam(value = "code")String code){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치의 box 수정 성공", memberService.coachBoxUpdate(code));
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
-    //박스의 회원 등록하기
-    //member의 boxid 변경과 등록정보에 추가 -> 등록정보에서 맡아서 하는게 맞을듯?
-//    @PostMapping("/user/box/update/{id}")
+
+    //박스 회원 탈퇴
+    @PreAuthorize("hasRole('CEO')")
+    @PatchMapping("/leave/box")
+    public ResponseEntity<?> leaveBox(@RequestParam(value = "userEmail") String userEmail){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "박스내 회원 탈퇴", memberService.userLeaveBox(userEmail));
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+
+    }
 
 
 
-    //
-    //멤버의 박스 삭제하기
-    //박스별 멤버 리스트 조회
 
 }

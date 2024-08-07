@@ -24,7 +24,8 @@ public class PostDetResDto {
     private Type type;
     private String title;
     private String contents;
-    private String memberEmail;
+    private Long likeCount;
+    private String name;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
     List<CommentResDto> comments;
@@ -36,15 +37,20 @@ public class PostDetResDto {
                 .type(post.getType())
                 .title(post.getTitle())
                 .contents(post.getContents())
-                .memberEmail(post.getMember().getEmail())
+                .likeCount(post.getLikeCount())
+                .name(post.getMember().getName())
                 .createdTime(post.getCreatedTime())
                 .updatedTime(post.getUpdatedTime())
                 .comments(post.getComments().stream()
-                        .filter(comment -> comment.getDelYn().equals("N"))
-                        .map(CommentResDto::fromEntity).collect(Collectors.toList()))
+                        .filter(comment -> comment.getDelYn().equals("N") && comment.getParent() == null)
+                        .map(CommentResDto::fromEntity)
+                        .collect(Collectors.toList())
+                )
                 .files(post.getFiles().stream()
                         .filter(image -> image.getDelYn().equals("N"))
-                        .map(ImageResDto::fromEntity).collect(Collectors.toList()))
+                        .map(ImageResDto::fromEntity)
+                        .collect(Collectors.toList())
+                )
                 .build();
     }
 }

@@ -27,10 +27,10 @@ public class ReservationCreateReqDto {
     private int maximumPeople;
 
 
-    public Reservation toEntity(Box box, Member coach) {
+    public Reservation toEntity(Box box, Member coach, Wod wod) {
         return Reservation.builder()
                 .box(box)
-//                .wod(wod)
+                .wod(wod)
                 .date(this.date)
                 .time(this.time)
                 .maximumPeople(this.maximumPeople)

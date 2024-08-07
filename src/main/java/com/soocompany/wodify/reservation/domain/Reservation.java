@@ -63,6 +63,7 @@ public class Reservation extends BaseEntity {
                 .id(this.id)
                 .date(this.date)
                 .time(this.time)
+                .wod_id(this.wod.getId())
                 .maximumPeople(this.maximumPeople)
                 .availablePeople(this.availablePeople)
                 .coach_id(this.coach.getId())

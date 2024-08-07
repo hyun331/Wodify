@@ -1,16 +1,13 @@
 package com.soocompany.wodify.post.domain;
-
 import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.post.dto.PostUpdateReqDto;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
@@ -36,18 +33,20 @@ public class Post extends BaseEntity {
     @Column(length = 3000)
     private String contents;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private Long likeCount = 0L;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedTime;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Image> files = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
-
-    private Long likeCount;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedTime;
 
     public void updatePost(PostUpdateReqDto postUpdateReqDto) {
         this.type = postUpdateReqDto.getType();
@@ -59,8 +58,8 @@ public class Post extends BaseEntity {
         this.updateDelYn();
     }
 
-    public Long updateLikeCount(Long one) {
-        this.likeCount += one;
+    public Long updateLikeCount(Long likeCount) {
+        this.likeCount = likeCount;
         return this.likeCount;
     }
 }

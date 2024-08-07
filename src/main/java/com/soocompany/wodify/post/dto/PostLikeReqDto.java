@@ -9,5 +9,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostLikeReqDto {
     private Long id;
-    private String email;
 }

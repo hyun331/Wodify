@@ -25,7 +25,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+<<<<<<< HEAD
 import java.util.List;
+=======
+
+import java.util.List;
+
+>>>>>>> fbcee6e799b665dd89a952dafe4bf7d4c4da8152
 import java.util.Optional;
 import java.util.UUID;
 
@@ -82,6 +88,7 @@ public class BoxService {
         newMember.memberBoxUpdate(box);
         memberRepository.save(newMember);
         return box;
+
     }
 
 
@@ -123,6 +130,20 @@ public class BoxService {
         return boxRepository.save(box);
     }
 
+    //박스 폐업 -> 대표, 코치, 회원의 box 정보 null변경
+    public void boxDelete() {
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName()), "N").orElseThrow(()->{
+            log.error("boxDelete() : id에 맞는 member가 존재하지 않습니다.");
+            throw new EntityNotFoundException("id에 맞는 member가 존재하지 않습니다.");
+        });
+
+        Box box = member.getBox();
+        if(box==null){
+            log.error("boxDelete() : 대표의 box가 존재하지 않습니다.");
+            throw new EntityNotFoundException("대표의 box가 존재하지 않습니다.");
+        }
+        // Box 삭제
+        box.updateDelYn();
 
     public void boxDelete(Long id) {
         // 현재 로그인한 사용자 ID 가져오기
@@ -141,11 +162,14 @@ public class BoxService {
             String errorMessage = "현재 사용자가 해당 Box를 삭제할 권한이 없습니다.";
             log.error("boxDelete() : " + errorMessage);
             throw new IllegalArgumentException(errorMessage);
+
+        //박스에 연관된 코치, 회원 리스트
+        List<Member> boxMemberList = memberRepository.findByBoxAndDelYn(box, "N");
+        for(Member m: boxMemberList){
+            m.memberBoxUpdate(null);
+
         }
 
-        // Box 삭제
-        box.updateDelYn();
-        boxRepository.save(box);
     }
 
 

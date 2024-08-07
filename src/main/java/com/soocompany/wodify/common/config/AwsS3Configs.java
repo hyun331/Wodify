@@ -1,4 +1,4 @@
-package com.soocompany.wodify.post.controller;
+package com.soocompany.wodify.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
