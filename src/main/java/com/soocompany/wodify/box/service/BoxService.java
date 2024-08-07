@@ -15,11 +15,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
 import java.util.List;
+
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -36,7 +46,7 @@ public class BoxService {
     }
 
 
-    public BoxSaveReqDto boxCreate(BoxSaveReqDto dto) {
+    public Box  boxCreate(BoxSaveReqDto dto) throws IOException {
         // 현재 로그인한 사용자 ID 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
@@ -50,23 +60,37 @@ public class BoxService {
         }
 
         Member member = memberRepository.getReferenceById(Long.parseLong(memberId));
-        Box box = new Box(dto.getName(), dto.getLogo(), dto.getOperatingHours(), dto.getFee(), dto.getIntro(), dto.getAddress(), member);
-        boxRepository.save(box);
-        return dto;
+
+
+        // MultipartFile에서 파일 저장 경로 얻기
+        MultipartFile logoFile = dto.getLogoPath();
+        String logoPath = null;
+        if (logoFile != null && !logoFile.isEmpty()) {
+            byte[] bytes = logoFile.getBytes();
+            Path path = Paths.get("C:/Users/rnjsc/Desktop/tmp/", UUID.randomUUID() + "_" + logoFile.getOriginalFilename());
+            Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            logoPath = path.toString();
+        }
+
+        Box box = boxRepository.save(dto.toEntity(member));
+        if (logoPath != null) {
+            box.updateLogo(logoPath);
+            boxRepository.save(box);
+        }
+
+        return box;
     }
 
 
-    public BoxSaveReqDto boxUpdate(Long id, BoxUpdateReqDto dto) {
-        // 현재 로그인한 사용자 ID 가져오기
+    public Box boxUpdate(Long id, BoxUpdateReqDto dto) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
 
-        // Box 조회 및 소유자 확인
         Box box = boxRepository.findByIdAndDelYn(id, "N")
                 .orElseThrow(() -> {
                     String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
                     log.error("boxUpdate() : " + errorMessage);
-                    throw  new IllegalArgumentException(errorMessage);
+                    throw new IllegalArgumentException(errorMessage);
                 });
 
         if (!box.getMember().getId().toString().equals(memberId)) {
@@ -75,23 +99,25 @@ public class BoxService {
             throw new SecurityException(errorMessage);
         }
 
-        // Box 업데이트
+        // 파일 저장 로직 처리
+        MultipartFile logoFile = dto.getLogo();
+        if (logoFile != null && !logoFile.isEmpty()) {
+            byte[] bytes = logoFile.getBytes();
+            Path path = Paths.get("C:/Users/rnjsc/Desktop/tmp/", UUID.randomUUID() + "_" + logoFile.getOriginalFilename());
+            Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            box.updateLogo(path.toString());
+        }
+
+        // 로고 업데이트를 제외한 다른 필드만 업데이트
         box.updateDetails(dto.getName(),
-                dto.getLogo(),
+                box.getLogo(),
                 dto.getOperatingHours(),
                 dto.getFee(),
                 dto.getIntro(),
                 dto.getAddress()
         );
-        boxRepository.save(box);
-        return BoxSaveReqDto.builder()
-                .name(box.getName())
-                .logo(box.getLogo())
-                .operatingHours(box.getOperatingHours())
-                .fee(box.getFee())
-                .intro(box.getIntro())
-                .address(box.getAddress())
-                .build();
+
+        return boxRepository.save(box);
     }
 
     //박스 폐업 -> 대표, 코치, 회원의 box 정보 null변경
@@ -109,11 +135,29 @@ public class BoxService {
         // Box 삭제
         box.updateDelYn();
 
+    public void boxDelete(Long id) {
+        // 현재 로그인한 사용자 ID 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = authentication.getName();
+
+        // Box 조회 및 소유자 확인
+        Box box = boxRepository.findByIdAndDelYn(id, "N")
+                .orElseThrow(() -> {
+                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
+                    log.error("boxDelete() : " + errorMessage);
+                    throw new IllegalArgumentException(errorMessage);
+                });
+
+        if (!box.getMember().getId().toString().equals(memberId)) {
+            String errorMessage = "현재 사용자가 해당 Box를 삭제할 권한이 없습니다.";
+            log.error("boxDelete() : " + errorMessage);
+            throw new IllegalArgumentException(errorMessage);
 
         //박스에 연관된 코치, 회원 리스트
         List<Member> boxMemberList = memberRepository.findByBoxAndDelYn(box, "N");
         for(Member m: boxMemberList){
             m.memberBoxUpdate(null);
+
         }
 
     }
