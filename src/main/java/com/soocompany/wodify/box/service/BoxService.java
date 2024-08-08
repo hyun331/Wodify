@@ -25,13 +25,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-<<<<<<< HEAD
 import java.util.List;
-=======
 
 import java.util.List;
 
->>>>>>> fbcee6e799b665dd89a952dafe4bf7d4c4da8152
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,7 +47,7 @@ public class BoxService {
     }
 
 
-    public Box  boxCreate(BoxSaveReqDto dto) throws IOException {
+    public Box boxCreate(BoxSaveReqDto dto) throws IOException {
         // 현재 로그인한 사용자 ID 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
@@ -66,7 +63,7 @@ public class BoxService {
         Member member = memberRepository.getReferenceById(Long.parseLong(memberId));
 
         //맴버에 박스 넣어주기
-        Member newMember = memberRepository.findByEmailAndDelYn(member.getEmail(), "N").orElseThrow(()->new EntityNotFoundException("Test Ceo Initial Data Loader Exception"));
+        Member newMember = memberRepository.findByEmailAndDelYn(member.getEmail(), "N").orElseThrow(() -> new EntityNotFoundException("Test Ceo Initial Data Loader Exception"));
 
 
         // MultipartFile에서 파일 저장 경로 얻기
@@ -132,73 +129,75 @@ public class BoxService {
 
     //박스 폐업 -> 대표, 코치, 회원의 box 정보 null변경
     public void boxDelete() {
-        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName()), "N").orElseThrow(()->{
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName()), "N").orElseThrow(() -> {
             log.error("boxDelete() : id에 맞는 member가 존재하지 않습니다.");
             throw new EntityNotFoundException("id에 맞는 member가 존재하지 않습니다.");
         });
 
         Box box = member.getBox();
-        if(box==null){
+        if (box == null) {
             log.error("boxDelete() : 대표의 box가 존재하지 않습니다.");
             throw new EntityNotFoundException("대표의 box가 존재하지 않습니다.");
         }
         // Box 삭제
         box.updateDelYn();
 
-    public void boxDelete(Long id) {
-        // 현재 로그인한 사용자 ID 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String memberId = authentication.getName();
+        public void boxDelete (Long id){
+            // 현재 로그인한 사용자 ID 가져오기
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
 
-        // Box 조회 및 소유자 확인
-        Box box = boxRepository.findByIdAndDelYn(id, "N")
-                .orElseThrow(() -> {
-                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
-                    log.error("boxDelete() : " + errorMessage);
-                    throw new IllegalArgumentException(errorMessage);
-                });
+            // Box 조회 및 소유자 확인
+            Box box = boxRepository.findByIdAndDelYn(id, "N")
+                    .orElseThrow(() -> {
+                        String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
+                        log.error("boxDelete() : " + errorMessage);
+                        throw new IllegalArgumentException(errorMessage);
+                    });
 
-        if (!box.getMember().getId().toString().equals(memberId)) {
-            String errorMessage = "현재 사용자가 해당 Box를 삭제할 권한이 없습니다.";
-            log.error("boxDelete() : " + errorMessage);
-            throw new IllegalArgumentException(errorMessage);
+            if (!box.getMember().getId().toString().equals(memberId)) {
+                String errorMessage = "현재 사용자가 해당 Box를 삭제할 권한이 없습니다.";
+                log.error("boxDelete() : " + errorMessage);
+                throw new IllegalArgumentException(errorMessage);
 
-        //박스에 연관된 코치, 회원 리스트
-        List<Member> boxMemberList = memberRepository.findByBoxAndDelYn(box, "N");
-        for(Member m: boxMemberList){
-            m.memberBoxUpdate(null);
+                //박스에 연관된 코치, 회원 리스트
+                List<Member> boxMemberList = memberRepository.findByBoxAndDelYn(box, "N");
+                for (Member m : boxMemberList) {
+                    m.memberBoxUpdate(null);
 
+                }
+
+            }
         }
 
+
+            public Page<BoxListResDto> boxList (Pageable pageable){
+                Page<Box> boxPage = boxRepository.findAllByDelYn("N", pageable);
+                return boxPage.map(box -> BoxListResDto.builder()
+                        .name(box.getName())
+                        .logo(box.getLogo())
+                        .operatingHours(box.getOperatingHours())
+                        .address(box.getAddress())
+                        .build());
+            }
+
+
+            public BoxDetailResDto boxDetail (Long id){
+                Box box = boxRepository.findByIdAndDelYn(id, "N")
+                        .orElseThrow(() -> {
+                            String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
+                            log.error("boxDetail() : " + errorMessage);
+                            throw new IllegalArgumentException(errorMessage);
+                        });
+
+                return BoxDetailResDto.builder()
+                        .name(box.getName())
+                        .logo(box.getLogo())
+                        .operatingHours(box.getOperatingHours())
+                        .fee(box.getFee())
+                        .address(box.getAddress())
+                        .build();
+            }
+        }
     }
-
-
-    public Page<BoxListResDto> boxList(Pageable pageable) {
-        Page<Box> boxPage = boxRepository.findAllByDelYn("N", pageable);
-        return boxPage.map(box -> BoxListResDto.builder()
-                .name(box.getName())
-                .logo(box.getLogo())
-                .operatingHours(box.getOperatingHours())
-                .address(box.getAddress())
-                .build());
-    }
-
-
-    public BoxDetailResDto boxDetail(Long id) {
-        Box box = boxRepository.findByIdAndDelYn(id, "N")
-                .orElseThrow(() -> {
-                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
-                    log.error("boxDetail() : " + errorMessage);
-                    throw  new IllegalArgumentException(errorMessage);
-                });
-
-        return BoxDetailResDto.builder()
-                .name(box.getName())
-                .logo(box.getLogo())
-                .operatingHours(box.getOperatingHours())
-                .fee(box.getFee())
-                .address(box.getAddress())
-                .build();
-    }
-}
 
