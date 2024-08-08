@@ -1,20 +1,18 @@
 import {createRouter, createWebHistory} from 'vue-router';
+
 import { memberRouter } from './MemberRouter';
-import HelloWorld from '@/components/HelloWorld.vue';
+import HomeView from '@/views/common/HomeView.vue';
+import {reservationRouter} from './reservationRouter';
+
 const routes = [
-    ...memberRouter,
-    
-
-    // 홈화면
     {
-        path:"/",
-        name: "HelloWorld",
-        component: HelloWorld
-    }
-    
-
+        path: '/',
+        name: 'HomeView',
+        component: HomeView
+    },
+    ...memberRouter,
+    ...reservationRouter
 ]
-
 
 const router = createRouter({
     history: createWebHistory(),
