@@ -114,4 +114,14 @@ public class ReservationDetailService {
         reservationDetail.updateDelYn();
         reservationDetailRepository.save(reservationDetail);
     }
+
+    public Page<ReservationDetailDetResDto> myReservationList(Pageable pageable) {
+        Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
+            log.error("reservationCreate() : 해당 id의 회원을 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
+        });
+        Page<ReservationDetail> details = reservationDetailRepository.findByMemberAndDelYn(member, "N", pageable);
+        return details.map(ReservationDetail::detFromEntity);
+    }
 }

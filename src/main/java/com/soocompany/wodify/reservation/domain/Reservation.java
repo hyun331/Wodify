@@ -55,6 +55,7 @@ public class Reservation extends BaseEntity {
                 .id(this.id)
                 .date(this.date)
                 .time(this.time)
+                .coach(this.coach.getName())
                 .build();
 
     }
