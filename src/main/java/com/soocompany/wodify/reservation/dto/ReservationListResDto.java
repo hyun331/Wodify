@@ -18,6 +18,7 @@ public class ReservationListResDto {
     private Long id;
     private LocalDate date;
     private LocalTime time;
+    private String coach;
     private Long wod_id;
 
 }
