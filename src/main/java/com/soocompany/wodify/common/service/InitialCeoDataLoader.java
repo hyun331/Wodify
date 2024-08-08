@@ -61,19 +61,19 @@ public class InitialCeoDataLoader implements CommandLineRunner {
 
         }
 
-//        if(memberService.isMemberExist("sus03319@naver.com", "N")==null){
-//            MemberSaveReqDto member = MemberSaveReqDto.builder()
-//                    .name("신승현")
-//                    .email("sus03319@naver.com")
-//                    .phone("010-1231-6484")
-//                    .role(Role.USER)
-//                    .address("보라매로 87")
-//                    .deadLift(BigDecimal.valueOf(80.5))
-//                    .squat(BigDecimal.valueOf(60.5))
-//                    .benchPress(BigDecimal.valueOf(40.5))
-//                    .build();
-//            memberService.memberRegister(member);
-//        }
+        if(memberService.isMemberExist("sus03319@naver.com", "N")==null){
+            MemberSaveReqDto member = MemberSaveReqDto.builder()
+                    .name("신승현")
+                    .email("sus03319@naver.com")
+                    .phone("010-1231-6484")
+                    .role(Role.USER)
+                    .address("보라매로 87")
+                    .deadLift(BigDecimal.valueOf(80.5))
+                    .squat(BigDecimal.valueOf(60.5))
+                    .benchPress(BigDecimal.valueOf(40.5))
+                    .build();
+            memberService.memberRegister(member);
+        }
         if(memberService.isMemberExist("2rhdwndmswl@naver.com", "N")==null){
             MemberSaveReqDto member = MemberSaveReqDto.builder()
                     .name("방은지")
