@@ -5,18 +5,21 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soocompany.wodify.common.auth.JwtTokenProvider;
+import com.soocompany.wodify.common.dto.CommonErrorDto;
 import com.soocompany.wodify.common.dto.CommonResDto;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.domain.OAuthToken;
-import com.soocompany.wodify.member.dto.MemberDetResDto;
-import com.soocompany.wodify.member.dto.MemberListResDto;
-import com.soocompany.wodify.member.dto.MemberSaveReqDto;
-import com.soocompany.wodify.member.dto.MemberUpdateDto;
+import com.soocompany.wodify.member.dto.*;
 import com.soocompany.wodify.member.service.MemberService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +32,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RequestMapping("/member")
 @RestController
@@ -37,12 +41,17 @@ public class MemberController {
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Qualifier("refreshToken")
+    private final RedisTemplate<String, Object> redisTemplate;
+
     @Autowired
-    public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider){
+    public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider, @Qualifier("refreshToken") RedisTemplate<String, Object> redisTemplate){
         this.memberService = memberService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.redisTemplate = redisTemplate;
     }
-
+    @Value("${jwt.secretKeyRt}")
+    String secretKeyRt;
 
     ////////////////////////////////////////////////
     //kakao login
@@ -99,7 +108,7 @@ public class MemberController {
                 kakaoProfileRequest2,
                 String.class
         );
-        System.out.println("body \n"+response2.getBody());
+//        System.out.println("body \n"+response2.getBody());
         JsonNode jsonNode = null;
         String email = null;
         try{
@@ -110,7 +119,7 @@ public class MemberController {
         }
 
 
-        System.out.println(email+"\n\n\n\n\n\n\n");
+//        System.out.println(email+"\n\n\n\n\n\n\n");
 
         //현재 데이터베이스에 있는지 확인
         MemberDetResDto member = memberService.isMemberExist(email, "N");
@@ -118,16 +127,52 @@ public class MemberController {
         if(member!=null){
             //회원으로 존재하면
             String jwtToken = jwtTokenProvider.createToken(member.getId().toString(), member.getRole().toString());
+            String refreshToken = jwtTokenProvider.createRefreshToken(member.getId().toString(), member.getRole().toString());
 
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, member.getName()+"회원님 login 완료", jwtToken);
+            System.out.println("로그인화면");
+
+            redisTemplate.opsForValue().set(member.getId().toString(), refreshToken, 240, TimeUnit.HOURS);
+            Map<String, Object> loginInfo = new HashMap<>();
+            loginInfo.put("id", member.getId());
+            loginInfo.put("token", jwtToken);
+            loginInfo.put("refreshToken", refreshToken);
+
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, member.getName()+"회원님 login 완료", loginInfo);
+
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 
         }else{
             //회원가입 해야함
             CommonResDto commonResDto = new CommonResDto(HttpStatus.UNAUTHORIZED, email+" 이메일이 존재하지 않습니다. 회원가입 필요", email);
+            System.out.println("회원가입 화면");
             return new ResponseEntity<>(commonResDto, HttpStatus.UNAUTHORIZED);
         }
 
+    }
+
+
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> generateNewAccessToken(@RequestBody MemberRefreshDto dto){
+        Claims claims = null;
+        String rt = dto.getRefreshToken();
+        try{
+            claims = Jwts.parser().setSigningKey(secretKeyRt).parseClaimsJws(rt).getBody();
+        }catch (Exception e){
+            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.UNAUTHORIZED, "invalid refresh token"), HttpStatus.UNAUTHORIZED);
+        }
+
+        //access token 새로 발급해야함
+        String memberId = claims.getSubject();
+        String role = claims.get("role").toString();
+
+        String newAt = jwtTokenProvider.createToken(memberId, role);
+
+
+        Map<String, Object> info = new HashMap<>();
+        info.put("token", newAt);
+
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "at is renewed", info), HttpStatus.OK);
     }
 
     //postman 테스트용
@@ -136,8 +181,17 @@ public class MemberController {
         MemberDetResDto member = memberService.isMemberExist(email, "N");
         if(member!=null){
             String jwtToken = jwtTokenProvider.createToken(member.getId().toString(), member.getRole().toString());
+            String refreshToken = jwtTokenProvider.createRefreshToken(member.getId().toString(), member.getRole().toString());
 
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, member.getName()+"회원님 login 완료", jwtToken);
+            System.out.println("로그인화면");
+
+            redisTemplate.opsForValue().set(member.getId().toString(), refreshToken, 240, TimeUnit.HOURS);
+            Map<String, Object> loginInfo = new HashMap<>();
+            loginInfo.put("id", member.getId());
+            loginInfo.put("token", jwtToken);
+            loginInfo.put("refreshToken", refreshToken);
+
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, member.getName()+"회원님 login 완료", loginInfo);
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 
         }else{
