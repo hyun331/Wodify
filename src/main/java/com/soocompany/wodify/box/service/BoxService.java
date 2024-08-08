@@ -46,7 +46,7 @@ public class BoxService {
     }
 
 
-    public Box boxCreate(BoxSaveReqDto dto) throws IOException {
+    public BoxSaveReqDto boxCreate(BoxSaveReqDto dto) throws IOException {
         // 현재 로그인한 사용자 ID 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
@@ -62,8 +62,8 @@ public class BoxService {
         Member member = memberRepository.getReferenceById(Long.parseLong(memberId));
 
         //맴버에 박스 넣어주기
-        Member newMember = memberRepository.findByEmailAndDelYn(member.getEmail(), "N").orElseThrow(() -> new EntityNotFoundException("Test Ceo Initial Data Loader Exception"));
-
+        Member newMember = memberRepository.findByEmailAndDelYn(member.getEmail(), "N")
+                .orElseThrow(() -> new EntityNotFoundException("Test Ceo Initial Data Loader Exception"));
 
         // MultipartFile에서 파일 저장 경로 얻기
         MultipartFile logoFile = dto.getLogoPath();
@@ -83,12 +83,12 @@ public class BoxService {
 
         newMember.memberBoxUpdate(box);
         memberRepository.save(newMember);
-        return box;
 
+        return BoxSaveReqDto.fromEntity(box);
     }
 
 
-    public Box boxUpdate(Long id, BoxUpdateReqDto dto) throws IOException {
+    public BoxSaveReqDto boxUpdate(Long id, BoxUpdateReqDto dto) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
 
@@ -123,7 +123,8 @@ public class BoxService {
                 dto.getAddress()
         );
 
-        return boxRepository.save(box);
+        Box updatedBox = boxRepository.save(box);
+        return BoxSaveReqDto.fromEntity(updatedBox);
     }
 
 
@@ -152,32 +153,32 @@ public class BoxService {
         }
 
 
-    public Page<BoxListResDto> boxList(Pageable pageable) {
-        Page<Box> boxPage = boxRepository.findAllByDelYn("N", pageable);
-        return boxPage.map(box -> BoxListResDto.builder()
-                .name(box.getName())
-                .logo(box.getLogo())
-                .operatingHours(box.getOperatingHours())
-                .address(box.getAddress())
-                .build());
-    }
+//    public Page<BoxListResDto> boxList(Pageable pageable) {
+//        Page<Box> boxPage = boxRepository.findAllByDelYn("N", pageable);
+//        return boxPage.map(box -> BoxListResDto.builder()
+//                .name(box.getName())
+//                .logo(box.getLogo())
+//                .operatingHours(box.getOperatingHours())
+//                .address(box.getAddress())
+//                .build());
+//    }
 
 
-    public BoxDetailResDto boxDetail(Long id) {
-        Box box = boxRepository.findByIdAndDelYn(id, "N")
-                .orElseThrow(() -> {
-                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
-                    log.error("boxDetail() : " + errorMessage);
-                    throw  new IllegalArgumentException(errorMessage);
-                });
+//    public BoxDetailResDto boxDetail(Long id) {
+//        Box box = boxRepository.findByIdAndDelYn(id, "N")
+//                .orElseThrow(() -> {
+//                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
+//                    log.error("boxDetail() : " + errorMessage);
+//                    throw  new IllegalArgumentException(errorMessage);
+//                });
+//
+//        return BoxDetailResDto.builder()
+//                .name(box.getName())
+//                .logo(box.getLogo())
+//                .operatingHours(box.getOperatingHours())
+//                .fee(box.getFee())
+//                .address(box.getAddress())
+//                .build();
+//    }
 
-        return BoxDetailResDto.builder()
-                .name(box.getName())
-                .logo(box.getLogo())
-                .operatingHours(box.getOperatingHours())
-                .fee(box.getFee())
-                .address(box.getAddress())
-                .build();
-    }
-}
 
