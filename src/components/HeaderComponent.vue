@@ -71,16 +71,26 @@
                 </v-list-item>
             </v-list>
         </v-menu>
-        <v-btn :to="{path:'/'}">LOGIN</v-btn>
+        <v-btn @click="kakaoLogin">LOGIN</v-btn>
         <v-btn :to="{path:'/'}">LOGOUT</v-btn>
     </v-app-bar>
+
 </template>
 
 <script>
+// import axios from 'axios';
+import { KAKAO_AUTH_URL } from '@/router/Oauth';
 export default{
     data(){
         return{
         }
+    },
+    methods:{
+        kakaoLogin(){
+            window.location.href=KAKAO_AUTH_URL;
+        }
+
     }
+
 }
 </script>
