@@ -46,7 +46,7 @@ public class BoxService {
     }
 
 
-    public Box  boxCreate(BoxSaveReqDto dto) throws IOException {
+    public BoxSaveReqDto boxCreate(BoxSaveReqDto dto) throws IOException {
         // 현재 로그인한 사용자 ID 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
@@ -61,6 +61,9 @@ public class BoxService {
 
         Member member = memberRepository.getReferenceById(Long.parseLong(memberId));
 
+        //맴버에 박스 넣어주기
+        Member newMember = memberRepository.findByEmailAndDelYn(member.getEmail(), "N")
+                .orElseThrow(() -> new EntityNotFoundException("Test Ceo Initial Data Loader Exception"));
 
         // MultipartFile에서 파일 저장 경로 얻기
         MultipartFile logoFile = dto.getLogoPath();
@@ -78,12 +81,14 @@ public class BoxService {
             boxRepository.save(box);
         }
 
-        return box;
+        newMember.memberBoxUpdate(box);
+        memberRepository.save(newMember);
 
+        return BoxSaveReqDto.fromEntity(box);
     }
 
 
-    public Box boxUpdate(Long id, BoxUpdateReqDto dto) throws IOException {
+    public BoxSaveReqDto boxUpdate(Long id, BoxUpdateReqDto dto) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
 
@@ -118,20 +123,21 @@ public class BoxService {
                 dto.getAddress()
         );
 
-        return boxRepository.save(box);
+        Box updatedBox = boxRepository.save(box);
+        return BoxSaveReqDto.fromEntity(updatedBox);
     }
 
 
 
     //박스 폐업 -> 대표, 코치, 회원의 box 정보 null변경
     public void boxDelete() {
-        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName()), "N").orElseThrow(()->{
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName()), "N").orElseThrow(() -> {
             log.error("boxDelete() : id에 맞는 member가 존재하지 않습니다.");
             throw new EntityNotFoundException("id에 맞는 member가 존재하지 않습니다.");
         });
 
         Box box = member.getBox();
-        if(box==null){
+        if (box == null) {
             log.error("boxDelete() : 대표의 box가 존재하지 않습니다.");
             throw new EntityNotFoundException("대표의 box가 존재하지 않습니다.");
         }
@@ -143,35 +149,36 @@ public class BoxService {
             m.memberBoxUpdate(null);
         }
 
-    }
+            }
+        }
 
 
-    public Page<BoxListResDto> boxList(Pageable pageable) {
-        Page<Box> boxPage = boxRepository.findAllByDelYn("N", pageable);
-        return boxPage.map(box -> BoxListResDto.builder()
-                .name(box.getName())
-                .logo(box.getLogo())
-                .operatingHours(box.getOperatingHours())
-                .address(box.getAddress())
-                .build());
-    }
+//    public Page<BoxListResDto> boxList(Pageable pageable) {
+//        Page<Box> boxPage = boxRepository.findAllByDelYn("N", pageable);
+//        return boxPage.map(box -> BoxListResDto.builder()
+//                .name(box.getName())
+//                .logo(box.getLogo())
+//                .operatingHours(box.getOperatingHours())
+//                .address(box.getAddress())
+//                .build());
+//    }
 
 
-    public BoxDetailResDto boxDetail(Long id) {
-        Box box = boxRepository.findByIdAndDelYn(id, "N")
-                .orElseThrow(() -> {
-                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
-                    log.error("boxDetail() : " + errorMessage);
-                    throw  new IllegalArgumentException(errorMessage);
-                });
+//    public BoxDetailResDto boxDetail(Long id) {
+//        Box box = boxRepository.findByIdAndDelYn(id, "N")
+//                .orElseThrow(() -> {
+//                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
+//                    log.error("boxDetail() : " + errorMessage);
+//                    throw  new IllegalArgumentException(errorMessage);
+//                });
+//
+//        return BoxDetailResDto.builder()
+//                .name(box.getName())
+//                .logo(box.getLogo())
+//                .operatingHours(box.getOperatingHours())
+//                .fee(box.getFee())
+//                .address(box.getAddress())
+//                .build();
+//    }
 
-        return BoxDetailResDto.builder()
-                .name(box.getName())
-                .logo(box.getLogo())
-                .operatingHours(box.getOperatingHours())
-                .fee(box.getFee())
-                .address(box.getAddress())
-                .build();
-    }
-}
 

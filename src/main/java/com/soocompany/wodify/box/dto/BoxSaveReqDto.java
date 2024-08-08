@@ -37,5 +37,16 @@ public class BoxSaveReqDto {
 
         return box;
     }
+
+    public static BoxSaveReqDto fromEntity(Box box) {
+        return BoxSaveReqDto.builder()
+                .name(box.getName())
+                .operatingHours(box.getOperatingHours())
+                .fee(box.getFee())
+                .intro(box.getIntro())
+                .address(box.getAddress())
+                .representativeId(box.getMember().getId())
+                .build();
+    }
 }
 

@@ -39,23 +39,25 @@ public class BoxController {
     // Box 생성
     @PostMapping("/create")
     @PreAuthorize("hasRole('CEO')")
-    public ResponseEntity<?> boxCreate(@ModelAttribute BoxSaveReqDto boxSaveReqDto) {
+    public ResponseEntity<CommonResDto> boxCreate(@ModelAttribute BoxSaveReqDto boxSaveReqDto) {
         // 현재 로그인한 사용자의 ID를 가져옴
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserId = authentication.getName(); // 토큰에서 가져온 ID
+        String currentUserId = authentication.getName();
 
         // representativeId를 로그인한 사용자 ID로 설정
         boxSaveReqDto.setRepresentativeId(Long.parseLong(currentUserId));
 
         try {
-            Box box = boxService.boxCreate(boxSaveReqDto);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "Box 생성 완료", box);
+            BoxSaveReqDto responseDto = boxService.boxCreate(boxSaveReqDto);
+
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "Box 생성 완료", responseDto);
             return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
         } catch (Exception e) {
             CommonResDto commonResDto = new CommonResDto(HttpStatus.INTERNAL_SERVER_ERROR, "Box 생성 중 오류 발생: " + e.getMessage(), null);
             return new ResponseEntity<>(commonResDto, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 
 
@@ -81,8 +83,8 @@ public class BoxController {
                 .build();
 
         try {
-            Box updatedBox = boxService.boxUpdate(id, boxUpdateReqDto);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box 수정 완료", updatedBox);
+            BoxSaveReqDto updatedBoxDto = boxService.boxUpdate(id, boxUpdateReqDto);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box 수정 완료", updatedBoxDto);
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
         } catch (Exception e) {
             CommonResDto commonResDto = new CommonResDto(HttpStatus.INTERNAL_SERVER_ERROR, "Box 수정 중 오류 발생: " + e.getMessage(), null);
@@ -102,25 +104,25 @@ public class BoxController {
 
 
 
-    // Box 목록 조회
-    @GetMapping("/list")
-    public ResponseEntity<CommonResDto> boxList(Pageable pageable) {
-        Page<BoxListResDto> boxes = boxService.boxList(pageable);
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box 목록이 성공적으로 조회되었습니다", boxes);
-        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
-    }
+//    // Box 목록 조회
+//    @GetMapping("/list")
+//    public ResponseEntity<CommonResDto> boxList(Pageable pageable) {
+//        Page<BoxListResDto> boxes = boxService.boxList(pageable);
+//        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box 목록이 성공적으로 조회되었습니다", boxes);
+//        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+//    }
 
-    // Box 상세 조회
-    @GetMapping("/detail/{id}")
-    public ResponseEntity<CommonResDto> boxDetail(@PathVariable Long id) {
-        try {
-            BoxDetailResDto boxDetail = boxService.boxDetail(id);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box가 성공적으로 조회되었습니다", boxDetail);
-            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.NOT_FOUND, e.getMessage(), null);
-            return new ResponseEntity<>(commonResDto, HttpStatus.NOT_FOUND);
-        }
-    }
+//    // Box 상세 조회
+//    @GetMapping("/detail/{id}")
+//    public ResponseEntity<CommonResDto> boxDetail(@PathVariable Long id) {
+//        try {
+//            BoxDetailResDto boxDetail = boxService.boxDetail(id);
+//            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box가 성공적으로 조회되었습니다", boxDetail);
+//            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+//        } catch (IllegalArgumentException e) {
+//            CommonResDto commonResDto = new CommonResDto(HttpStatus.NOT_FOUND, e.getMessage(), null);
+//            return new ResponseEntity<>(commonResDto, HttpStatus.NOT_FOUND);
+//        }
+//    }
 
 }
