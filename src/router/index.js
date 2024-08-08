@@ -11,7 +11,8 @@ const routes = [
         component: HomeView
     },
     ...memberRouter,
-    ...reservationRouter
+    ...reservationRouter,
+    ...wodRouter
 ]
 
 const router = createRouter({
