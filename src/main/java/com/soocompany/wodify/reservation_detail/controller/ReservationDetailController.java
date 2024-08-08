@@ -34,6 +34,11 @@ public class ReservationDetailController {
         Page<ReservationDetailDetResDto> detResDtoList = reservationDetailService.listByMember(id, pageable);
         return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약싱세 조회 성공",detResDtoList),HttpStatus.OK);
     }
+    @GetMapping("/mylist")
+    public ResponseEntity<CommonResDto> reservationDetail(Pageable pageable) {
+        Page<ReservationDetailDetResDto> detResDtoList = reservationDetailService.myReservationList(pageable);
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약싱세 조회 성공",detResDtoList),HttpStatus.OK);
+    }
 
     @PatchMapping("/delete/{id}")
     public ResponseEntity<CommonResDto> reservationDetailDelete(@PathVariable Long id) {
