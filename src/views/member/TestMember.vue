@@ -1,6 +1,7 @@
 <template>
-    <v-app-bar>네비게이션바</v-app-bar>
-    <div>test</div>
+    <div class="background">
+        <p class="rubikMonoOne">MEMBER 한글 지원할까..?</p>
+    </div>
 
 </template>
 
@@ -9,3 +10,18 @@ export default{
 
 }
 </script>
+
+
+<style>
+.background{
+    height: 100vh;
+    overflow: hidden;
+    margin:0;
+    background-image: url("@/assets/background.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+</style>
