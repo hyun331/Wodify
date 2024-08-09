@@ -46,7 +46,7 @@ public class BoxService {
     }
 
 
-    public BoxSaveReqDto boxCreate(BoxSaveReqDto dto) throws IOException {
+    public BoxSaveReqDto boxCreate(BoxSaveReqDto dto) {
         // 현재 로그인한 사용자 ID 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
@@ -69,9 +69,18 @@ public class BoxService {
         MultipartFile logoFile = dto.getLogoPath();
         String logoPath = null;
         if (logoFile != null && !logoFile.isEmpty()) {
-            byte[] bytes = logoFile.getBytes();
+            byte[] bytes = null;
+            try {
+                bytes = logoFile.getBytes();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             Path path = Paths.get("C:/Users/rnjsc/Desktop/tmp/", UUID.randomUUID() + "_" + logoFile.getOriginalFilename());
-            Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            try {
+                Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             logoPath = path.toString();
         }
 
