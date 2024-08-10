@@ -66,6 +66,8 @@ public class WodService {
             log.error("wodFind() : 해당 이메일의 멤버를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 이메일의 멤버를 찾을 수 없습니다.");
         });
+        if (member.getBox() == null)
+            throw new EntityNotFoundException("db 에 box 설정하고 wod 를 조회해주세요");
         Box box = boxRepository.findByMemberIdAndDelYn(member.getBox().getId(), "N").orElseThrow(() -> {
             log.error("wodFind() : 해당 ID의 박스를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 ID의 박스를 찾을 수 없습니다.");
