@@ -30,8 +30,8 @@ export default{
                 localStorage.setItem('role', role);
                 window.location.href="/";
             }catch(e){
-                alert(e.response.data.error_message);
-                window.location.href="/member/choose/register"
+                // alert(e.response.data.result);
+                window.location.href=`/member/choose/register?email=${e.response.data.result}`;
             }
             
 
