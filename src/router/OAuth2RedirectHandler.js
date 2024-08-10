@@ -1,7 +1,8 @@
 import axios from "axios";
-
+import { jwtDecode } from "jwt-decode";
 
 export default{
+
     name: 'OAuth2RedirectHandler',
     data(){
         return{
@@ -20,6 +21,13 @@ export default{
                 const response = await axios.get(`http://localhost:8090/member/auth/kakao/callback?code=${code}`);
                 alert(response.data.result.token);
                 //홈화면
+                const token = response.data.result.token;
+                const refreshToken = response.data.result.refreshToken;
+                const role = jwtDecode(token).role;
+
+                localStorage.setItem('token', token);
+                localStorage.setItem('refreshToken', refreshToken);
+                localStorage.setItem('role', role);
                 window.location.href="/";
             }catch(e){
                 alert(e.response.data.error_message);

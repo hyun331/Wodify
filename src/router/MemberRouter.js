@@ -14,6 +14,7 @@ export const  memberRouter = [
         component: OAuth2RedirectHandler
     },
 
+
     {
         path:"/member/choose/register",
         name: "ChooseRegister",

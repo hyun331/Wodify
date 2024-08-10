@@ -71,23 +71,39 @@
                 </v-list-item>
             </v-list>
         </v-menu>
-        <v-btn @click="kakaoLogin">LOGIN</v-btn>
-        <v-btn :to="{path:'/'}">LOGOUT</v-btn>
+        <v-btn @click="kakaoLogin" v-if="!isLogin">LOGIN</v-btn>
+        <v-btn @click="kakaoLogout" v-if="isLogin">LOGOUT</v-btn>
     </v-app-bar>
 
 </template>
 
 <script>
 // import axios from 'axios';
-import { KAKAO_AUTH_URL } from '@/router/Oauth';
+import { KAKAO_LOGIN_URL } from '@/router/KakaoLoginUrl';
+import { KAKAO_LOGOUT_URL } from '@/router/KakaoLogoutUrl';
 export default{
     data(){
         return{
+            userRole: null,
+            isLogin: false,
+        }
+    },
+    created(){
+        const token = localStorage.getItem('token');
+        if(token){
+            this.isLogin = true;
+            this.userRole = localStorage.getItem("role");
         }
     },
     methods:{
         kakaoLogin(){
-            window.location.href=KAKAO_AUTH_URL;
+            window.location.href=KAKAO_LOGIN_URL;
+        },
+        kakaoLogout(){
+            localStorage.removeItem('token');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('role');
+            window.location.href=KAKAO_LOGOUT_URL;
         }
 
     }
