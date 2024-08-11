@@ -1,8 +1,9 @@
 import {createRouter, createWebHistory} from 'vue-router';
-import { memberRouter } from './member/MemberRouter';
 
+import { memberRouter } from './MemberRouter';
 import HomeView from '@/views/common/HomeView.vue';
 import {reservationRouter} from './reservationRouter';
+import { wodRouter } from './wodRouter';
 
 const routes = [
     {
@@ -11,9 +12,9 @@ const routes = [
         component: HomeView
     },
     ...memberRouter,
-    ...reservationRouter
+    ...reservationRouter,
+    ...wodRouter
 ]
-
 
 const router = createRouter({
     history: createWebHistory(),
