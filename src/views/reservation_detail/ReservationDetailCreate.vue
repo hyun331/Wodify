@@ -29,17 +29,31 @@
                     ></v-text-field>
                 </v-col>
                 <v-col cols="6" class="d-flex justify-center align-center">
-                    {{ wod }}
+                    {{ wod.date }}
+                    {{ wod.timeCap }}
+                    {{ wod.rounds }}
+                    {{ wod.info }}
+                    <v-table>
+                        <thead><tr><th>name</th><th>contents</th></tr></thead>
+                        <tbody>
+                            <tr v-for="detail in wod.wodDetResDtoList" :key="detail.id">
+                                <td>{{detail.name}}</td>
+                                <td>{{detail.contents}}</td>
+                            </tr>
+                        </tbody>
+                    </v-table>
                 </v-col>
             </v-row>
             <v-row>
                 <v-col cols="12">
                     <v-select
-                    v-model="time"
-                    :items="timeOptions"
-                    label="시간 선택"
-                    class="mx-2"
-                ></v-select>
+                        v-model="time"
+                        :items="timeOptions"
+                        item-text="text"  
+                        item-value="value"
+                        label="시간 선택"
+                        class="mx-2"
+                    ></v-select>
                 </v-col>
             </v-row>
             <v-row class="d-flex justify-center align-center">
@@ -49,20 +63,25 @@
                   </button>
             </v-row>
         </v-form>
-        
+        <v-date-picker v-model="vdate" @input="menu = false" :max="maxDate"></v-date-picker>
         
     </v-container>
     </div>
 </template>
 
 <script>
-export default {
+import axios from 'axios';
+export default {    
+    
     data() {
         return {
+            menu: false,
+            vdate: null,
             date:"",
             wod:"와드 내용",
             time:"",
-            timeOptions: [] // 시간 옵션을 여기에 저장
+            timeOptions: [], // 시간 옵션을 여기에 저장
+            token:"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MjMxOTU1NTAsImV4cCI6MTcyMzIxMzU1MH0.hdvFCt9lzy0UjjaTc0QukWubTUZUYd2ko0o_EsPRn-E"
         }
     },
     watch: {
@@ -74,11 +93,44 @@ export default {
         }
     },
     methods: {
-        fetchWod (date){
-            this.wod = `${date} 와드`;
+        async fetchWod (date){
+            const dateData = {date:this.date}
+            console.log(date)
+            try {
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find`, {
+                    params: dateData,
+                    headers: { 
+                        Authorization: `Bearer ${this.token}`
+                    }
+                });
+                console.log(response);
+                this.wod = response.data.result;
+            } catch (error) {
+                console.log(error);
+            }
+            
+
         },
-        fetchTimeOptions(date) {
-            this.timeOptions = [2,3,4,5,date];
+        async fetchTimeOptions() {
+            console.log(this.date);
+            const dateData = {date:this.date};
+            try {
+                const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation/box/list/`, 
+                    dateData,
+                    {
+                        headers: { 
+                            Authorization: `Bearer ${this.token}`
+                        }
+                    }
+                );
+                console.log(response.data.result.content);
+                this.timeOptions = response.data.result.content.map(item => {
+                    return { text: item.time, value: item.id };
+                });
+                console.log(this.timeOptions)
+            } catch (error) {
+                console.log(error);
+            }
         },
         reservation() {
             const reservationData = {
