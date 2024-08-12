@@ -1,12 +1,12 @@
 <template>
-    <button class="rounded-button" type="submit">
+    <button class="rounded-button" :type="buttonType">
         <i class="fas fa-map-marker-alt"></i>
         <span class="button-text">{{ text }}</span>
     </button>
 </template>
 <script>
 export default {
-    props: ['text']
+    props: ['text', 'buttonType']
 }
 </script>
 <style>
