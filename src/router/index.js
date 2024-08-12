@@ -3,8 +3,8 @@ import {createRouter, createWebHistory} from 'vue-router';
 import { memberRouter } from './MemberRouter';
 import HomeView from '@/views/common/HomeView.vue';
 import {reservationRouter} from './reservationRouter';
-import { boxRouter } from './BoxRouter';
 import { wodRouter } from './wodRouter';
+import { boxRouter } from './BoxRouter';
 
 const routes = [
     {
@@ -14,8 +14,8 @@ const routes = [
     },
     ...memberRouter,
     ...reservationRouter,
-    ...boxRouter,
-    ...wodRouter
+    ...wodRouter,
+    ...boxRouter
 ]
 
 const router = createRouter({
