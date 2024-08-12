@@ -23,7 +23,6 @@ public class PostSaveReqDto {
     private Type type;
     private String title;
     private String contents;
-    private Long likeCount;
     private MultipartFile[] files;
 
     public Post toEntity(Member member) {
@@ -31,9 +30,7 @@ public class PostSaveReqDto {
                 .type(this.type)
                 .title(this.title)
                 .contents(this.contents)
-                .likeCount(0L)
                 .member(member)
-                .files(new ArrayList<>())
                 .build();
     }
 }

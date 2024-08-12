@@ -4,7 +4,6 @@ import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.repository.MemberRepository;
 import com.soocompany.wodify.post.domain.LikeEvent;
 import com.soocompany.wodify.post.domain.Post;
-import com.soocompany.wodify.post.dto.PostLikeReqDto;
 import com.soocompany.wodify.post.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -31,13 +30,13 @@ public class LikeService {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public Long postLike(PostLikeReqDto postLikeReqDto) {
+    public Long postLike(Long postId) {
         String id = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(() -> {
             log.error("postLike() : Email 에 해당하는 member 가 없습니다.");
             return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
         });
-        Post post = postRepository.findById(postLikeReqDto.getId()).orElseThrow(() -> {
+        Post post = postRepository.findById(postId).orElseThrow(() -> {
             log.error("postLike() : 해당 id의 게시글을 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 id의 게시글을 찾을 수 없습니다.");
         });
@@ -45,12 +44,12 @@ public class LikeService {
             log.error("postLike() : 삭제된 게시글 입니다.");
             throw new IllegalArgumentException("삭제된 게시글 입니다.");
         }
-        String likeStatusKey = "post::" + post.getId() + "member::" + member.getId() + "::likeStatus";
+        String likeStatusKey = "post::" + post.getId() + "::member::" + member.getId() + "::likeStatus";
         String likeCountKey = "post::" + post.getId() + "::likeCount";
 
         Boolean liked = redisLikeTemplate.hasKey(likeStatusKey);
+        System.out.println("liked = " + liked);
         Long likeCount;
-
         if (Boolean.TRUE.equals(liked)) {
             redisLikeTemplate.delete(likeStatusKey);
             likeCount = redisLikeTemplate.opsForValue().decrement(likeCountKey);
@@ -62,7 +61,7 @@ public class LikeService {
             likeCount = redisLikeTemplate.opsForValue().increment(likeCountKey);
         }
 
-        rabbitTemplate.convertAndSend(RabbitMqConfig.LIKE_EVENT_QUEUE, "post.like", new LikeEvent(post.getId(), member.getId(), likeCount));
+        rabbitTemplate.convertAndSend(RabbitMqConfig.LIKE_EVENT_QUEUE, new LikeEvent(post.getId(), member.getId(), likeCount));
         return likeCount;
     }
 }

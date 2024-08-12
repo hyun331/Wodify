@@ -40,8 +40,8 @@ public class Post extends BaseEntity {
     @UpdateTimestamp
     private LocalDateTime updatedTime;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> files = new ArrayList<>();
 
     @Builder.Default

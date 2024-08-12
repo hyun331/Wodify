@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class CommentResDto{
     private Long id;
-    private String email;
+    private String name;
     private String comment;
     private List<CommentResDto> replies;
     private LocalDateTime createdTime;
@@ -22,7 +22,7 @@ public class CommentResDto{
     static public CommentResDto fromEntity(Comment comment) {
         return CommentResDto.builder()
                 .id(comment.getId())
-                .email(comment.getMember().getEmail())
+                .name(comment.getMember().getName())
                 .comment(comment.getComment())
                 .replies(comment.getReplies().stream()
                         .filter(comment1 -> comment1.getDelYn().equals("N"))
