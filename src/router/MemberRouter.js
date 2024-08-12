@@ -24,7 +24,7 @@ export const  memberRouter = [
     },
 
     {
-        path:"/member/userRegister",
+        path:"/member/user-register",
         name: "UserRegister",
         component: UserRegister
     },

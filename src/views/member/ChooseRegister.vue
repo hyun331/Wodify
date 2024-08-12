@@ -73,7 +73,7 @@ export default {
         userLogin(){
             // alert(this.$route.query.email);
             // window.location.href = "/member/userRegister";
-            this.$router.push("/member/userRegister");
+            this.$router.push(`/member/user-register?email=${this.$route.query.email}`);
 
         }
     }
@@ -84,8 +84,7 @@ export default {
 
 <style>
 .background {
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
     margin: 0;
     background-image: url("@/assets/background.png");
     background-size: cover;

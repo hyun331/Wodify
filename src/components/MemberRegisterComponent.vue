@@ -1,5 +1,5 @@
 <template>
-    <div class="background1">
+    <div class="background">
         <v-container>
             <v-row>
                 <v-col cols="6">
@@ -30,7 +30,7 @@
                             <v-col cols="2"><v-label class="rubikMonoOne" style="font-size: 25px;">EMAIL</v-label></v-col>
                             <v-col cols="10">
                                 
-                                <v-text-field  v-model="email" type="email" required>
+                                <v-text-field  v-model="email" type="email" required disabled="">
                                 </v-text-field>
                             </v-col>
                         </v-row>
@@ -80,6 +80,15 @@
                             </v-col>
                         </v-row>
 
+                        <v-row justify="center">
+                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">ROLE</v-label></v-col>
+                            <v-col cols="8">
+                                
+                                <v-text-field v-model="role"  required readonly="">{{ propsRole }}
+                                </v-text-field>
+                            </v-col>
+                        </v-row>
+
    
 
                         <v-btn type="submit" color="primary" block>등록</v-btn>
@@ -97,6 +106,7 @@
 
 <script>
 export default {
+    props:['propsRole'],
     data(){
         return{
             name:"",
@@ -106,7 +116,13 @@ export default {
             deadLift:"",
             squat:"",
             benchPress:"",
+            role :"",
         }
+    },
+    created(){
+        this.email = new URL(window.location.href).searchParams.get('email');
+
+        
     },
     methods: {
         memberRegister() {
@@ -119,7 +135,7 @@ export default {
 </script>
 
 <style>
-.background1 {
+.background{
     min-height: 100vh;
     margin: 0;
     background-image: url("@/assets/background.png");

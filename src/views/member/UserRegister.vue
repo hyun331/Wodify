@@ -1,5 +1,6 @@
 <template>
-    <MemberRegisterComponent/>
+    <MemberRegisterComponent
+    propsRole="USER"/>
 
 </template>
 <script>
