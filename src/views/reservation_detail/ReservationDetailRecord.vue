@@ -5,8 +5,8 @@
         <h1 class="title">MY</h1>
         <h1 class="title">RESERVATION</h1>
       </div>
-      <v-row>
-        <v-col>
+      <v-row justify="center">
+        <v-col cols="12" sm="2" md="4">
           <v-card>
             <v-card-text>
               <v-table>
@@ -44,7 +44,7 @@
 
 <script>
 import axios from 'axios';
-import Record from './Record.vue';
+import Record from './RecordCreate.vue';
 
 export default{
   components:{
