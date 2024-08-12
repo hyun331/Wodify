@@ -1,17 +1,20 @@
 <template>
-    <div class="background">
+    <div class="background1">
         <v-container>
             <v-row>
                 <v-col cols="6">
                     <v-img :src="require('@/assets/wodify.png')" alt="WODIFY" sizes="70%" contain></v-img>
                 </v-col>
                 <v-col cols="6">
-                    <div class="rubikMonoOne" style="font-size: 50px;"><h1> USER REGISTER</h1></div>
+                    <!-- <div class="rubikMonoOne" style="font-size: 50px;"><h1> USER REGISTER</h1></div> -->
                 </v-col>
             </v-row>
+
+
+
             <v-row class="d-flex justify-content-between mt-5" justify="center">
-        
                 <v-col cols="12" sm="6" md="8">
+                  
 
                     <v-form @submit.prevent="memberRegister">
                         <v-row justify="center">
@@ -85,9 +88,9 @@
 
                     </v-form>
 
-
                 </v-col>
             </v-row>
+
         </v-container>
     </div>
 </template>
@@ -116,9 +119,8 @@ export default {
 </script>
 
 <style>
-.background {
-    height: 100vh;
-    overflow: hidden;
+.background1 {
+    min-height: 100vh;
     margin: 0;
     background-image: url("@/assets/background.png");
     background-size: cover;
