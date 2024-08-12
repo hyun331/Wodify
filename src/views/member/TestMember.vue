@@ -13,15 +13,12 @@ export default{
 
 
 <style>
-.background{
-    height: 100vh;
-    overflow: hidden;
-    margin:0;
+.background {
+    min-height: 100vh;
+    margin: 0;
     background-image: url("@/assets/background.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
 }
-
-
 </style>
