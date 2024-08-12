@@ -59,6 +59,7 @@
             <v-row class="d-flex justify-center align-center">
                 <RoundedButtonComponent
                 text="Book Now"
+                buttonType="submit"
                 />
             </v-row>
         </v-form>
