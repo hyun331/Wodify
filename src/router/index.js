@@ -4,6 +4,7 @@ import { memberRouter } from './MemberRouter';
 import HomeView from '@/views/common/HomeView.vue';
 import {reservationRouter} from './reservationRouter';
 import { wodRouter } from './wodRouter';
+import { boxRouter } from './BoxRouter';
 
 const routes = [
     {
@@ -13,7 +14,8 @@ const routes = [
     },
     ...memberRouter,
     ...reservationRouter,
-    ...wodRouter
+    ...wodRouter,
+    ...boxRouter
 ]
 
 const router = createRouter({

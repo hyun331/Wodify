@@ -19,7 +19,7 @@ export default{
         async getAuthToken(code){
             try{
                 const response = await axios.get(`http://localhost:8090/member/auth/kakao/callback?code=${code}`);
-                alert(response.data.result.token);
+                // alert(response.data.result.token);
                 //홈화면
                 const token = response.data.result.token;
                 const refreshToken = response.data.result.refreshToken;
