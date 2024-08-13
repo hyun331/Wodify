@@ -55,6 +55,7 @@
                                 <tr>
                                     <!-- <th>ID</th> -->
                                     <th>NAME</th>
+                                    <th>EMAIL</th>
                                     <th>등록정보</th>
                                     <th>연장</th>
                                     <th>등록일</th>
@@ -66,8 +67,9 @@
                                     <!-- <td><v-img :src="p.imagePath" style="height: 100px; width:auto;"></v-img></td> -->
                                     <!-- <td>{{u.id}}</td> -->
                                     <td>{{u.name}}</td>
+                                    <td>{{u.email}}</td>
                                     <td>{{u.state}}</td>
-                                    <td><v-btn>연장</v-btn></td>
+                                    <td><v-btn @click="showRegistrationModal(u.email, u.endDate)">연장</v-btn></td>
                                     <td>{{u.registrationDate}}</td>
                                     <td>{{u.endDate}}</td>
                                 </tr>
@@ -78,15 +80,29 @@
                 </v-card>
             </v-col>
         </v-row>
+
+        <RegistrationCreateModal 
+        v-model="registrationModal" 
+        :modalUserEmail="modalUserEmail"
+        :modalNextStartDate="modalNextStartDate"
+        @update:dialog="registrationModal = $event"
+        >
+
+        </RegistrationCreateModal>
+
     </v-container>
 </div>
 </template>
 
 <script>
 import axios from 'axios';
+import RegistrationCreateModal from '@/views/registrationInfo/RegistrationCreateModal.vue';
 export default{
     //isAmin이라는 변수를 넘겨받을 수 있다.
     props:['isCEO'],
+    components:{
+        RegistrationCreateModal,
+    },
     data(){
         return{
 
@@ -104,6 +120,9 @@ export default{
             currentPage:0,
             isLastPage: false,
             isLoading: false,
+            registrationModal: false,
+            modalUserEmail : "",
+            modalNextStartDate: "",
 
             
         }
@@ -176,6 +195,11 @@ export default{
             if(isBottom && !this.isLastPage && !this.isLoading){
                 this.loadUser();
             }
+        },
+        showRegistrationModal(userEmail, userEndDate){
+            this.registrationModal=true;
+            this.modalUserEmail = userEmail;
+            this.modalNextStartDate = userEndDate;
         }
 
     }
