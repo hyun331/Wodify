@@ -17,6 +17,19 @@
                   
 
                     <v-form @submit.prevent="memberRegister">
+
+                        <v-row>
+                            <v-col>
+
+                            </v-col>
+                            <v-col>
+                                <v-file-input
+                                label="PROFILE"
+                                accept="image/*"
+                                @change="fileUpdate"
+                                ></v-file-input>
+                            </v-col>
+                        </v-row>
                         <v-row justify="center">
                             <v-col cols="2"><v-label class="rubikMonoOne" style="font-size: 25px;">NAME</v-label></v-col>
                             <v-col cols="10">
@@ -84,7 +97,7 @@
                             <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">ROLE</v-label></v-col>
                             <v-col cols="8">
                                 
-                                <v-text-field v-model="role"  required readonly="">{{ propsRole }}
+                                <v-text-field v-model="role"  required readonly="">
                                 </v-text-field>
                             </v-col>
                         </v-row>
@@ -105,6 +118,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     props:['propsRole'],
     data(){
@@ -116,17 +130,39 @@ export default {
             deadLift:"",
             squat:"",
             benchPress:"",
-            role :"",
+            role:"",
+            memberImage: null,
         }
     },
     created(){
         this.email = new URL(window.location.href).searchParams.get('email');
-
-        
+        this.role = this.propsRole;
     },
     methods: {
-        memberRegister() {
-
+        async memberRegister() {
+            try{
+                
+                let registerData = new FormData();
+                registerData.append("name", this.name);
+                registerData.append("email", this.email);
+                registerData.append("phone", this.phone);
+                registerData.append("address", this.address);
+                registerData.append("deadLift", this.deadLift);
+                registerData.append("squat", this.squat);
+                registerData.append("benchPress", this.benchPress);
+                registerData.append("role", this.role);
+                if(this.memberImage != null){
+                    registerData.append("memberImage", this.memberImage);
+                }
+                const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member/register`, registerData);
+                console.log(response.data.result);
+                window.location.href = "/";
+            }catch(e){
+                console.log(e);
+            }
+        },
+        fileUpdate(event){
+            this.memberImage = event.target.files[0];
         }
     }
 

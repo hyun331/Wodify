@@ -16,16 +16,16 @@
             </div> -->
             <v-row justify="center" class="d-flex justify-content-between mt-5" style="width: 80%; margin: 0 auto;">
                 <v-col cols="6">
-                    <v-card  @mouseover="changeImage('user')" @mouseleave="resetImage('user')"  @click="userLogin">
-                        <v-img :src=userImage alt="일반회원가입 이미지"  contain></v-img>
+                    <v-card  class="hover-image"  @click="userLogin">
+                        <v-img :src=defaultImage alt="일반회원가입 이미지"  contain></v-img>
                         <v-card-title justify="center" class="text-center text-h5" >
                             일반회원가입
                         </v-card-title>
                     </v-card>
                 </v-col>
                 <v-col cols="6">
-                    <v-card  @mouseover="changeImage('coach')"  @mouseleave="resetImage('coach')"> 
-                        <v-img :src=coachImage alt="코치회원가입 이미지"  contain></v-img>
+                    <v-card  class="hover-image" @click="coachLogin"> 
+                        <v-img :src=defaultImage alt="코치회원가입 이미지"  contain></v-img>
                         <v-card-title justify="center" class="text-center text-h5">
                             코치회원가입
                         </v-card-title>
@@ -47,34 +47,17 @@ export default {
     data(){
         return{
             defaultImage: require('@/assets/home.png'),
-            userImage : require('@/assets/home.png'),
-            coachImage : require('@/assets/home.png'),
-            hoverImage: require('@/assets/home_color2.png'),
-            
+           
 
         }
     },
 
     methods:{
-        changeImage(role){
-            if(role === 'user'){
-                this.userImage = this.hoverImage;
-            }else{
-                this.coachImage = this.hoverImage;
-            }
-        },
-        resetImage(role){
-            if(role === 'user'){
-                this.userImage = this.defaultImage;
-            }else{
-                this.coachImage = this.defaultImage;
-            }
-        },
         userLogin(){
-            // alert(this.$route.query.email);
-            // window.location.href = "/member/userRegister";
             this.$router.push(`/member/user-register?email=${this.$route.query.email}`);
-
+        },
+        coachLogin(){
+            this.$router.push(`/member/coach-register?email=${this.$route.query.email}`);
         }
     }
 
@@ -90,5 +73,9 @@ export default {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.hover-image:hover img{
+    content: url('@/assets/home_color2.png');
 }
 </style>
