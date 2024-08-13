@@ -211,7 +211,7 @@ public class MemberController {
 
     //회원가입
     @PostMapping("/register")
-    public ResponseEntity<CommonResDto>  memberRegister(@RequestBody MemberSaveReqDto memberSaveReqDto){
+    public ResponseEntity<CommonResDto>  memberRegister(MemberSaveReqDto memberSaveReqDto){
         CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "회원가입 완료", memberService.memberRegister(memberSaveReqDto));
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
