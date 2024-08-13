@@ -24,6 +24,7 @@ public class MemberDetResDto {
     private Role role;
     private String boxName;
     private Long boxId;
+    private String imagePath;
 
 
 }

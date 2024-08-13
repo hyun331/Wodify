@@ -60,11 +60,14 @@ public class Member extends BaseEntity {
     private Box box;
 
 
+    private String imagePath;
+
+
     public MemberDetResDto detFromEntity(){
         //box가 null인거 check -> 안하면 NullPointException
         Long boxId = null;
         String boxName = null;
-        if(box!=null){
+        if(this.box!=null){
             boxId = this.box.getId();
             boxName = this.box.getName();
         }
@@ -80,6 +83,7 @@ public class Member extends BaseEntity {
                 .role(this.role)
                 .boxId(boxId)
                 .boxName(boxName)
+                .imagePath(this.imagePath)
                 .build();
     }
 
@@ -125,4 +129,7 @@ public class Member extends BaseEntity {
     }
 
 
+    public void updateImagePath(String s3Path) {
+        this.imagePath = s3Path;
+    }
 }

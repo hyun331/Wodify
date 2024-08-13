@@ -15,6 +15,7 @@ public class MemberManagementListDto{
     private String email;
     private String address;
     private String phone;
+    private String state;
     private LocalDate registrationDate;
     private LocalDate endDate;
 }
