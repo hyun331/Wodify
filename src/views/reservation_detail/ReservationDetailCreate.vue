@@ -29,40 +29,63 @@
                     ></v-text-field>
                 </v-col>
                 <v-col cols="6" class="d-flex justify-center align-center">
-                    {{ wod }}
+                    {{ wod.date }}
+                    {{ wod.timeCap }}
+                    {{ wod.rounds }}
+                    {{ wod.info }}
+                    <v-table>
+                        <thead><tr><th>name</th><th>contents</th></tr></thead>
+                        <tbody>
+                            <tr v-for="detail in wod.wodDetResDtoList" :key="detail.id">
+                                <td>{{detail.name}}</td>
+                                <td>{{detail.contents}}</td>
+                            </tr>
+                        </tbody>
+                    </v-table>
                 </v-col>
             </v-row>
             <v-row>
                 <v-col cols="12">
                     <v-select
-                    v-model="time"
-                    :items="timeOptions"
-                    label="시간 선택"
-                    class="mx-2"
-                ></v-select>
+                        v-model="time"
+                        :items="timeOptions"
+                        item-text="text"  
+                        item-value="value"
+                        label="시간 선택"
+                        class="mx-2"
+                    ></v-select>
                 </v-col>
             </v-row>
             <v-row class="d-flex justify-center align-center">
-                <button class="rounded-button" type="submit">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span class="button-text">Book Now</span>
-                  </button>
+                <RoundedButtonComponent
+                text="Book Now"
+                buttonType="submit"
+                />
             </v-row>
         </v-form>
-        
+        <v-date-picker v-model="vdate" @input="menu = false" :max="maxDate"></v-date-picker>
         
     </v-container>
     </div>
 </template>
 
 <script>
-export default {
+import RoundedButtonComponent from '@/components/RoundedButtonComponent.vue';
+import axios from 'axios';
+export default {    
+    components:{
+        RoundedButtonComponent
+    },
     data() {
         return {
+            menu: false,
+            vdate: null,
             date:"",
             wod:"와드 내용",
             time:"",
-            timeOptions: [] // 시간 옵션을 여기에 저장
+            timeOptions: [], // 시간 옵션을 여기에 저장
+            token:"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MjMxOTU1NTAsImV4cCI6MTcyMzIxMzU1MH0.hdvFCt9lzy0UjjaTc0QukWubTUZUYd2ko0o_EsPRn-E",
+            buttonTest: "test\nbutton"
         }
     },
     watch: {
@@ -74,11 +97,44 @@ export default {
         }
     },
     methods: {
-        fetchWod (date){
-            this.wod = `${date} 와드`;
+        async fetchWod (date){
+            const dateData = {date:this.date}
+            console.log(date)
+            try {
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find`, {
+                    params: dateData,
+                    headers: { 
+                        Authorization: `Bearer ${this.token}`
+                    }
+                });
+                console.log(response);
+                this.wod = response.data.result;
+            } catch (error) {
+                console.log(error);
+            }
+            
+
         },
-        fetchTimeOptions(date) {
-            this.timeOptions = [2,3,4,5,date];
+        async fetchTimeOptions() {
+            console.log(this.date);
+            const dateData = {date:this.date};
+            try {
+                const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation/box/list/`, 
+                    dateData,
+                    {
+                        headers: { 
+                            Authorization: `Bearer ${this.token}`
+                        }
+                    }
+                );
+                console.log(response.data.result.content);
+                this.timeOptions = response.data.result.content.map(item => {
+                    return { text: item.time, value: item.id };
+                });
+                console.log(this.timeOptions)
+            } catch (error) {
+                console.log(error);
+            }
         },
         reservation() {
             const reservationData = {
@@ -113,30 +169,5 @@ export default {
 .reservationHead {
     font-weight: bold;
     font-size: 20px;
-}
-.rounded-btn {
-    border-radius: 50px;
-    padding: 10px 20px;
-}
-.rounded-button {
-    background-color: #000000; /* 버튼 배경색 */
-    border: none;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    border-radius: 50px; /* 둥근 정도 조절 */
-    cursor: pointer;
-}
-.button-text {
-    /* 텍스트 스타일 */
-    color: white; /* 텍스트 색상 */
-    font-size: 16px;
-    /* 필요한 다른 스타일 추가 */
-  }
-  .rounded-button:hover {
-    border: 2px solid white; /* 버튼에 흰색 테두리 추가 */
-    background-color: rgb(48, 48, 48); /* 버튼 배경색을 조금 어두운 색으로 변경 */
-    outline: none; /* 기본 포커스 아웃라인 제거 */
 }
 </style>
