@@ -45,7 +45,7 @@ public class ReservationService {
             log.error("reservationCreate() : 예약을 생성할 수 있는 권한이 없습니다.");
             throw new IllegalArgumentException("예약을 생성할 수 있는 권한이 없습니다.");
         }
-        Box box = boxRepository.findById(dto.getBoxId()).orElseThrow(()-> new EntityNotFoundException("해당하는 id의 박스가 존재하지 않습니다."));
+        Box box = boxRepository.findByIdAndDelYn(dto.getBoxId(),"N").orElseThrow(()-> new EntityNotFoundException("해당하는 id의 박스가 존재하지 않습니다."));
         if (member.getBox()==null || !member.getBox().equals(box)) {
             log.error("reservationCreate() : 박스에 대한 권한이 없습니다.");
             throw new IllegalArgumentException("박스에 대한 권한이 없습니다.");
@@ -87,13 +87,13 @@ public class ReservationService {
         return reservationList.map(Reservation::ListResDtoFromEntity);
     }
 
-    public Page<ReservationListResDto> reservationListByDate(Long boxId, ReservationListReqDto dto, Pageable pageable){
+    public Page<ReservationListResDto> reservationListByDate(ReservationListReqDto dto, Pageable pageable){
         Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
         Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
             log.error("reservationList() : 해당 id의 회원을 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
         });
-        Box box = boxRepository.findById(boxId).orElseThrow(()-> new EntityNotFoundException("해당하는 id의 박스가 존재하지 않습니다."));
+        Box box = boxRepository.findByIdAndDelYn(member.getBox().getId(),"N").orElseThrow(()-> new EntityNotFoundException("해당하는 id의 박스가 존재하지 않습니다."));
         if (member.getBox()==null || !member.getBox().equals(box)) {
             log.error("reservationCreate() : 박스에 대한 권한이 없습니다.");
             throw new IllegalArgumentException("박스에 대한 권한이 없습니다.");
