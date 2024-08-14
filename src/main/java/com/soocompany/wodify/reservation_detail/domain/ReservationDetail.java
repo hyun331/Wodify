@@ -5,6 +5,7 @@ import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.record.domain.Record;
 import com.soocompany.wodify.reservation.domain.Reservation;
+import com.soocompany.wodify.reservation_detail.dto.ReservationDetListResDto;
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetailDetResDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +48,13 @@ public class ReservationDetail extends BaseEntity {
                 .wodId(reservation.getWod().getId())
                 .recordId(Optional.ofNullable(record).map(Record::getId).orElse(null))
                 .recordSnF(Optional.ofNullable(record).map(Record::getSnf).orElse(null))
+                .build();
+    }
+
+    public ReservationDetListResDto listDetFromEntity(){
+        return ReservationDetListResDto.builder()
+                .id(this.id)
+                .memberName(member.getName())
                 .build();
     }
 
