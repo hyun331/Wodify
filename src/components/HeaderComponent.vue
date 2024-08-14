@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar absolute color="#000000" extension-height="100px">
+    <v-app-bar absolute color="#000000">
         <v-btn :to="{path:'/'}" color="black">
             <img height="40"
             :src="require('@/assets/wod.png')"
@@ -14,17 +14,17 @@
                 <v-list-item :to="{path:'/box/list'}">
                     <v-list-item-title >박스조회-공통</v-list-item-title>
                 </v-list-item>
-                <v-list-item :to="{path:'/box/detail/:id'}">
+                <v-list-item :to="{path:'/box/detail'}">
                     <v-list-item-title>내 박스-공통</v-list-item-title>
                 </v-list-item>
-                <v-list-item :to="{path:'/'}">
-                    <v-list-item-title>박스 회원 관리-코치</v-list-item-title>
+                <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{path:'/'}">
+                    <v-list-item-title>박스 회원 관리-코치,CEO</v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-menu>
-        <v-menu v-if="userRole === 'COACH'" open-on-hover>
+        <v-menu v-if="userRole === 'COACH' || userRole === 'CEO'" open-on-hover>
             <template v-slot:activator="{ props }">
-                <v-btn color="white" v-bind="props" class="rubikMonoOne">WOD-코치</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne">WOD-코치,CEO</v-btn>
             </template>
             <v-list>
                 <v-list-item :to="{path:'/wod/find'}">
@@ -37,17 +37,17 @@
             <v-btn color="white" v-bind="props" class="rubikMonoOne">RESERVATION-공통</v-btn>
             </template>
             <v-list>
-                <v-list-item :to="{path:'/'}">
+                <v-list-item v-if="userRole === 'USER'" :to="{path:'/reservation-detail/create'}">
                     <v-list-item-title>예약하기-멤버</v-list-item-title>
                 </v-list-item>
-                <v-list-item :to="{path:'/'}">
-                    <v-list-item-title>예약생성-코치</v-list-item-title>
+                <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'"  :to="{path:'/reservation/create'}">
+                    <v-list-item-title>예약생성-코치,CEO</v-list-item-title>
                 </v-list-item>
-                <v-list-item :to="{path:'/'}">
+                <v-list-item v-if="userRole === 'USER'" :to="{path:'/reservation-detail/list'}">
                     <v-list-item-title>예약조회-멤버</v-list-item-title>
                 </v-list-item>
-                <v-list-item :to="{path:'/'}">
-                    <v-list-item-title>예약조회-코치</v-list-item-title>
+                <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{path:'/reservation/list'}">
+                    <v-list-item-title>예약조회-코치,CEO</v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-menu>
@@ -62,6 +62,9 @@
                 <!-- <v-list-item :to="{path:'/'}"> -->
                     <!-- <v-list-item-title>공지사항-공통</v-list-item-title> -->
                 <!-- </v-list-item> -->
+                <v-list-item :to="{path:'/hallOfFame'}">
+                    <v-list-item-title>명예의 전당</v-list-item-title>
+                </v-list-item>
             </v-list>
         </v-menu>
         <v-menu open-on-hover>
@@ -69,12 +72,12 @@
             <v-btn color="white" v-bind="props" class="rubikMonoOne">MY PAGE-공통</v-btn>
             </template>
             <v-list>
-                <v-list-item :to="{path:'/'}">
+                <v-list-item :to="{path:'/member/detail'}">
                     <v-list-item-title>내 정보-공통</v-list-item-title>
                 </v-list-item>
-                <v-list-item :to="{path:'/'}">
+                <!-- <v-list-item :to="{path:'/'}">
                     <v-list-item-title>내 기록-멤버</v-list-item-title>
-                </v-list-item>
+                </v-list-item> -->
             </v-list>
         </v-menu>
         <v-btn @click="kakaoLogin" v-if="!isLogin">LOGIN</v-btn>
