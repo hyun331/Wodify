@@ -129,7 +129,7 @@ public class MemberController {
             String jwtToken = jwtTokenProvider.createToken(member.getId().toString(), member.getRole().toString());
             String refreshToken = jwtTokenProvider.createRefreshToken(member.getId().toString(), member.getRole().toString());
 
-            System.out.println("로그인화면");
+            System.out.println("홈화면");
 
             redisTemplate.opsForValue().set(member.getId().toString(), refreshToken, 240, TimeUnit.HOURS);
             Map<String, Object> loginInfo = new HashMap<>();
@@ -143,9 +143,9 @@ public class MemberController {
 
         }else{
             //회원가입 해야함
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.UNAUTHORIZED, email+" 이메일이 존재하지 않습니다. 회원가입 필요", email);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.NOT_FOUND, email+" 이메일이 존재하지 않습니다. 회원가입 필요", email);
             System.out.println("회원가입 화면");
-            return new ResponseEntity<>(commonResDto, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(commonResDto, HttpStatus.NOT_FOUND);
         }
 
     }
@@ -159,12 +159,18 @@ public class MemberController {
         try{
             claims = Jwts.parser().setSigningKey(secretKeyRt).parseClaimsJws(rt).getBody();
         }catch (Exception e){
-            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.UNAUTHORIZED, "invalid refresh token"), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.BAD_REQUEST, "invalid refresh token"), HttpStatus.BAD_REQUEST);
         }
 
         //access token 새로 발급해야함
         String memberId = claims.getSubject();
         String role = claims.get("role").toString();
+
+        Object obj = redisTemplate.opsForValue().get(memberId);
+        if(obj == null || !obj.toString().equals(rt)){
+            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.BAD_REQUEST, "invalid refresh token"), HttpStatus.BAD_REQUEST);
+
+        }
 
         String newAt = jwtTokenProvider.createToken(memberId, role);
 
@@ -205,7 +211,7 @@ public class MemberController {
 
     //회원가입
     @PostMapping("/register")
-    public ResponseEntity<CommonResDto>  memberRegister(@RequestBody MemberSaveReqDto memberSaveReqDto){
+    public ResponseEntity<CommonResDto>  memberRegister(MemberSaveReqDto memberSaveReqDto){
         CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "회원가입 완료", memberService.memberRegister(memberSaveReqDto));
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }

@@ -6,10 +6,12 @@ import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.domain.Role;
 import com.soocompany.wodify.member.dto.*;
 import com.soocompany.wodify.member.repository.MemberRepository;
+import com.soocompany.wodify.post.domain.Image;
 import com.soocompany.wodify.registration_info.domain.RegistrationInfo;
 import com.soocompany.wodify.registration_info.repository.RegistrationInfoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,9 +19,15 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.Registration;
+import java.io.IOException;
 import java.security.Security;
 import java.util.Optional;
 
@@ -28,15 +36,21 @@ import java.util.Optional;
 @Slf4j
 public class MemberService {
 
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
     private final MemberRepository memberRepository;
     private final BoxRepository boxRepository;
     private final RegistrationInfoRepository registrationInfoRepository;
+    private final S3Client s3Client;
 
     @Autowired
-    public MemberService(MemberRepository memberRepository, BoxRepository boxRepository, RegistrationInfoRepository registrationInfoRepository){
+    public MemberService(MemberRepository memberRepository, BoxRepository boxRepository, RegistrationInfoRepository registrationInfoRepository, S3Client s3Client){
         this.memberRepository = memberRepository;
         this.boxRepository = boxRepository;
         this.registrationInfoRepository = registrationInfoRepository;
+        this.s3Client = s3Client;
     }
 
 
@@ -66,8 +80,34 @@ public class MemberService {
         if(memberSaveReqDto.getRole()==null)
             throw new IllegalArgumentException("역할 미입력");
 
+        MultipartFile image = memberSaveReqDto.getMemberImage();
+        Member newMember = null;
+        try {
+            newMember = memberRepository.save(memberSaveReqDto.toEntity());
+//            System.out.println(image+"\n\n\n\n");
+            if(image == null || image.isEmpty()){
+                newMember.updateImagePath("/assets/memberBaseImg.png");
+            }else{
+                byte[] bytes = image.getBytes();
+                String fileName = newMember.getId() + "_" + image.getOriginalFilename();
 
-        Member newMember = memberRepository.save(memberSaveReqDto.toEntity());
+                PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(fileName)
+                        .build();
+
+                PutObjectResponse putObjectResponse = s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes));
+                String s3Path = s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(fileName)).toExternalForm();
+                newMember.updateImagePath(s3Path);
+            }
+
+
+        } catch (IOException e) {
+            log.error("memberRegister() : 이미지 저장 실패");
+            throw new RuntimeException("이미지 저장 실패");
+        }
+
+
         return newMember.detFromEntity();
 
 
@@ -154,12 +194,14 @@ public class MemberService {
             throw new EntityNotFoundException("로그인한 코치, 대표가 가입한 박스가 존재하지 않습니다.");
         }
 
-        Page<Member> members = memberRepository.findAllByBoxAndRoleAndDelYn(pageable, box, Role.USER, "N");
-        Page<MemberManagementListDto> memberManagementListDtos = members.map(a->{
-            RegistrationInfo registrationInfo = registrationInfoRepository.findByMemberAndBoxAndDelYnOrderByRegistrationDateDesc(a, box, "N").get(0);
-            return a.managementListFromEntity(registrationInfo.getRegistrationDate(), registrationInfo.getEndDate());
-        });
-        return memberManagementListDtos;
+//        Page<Member> members = memberRepository.findAllByBoxAndRoleAndDelYn(pageable, box, Role.USER, "N");
+//        Page<MemberManagementListDto> memberManagementListDtos = members.map(a->{
+//            RegistrationInfo registrationInfo = registrationInfoRepository.findByMemberAndBoxAndDelYnOrderByRegistrationDateDesc(a, box, "N").get(0);
+//            return a.managementListFromEntity(registrationInfo.getRegistrationDate(), registrationInfo.getEndDate());
+//        });
+
+
+        return memberRepository.findMemberManagementListByBox(box.getId(), Role.USER, pageable);
 
     }
 
