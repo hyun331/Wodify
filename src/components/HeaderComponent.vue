@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar absolute dense color="#000000">
+    <v-app-bar absolute color="#000000" extension-height="100px">
         <v-btn :to="{path:'/'}" color="black">
             <img height="40"
             :src="require('@/assets/wod.png')"
@@ -11,10 +11,10 @@
             <v-btn color="white" v-bind="props" class="rubikMonoOne">BOX-공통</v-btn>
             </template>
             <v-list>
-                <v-list-item :to="{path:'/'}">
+                <v-list-item :to="{path:'/box/list'}">
                     <v-list-item-title >박스조회-공통</v-list-item-title>
                 </v-list-item>
-                <v-list-item :to="{path:'/'}">
+                <v-list-item :to="{path:'/box/detail/:id'}">
                     <v-list-item-title>내 박스-공통</v-list-item-title>
                 </v-list-item>
                 <v-list-item :to="{path:'/'}">
