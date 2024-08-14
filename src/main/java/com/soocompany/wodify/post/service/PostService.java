@@ -1,4 +1,5 @@
 package com.soocompany.wodify.post.service;
+import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.repository.MemberRepository;
 import com.soocompany.wodify.post.domain.Image;
@@ -33,6 +34,8 @@ public class PostService {
             log.error("postCreate() : Email 에 해당하는 member 가 없습니다.");
             return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
         });
+        Box box = member.getBox();
+        if (box == null) { throw new IllegalArgumentException("box 에 등록되지 않은 사용자입니다.");}
         Post post = postRepository.save(dto.toEntity(member));
         try {
             if (dto.getFiles() != null && dto.getFiles().length > 0) {
@@ -48,12 +51,22 @@ public class PostService {
     }
 
     public List<PostListResDto> postListNotice() {
-        List<Post> posts = postRepository.findAllByTypeAndDelYnOrderByCreatedTimeDesc(Type.NOTICE, "N");
+        String id = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(() -> {
+            log.error("postCreate() : Email 에 해당하는 member 가 없습니다.");
+            return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
+        });
+        List<Post> posts = postRepository.findAllByTypeAndBoxAndDelYnOrderByCreatedTimeDesc(Type.NOTICE, member.getBox(), "N");
         return posts.stream().map(PostListResDto::fromEntity).collect(Collectors.toList());
     }
 
     public Page<PostListResDto> postListPage(Pageable pageable) {
-        Page<Post> posts = postRepository.findAllByTypeAndDelYnOrderByCreatedTimeDesc(pageable, Type.POST, "N");
+        String id = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(() -> {
+            log.error("postCreate() : Email 에 해당하는 member 가 없습니다.");
+            return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
+        });
+        Page<Post> posts = postRepository.findAllByTypeAndBoxAndDelYnOrderByCreatedTimeDesc(pageable, Type.POST, member.getBox(), "N");
         return posts.map(PostListResDto::fromEntity);
     }
 

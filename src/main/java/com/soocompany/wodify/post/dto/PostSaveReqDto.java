@@ -31,6 +31,7 @@ public class PostSaveReqDto {
                 .title(this.title)
                 .contents(this.contents)
                 .member(member)
+                .box(member.getBox())
                 .build();
     }
 }

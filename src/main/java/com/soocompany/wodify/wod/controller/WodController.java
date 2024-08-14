@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @RequestMapping("/wod")
 public class WodController {
     private final WodService wodService;
-    @PreAuthorize("hasRole('COACH')")
+//    @PreAuthorize("hasRole('COACH')")
     @PostMapping("/save")
     public ResponseEntity<?> wodSave(@RequestBody WodSaveReqDto wodSaveReqDto) {
         HttpStatus code = HttpStatus.CREATED;
@@ -37,7 +37,7 @@ public class WodController {
         return new ResponseEntity<>(commonResDto, code);
     }
 
-    @PreAuthorize("hasRole('COACH')")
+//    @PreAuthorize("hasRole('COACH')")
     @PatchMapping("/delete/{date}")
     public ResponseEntity<?> wodDelete(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         String msg = "WOD 를 삭제했습니다.";

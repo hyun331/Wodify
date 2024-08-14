@@ -38,7 +38,7 @@ public class WodService {
             log.error("wodSave() : 해당 Email 의 멤버를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 Email 의 멤버를 찾을 수 없습니다.");
         });
-        if (member.getRole() == Role.USER) {
+        if (member.getRole() != Role.COACH) {
             log.error("wodSave() : WOD 생성 권한이 없습니다.");
             throw new IllegalArgumentException("WOD 생성 권한이 없습니다.");
         }
