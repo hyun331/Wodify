@@ -110,9 +110,6 @@ export default {
             try {
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find`, {
                     params: dateData,
-                    headers: { 
-                        Authorization: `Bearer ${this.token}`
-                    }
                 });
                 console.log(response);
                 this.wod = response.data.result;
