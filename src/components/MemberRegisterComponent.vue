@@ -19,10 +19,10 @@
                     <v-form @submit.prevent="memberRegister">
 
                         <v-row>
-                            <v-col>
+                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">PROFILE IMAGE</v-label></v-col>
 
-                            </v-col>
-                            <v-col>
+                            
+                            <v-col cols="8">
                                 <v-file-input
                                 label="PROFILE"
                                 accept="image/*"
@@ -31,8 +31,8 @@
                             </v-col>
                         </v-row>
                         <v-row justify="center">
-                            <v-col cols="2"><v-label class="rubikMonoOne" style="font-size: 25px;">NAME</v-label></v-col>
-                            <v-col cols="10">
+                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">NAME</v-label></v-col>
+                            <v-col cols="8">
                                 
                                 <v-text-field v-model="name" required>
                                 </v-text-field>
@@ -40,8 +40,8 @@
                         </v-row>
 
                         <v-row justify="center">
-                            <v-col cols="2"><v-label class="rubikMonoOne" style="font-size: 25px;">EMAIL</v-label></v-col>
-                            <v-col cols="10">
+                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">EMAIL</v-label></v-col>
+                            <v-col cols="8">
                                 
                                 <v-text-field  v-model="email" type="email" required disabled="">
                                 </v-text-field>
@@ -49,8 +49,8 @@
                         </v-row>
 
                         <v-row justify="center">
-                            <v-col cols="2"><v-label class="rubikMonoOne" style="font-size: 25px;">PHONE</v-label></v-col>
-                            <v-col cols="10">
+                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">PHONE</v-label></v-col>
+                            <v-col cols="8">
                                 
                                 <v-text-field v-model="phone"  required>
                                 </v-text-field>
@@ -58,8 +58,8 @@
                         </v-row>
 
                         <v-row justify="center">
-                            <v-col cols="2"><v-label class="rubikMonoOne" style="font-size: 25px;">ADDRESS</v-label></v-col>
-                            <v-col cols="10">
+                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">ADDRESS</v-label></v-col>
+                            <v-col cols="8">
                                 
                                 <v-text-field v-model="address"  required>
                                 </v-text-field>
@@ -104,7 +104,7 @@
 
    
 
-                        <v-btn type="submit" color="primary" block>등록</v-btn>
+                        <v-btn type="submit" color="primary" block>SIGN UP</v-btn>
 
 
 
