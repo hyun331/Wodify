@@ -35,6 +35,7 @@ public class SecurityConfigs {
                             , "/member/doLogin"
                             , "/box/list"
                             , "/member/refresh-token"
+                            , "/**"
                     )
                     .permitAll()
                 .anyRequest().authenticated()

@@ -5,7 +5,6 @@ import com.soocompany.wodify.post.domain.Image;
 import com.soocompany.wodify.post.domain.Post;
 import com.soocompany.wodify.post.domain.Type;
 import com.soocompany.wodify.post.dto.*;
-import com.soocompany.wodify.post.repository.CommentRepository;
 import com.soocompany.wodify.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-    private final CommentRepository commentRepository;
     private final ImageService imageService;
 
     public Post postCreate(PostSaveReqDto dto) {
@@ -39,7 +37,7 @@ public class PostService {
         try {
             if (dto.getFiles() != null && dto.getFiles().length > 0) {
                 List<Image> images = imageService.uploadImages(post, dto.getFiles());
-                post.getFiles().addAll(images);  // Post 엔티티에 이미지를 추가
+                post.getFiles().addAll(images);
                 postRepository.save(post);
             }
         } catch (IOException e) {
@@ -120,7 +118,7 @@ public class PostService {
             MultipartFile[] files = postUpdateReqDto.getNewFiles();
             if (files != null && files.length > 0) {
                 List<Image> images = imageService.uploadImages(post, files);
-                post.getFiles().addAll(images);  // Post 엔티티에 이미지를 추가
+                post.getFiles().addAll(images);
             }
         } catch (IOException e) {
             log.error("postCreate() : 이미지 저장 실패", e);

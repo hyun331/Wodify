@@ -1,5 +1,6 @@
 package com.soocompany.wodify.common.dto;
 
+import com.soocompany.wodify.common.config.SecurityContextUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +55,9 @@ public class JwtAuthFilter extends GenericFilter {
 
                 Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                // 토큰이 없을 경우 임시 사용자 설정 (개발/테스트 용도)
+                SecurityContextUtil.setTemporaryAuthentication("1");
             }
             //filterchain에서 그 다음 filtering으로 넘어가도록 하는 메서드
             filterChain.doFilter(request, response);

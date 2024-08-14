@@ -27,8 +27,8 @@ public class WodController {
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/find")
-    public ResponseEntity<?> wodFind(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    @GetMapping("/find/{date}")
+    public ResponseEntity<?> wodFind(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 
         HttpStatus code = HttpStatus.OK;
         String msg = "WOD 를 찾았습니다.";
