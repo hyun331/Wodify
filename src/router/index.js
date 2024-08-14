@@ -6,6 +6,7 @@ import {reservationRouter} from './reservationRouter';
 import { wodRouter } from './wodRouter';
 import { boxRouter } from './BoxRouter';
 import { hallOfFameRouter } from './HallOfFame';
+import { postRouter } from './postRouter';
 
 const routes = [
     {
@@ -18,6 +19,7 @@ const routes = [
     ...wodRouter,
     ...boxRouter,
     ...hallOfFameRouter,
+    ...postRouter
 ]
 
 const router = createRouter({

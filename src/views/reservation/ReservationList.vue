@@ -24,9 +24,9 @@
                     <tr v-for="r in reservationList" :key="r.id">
                     <td>{{r.date}}</td>
                     <td>{{r.time}}</td>
-                    <td>{{r.coach}}</td>
-                    <td>{{r.wodId}}</td>
-                    <td></td></tr>
+                    <td>{{r.coachName}}</td>
+                    <td><v-btn>view</v-btn></td>
+                    <td v-if="r.recordId">{{r.recordSnF}}</td><td v-else><v-btn>create</v-btn></td></tr>
                 </tbody>
             </v-table>
             </v-card-text>
@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     
   data() {
@@ -45,9 +46,17 @@ export default {
       reservationList: []
     };
   },
-  created() {
-    
-  }
+  async created() {
+      const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MjMxNjA1MDQsImV4cCI6MTcyMzE3ODUwNH0.IwzZ6rz9V7EH58_qaLsykQHqq0FYasqMOdW0fboXzjE';
+        try {
+          console.log(`${process.env.VUE_APP_API_BASE_URL}`);
+            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/mylist`,{headers:{Authorization: `Bearer ${token}`}});
+            console.log(response)
+            this.reservationList = response.data.result.content;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 };
 </script>
 
