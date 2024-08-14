@@ -34,7 +34,7 @@ axios.interceptors.response.use(
                 window.location.reload();
             }catch(e){
                 localStorage.clear();
-                window.location.href = "/login";
+                window.location.href = "/";
             }
             
         }

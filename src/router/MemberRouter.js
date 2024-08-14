@@ -3,6 +3,8 @@ import OAuth2RedirectHandler from './OAuth2RedirectHandler';
 import ChooseRegister from "@/views/member/ChooseRegister.vue";
 import UserRegister from "@/views/member/UserRegister.vue";
 import CoachRegister from "@/views/member/CoachRegister.vue";
+import MemberManagementComponent from "@/components/MemberManagementComponent.vue";
+import MyPage from "@/views/member/MyPage.vue";
 
 export const  memberRouter = [
     {
@@ -30,10 +32,21 @@ export const  memberRouter = [
     },
 
     {
-        path:"/member/coachRegister",
+        path:"/member/coach-register",
         name: "CoachRegister",
         component: CoachRegister
+    },
+    {
+        path:"/member/list/user",
+        name: "MemberManagementComponent",
+        component: MemberManagementComponent
+    },
+    {
+        path:"/member/detail",
+        name: "MyPage",
+        component: MyPage
     }
+
 
 
 ]
