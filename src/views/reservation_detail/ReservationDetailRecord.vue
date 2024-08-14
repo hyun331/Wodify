@@ -29,7 +29,7 @@
                 </tr>
                 <tr>
                   <td>RECORD</td>
-                  <td><v-btn> {{ recordButtonLabel }}</v-btn></td>
+                  <td><v-btn>{{ recordButtonLabel }}</v-btn></td>
                 </tr>
               </tbody>
             </v-table>
@@ -76,33 +76,35 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 export default {
   data() {
     return {
-      // reservationDetailId : this.$router.params.id,
+      reservationDetailId : this.$route.params.id,
       reservation: {},
       record: {}
     };
   },
   computed: {
-  // recordButtonLabel() {
-  //     if (this.reservation.recordSnF === 'S') {
-  //       return 'SUCCESS';
-  //     } else if (this.reservation.recordSnF === 'N') {
-  //       return 'FAILURE';
-  //     } else {
-  //       return 'CREATE';
-  //     }
-  //   },
+  recordButtonLabel() {
+      if (this.reservation.recordSnF === 'S') {
+        return 'SUCCESS';
+      } else if (this.reservation.recordSnF === 'N') {
+        return 'FAILURE';
+      } else {
+        return 'CREATE';
+      }
+    },
   },
   async created(){
-      // try{
-      //   const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/reservaion-detail/detail/${this.reservationDetailId}`)
-      //   this.reservation = response.data.result;
-      // }catch(e){
-      //   console.log(e)
-      // }
+      try{
+        console.log(this.reservationDetailId)
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/detail/${this.reservationDetailId}`)
+        this.reservation = response.data.result;
+        console.log(response)
+      }catch(e){
+        console.log(e)
+      }
   },
   methods: {
       viewWod() { // 와드 보는 기능 구현
