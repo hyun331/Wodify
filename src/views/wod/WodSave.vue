@@ -20,11 +20,12 @@
 import axios from 'axios';
 
 export default {
+    props: ['date'],  // date를 props로 받아서 사용
     data() {
         return {
             count: 0,
             wodSaveReqDto: {
-                date: '2024-08-10',
+                date: this.date,
                 timeCap: '00:30:00',
                 rounds: '3',
                 info: 'WOD 설명 텍스트입니다.',
