@@ -2,8 +2,14 @@
   <v-container>
     <v-form ref="form" @submit.prevent="submitForm">
       <v-row>
-        <v-col cols="12" md="6">
-          <v-select v-model="formData.type" :items="typeOptions" label="Type" required></v-select>
+        <v-col cols="12" md="6" v-if="userRole !== 'USER'">
+          <v-select 
+            v-model="formData.type" 
+            :items="typeOptions" 
+            label="Type" 
+            required 
+            :disabled="userRole === 'USER'"
+          ></v-select>
         </v-col>
 
         <v-col cols="12" md="6">
@@ -49,7 +55,22 @@ export default {
       },
       newFiles: [], // 이미지 파일과 미리보기 URL을 담을 배열
       typeOptions: ['NOTICE', 'POST'], // 가능한 타입 선택지
+      userRole: null, // 사용자의 역할을 저장
+      isLogin: false, // 로그인 상태를 저장
     };
+  },
+  created() {
+    // 로그인 상태와 사용자 역할을 localStorage에서 가져옴
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.isLogin = true;
+      this.userRole = localStorage.getItem("role");
+
+      // userRole이 'user'일 경우 type을 'POST'로 설정
+      if (this.userRole === 'USER') {
+        this.formData.type = 'POST';
+      }
+    }
   },
   methods: {
     handleFileUpload(event) {
@@ -88,7 +109,6 @@ export default {
         });
         console.log('Response:', response.data);
 
-        // 성공적으로 글이 생성된 후 /post/list로 이동
         this.$router.push('/post/list');
       } catch (error) {
         console.error('Error submitting form:', error);

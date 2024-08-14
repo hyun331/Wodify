@@ -18,7 +18,7 @@ export const postRouter = [
 		path: "/post/detail/:id",
 		name: "PostDetail",
 		component: PostDetail,
-		props: true, // route params를 컴포넌트에 props로 전달
+		props: true,
 	},
     {
         path: '/post/update/:id',
