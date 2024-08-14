@@ -35,10 +35,10 @@ public class ReservationController {
     /**
      * 박스별 날짜별 예약 목록 조회
      */
-    @PreAuthorize("hasRole('COACH')")
-    @PostMapping("/box/list/{id}")
-    public ResponseEntity<CommonResDto> reservationListByDate(@PathVariable(value = "id") Long boxId, @RequestBody ReservationListReqDto dto, Pageable pageable) {
-        Page<ReservationListResDto> listResDtos = reservationService.reservationListByDate(boxId, dto,pageable);
+    @PreAuthorize("hasAnyRole('COACH','USER','CEO')")
+    @PostMapping("/box/list/")
+    public ResponseEntity<CommonResDto> reservationListByDate(@RequestBody ReservationListReqDto dto, Pageable pageable) {
+        Page<ReservationListResDto> listResDtos = reservationService.reservationListByDate(dto,pageable);
         return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"날짜별 예약 리스트 조회 성공",listResDtos),HttpStatus.OK);
     }
 
