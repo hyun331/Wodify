@@ -1,5 +1,6 @@
 import ReservationList from '@/views/reservation/ReservationList.vue'
 import ReservationCreate from '@/views/reservation/ReservationCreate.vue'
+import ReservationDetailList from '@/views/reservation_detail/ReservationDetailList.vue'
 import ReservationDetailCreate from '@/views/reservation_detail/ReservationDetailCreate.vue'
 import ReservationDetailRecord from '@/views/reservation_detail/ReservationDetailRecord.vue'
 
@@ -13,6 +14,11 @@ export const reservationRouter = [
         path: '/reservation/create',
         name: 'ReservationCreate',
         component: ReservationCreate
+    },
+    {
+        path: '/reservation-detail/list',
+        name: 'ReservationDetailList',
+        component: ReservationDetailList
     },
     {
         path: '/reservation-detail/create',
