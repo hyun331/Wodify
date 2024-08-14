@@ -1,78 +1,91 @@
 <template>
-    <div class="page-container">
-    
+  <div class="page-container">
+    <div class="box right-align">
+      <br>
+      <span class="boxLocation">
+        CROSSFIT RICH NANGOK
+      </span>
+      <br>
+    </div>
 
     <v-container>
       <div>
-        <h1 class="title">MY</h1>
-        <h1 class="title">RESERVATION</h1>
-        </div>
+        <h1 class="title" style="margin-top: 10px;">RESERVATION</h1>
+      </div>
       <v-row>
         <v-col>
           <v-card>
             <v-card-text>
-              <v-table >
+            
+              <v-table>
                 <thead>
-                    <tr>
-                      <th style="font-weight: bold;">DATE</th>
-                      <th style="font-weight: bold;">TIME</th>
-                      <th style="font-weight: bold;">COACH</th>
-                      <th style="font-weight: bold;">WOD</th>
-                      <th style="font-weight: bold;">RECORD</th></tr>
+                  <tr>
+                    <th style="font-weight: bold;">DATE</th>
+                    <th style="font-weight: bold;">TIME</th>
+                    <th style="font-weight: bold;">PEOPLE</th>
+                    <th style="font-weight: bold;">WOD</th>
+                  </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="r in reservationList" :key="r.id">
-                    <td>{{r.date}}</td>
-                    <td>{{r.time}}</td>
-                    <td>{{r.coachName}}</td>
-                    <td><v-btn>view</v-btn></td>
-                    <td v-if="r.recordId">{{r.recordSnF}}</td><td v-else><v-btn>create</v-btn></td></tr>
+                  <tr v-for="r in reservationList" :key="r.id" @click="viewDetail()" style="cursor: pointer;">
+                    <td>{{ r.date }}</td>
+                    <td>{{ r.time }}</td>
+                    <td>{{ r.maxPeople }}</td>
+                    <ReservationMemberListModal
+                    v-model="memberListModal" @update:dialog="memberListModal = $event"
+                    :memberList="r.reservationDetails" />
+                    <td><v-btn @click="wod">view</v-btn></td>
+                  </tr>
                 </tbody>
-            </v-table>
+              </v-table>
             </v-card-text>
           </v-card>
         </v-col>
       </v-row>
+
     </v-container>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import ReservationMemberListModal from './ReservationMemberListModal.vue';
 export default {
-    
+  components :{
+    ReservationMemberListModal
+  },
   data() {
     return {
-      reservationList: []
+      reservationList: [],
+      memberListModal :false
     };
   },
   async created() {
-      const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MjMxNjA1MDQsImV4cCI6MTcyMzE3ODUwNH0.IwzZ6rz9V7EH58_qaLsykQHqq0FYasqMOdW0fboXzjE';
-        try {
-          console.log(`${process.env.VUE_APP_API_BASE_URL}`);
-            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/mylist`,{headers:{Authorization: `Bearer ${token}`}});
-            console.log(response)
-            this.reservationList = response.data.result.content;
-        } catch (error) {
-            console.log(error);
-        }
+
+    try {
+      console.log(`${process.env.VUE_APP_API_BASE_URL}`);
+      const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/reservation/box/list/1`);
+      console.log(response)
+      this.reservationList = response.data.result.content;
+    } catch (error) {
+      console.log(error);
     }
+  },
+  methods:{
+    viewDetail(){
+      this.showHoldingModal();
+    },
+    showHoldingModal() {
+      this.memberListModal=true;
+    },
+    wod() {
+      alert("wod");
+    }
+  }
 };
 </script>
 
 <style>
-.title {
-  font-family: "Roboto", sans-serif;
-  font-size: 100px;
-  line-height: 1.0; /* 전체 텍스트의 줄 간격 설정 */
-}
-
-.page-container {
-    /* 전체 페이지의 배경색을 설정합니다 */
-    background-color: #D9D9D9; /* 원하는 배경색으로 변경 */
-    min-height: 100vh; /* 전체 화면 높이로 설정 */
-  }
-
 .bold {
   font-weight: bold;
 }
