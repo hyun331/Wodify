@@ -11,15 +11,17 @@ export default{
     },
     created(){
         const code = new URL(window.location.href).searchParams.get('code');
+        alert("이게모야");
         if(code){
+            alert(code);
             this.getAuthToken(code);
         }
     },
     methods:{
         async getAuthToken(code){
             try{
-                const response = await axios.get(`http://localhost:8090/member/auth/kakao/callback?code=${code}`);
-                // alert(response.data.result.token);
+                const response = await axios.get(`http://localhost:8090/member/auth/kakao/callback?code=${this.code}`);
+                 alert(response.data.result.token);
                 //홈화면
                 const token = response.data.result.token;
                 const refreshToken = response.data.result.refreshToken;

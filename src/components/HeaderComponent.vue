@@ -8,11 +8,11 @@
         <v-spacer></v-spacer>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-            <v-btn color="white" v-bind="props">BOX-공통</v-btn>
+            <v-btn color="white" v-bind="props" class="rubikMonoOne">BOX-공통</v-btn>
             </template>
             <v-list>
                 <v-list-item :to="{path:'/'}">
-                    <v-list-item-title>박스조회-공통</v-list-item-title>
+                    <v-list-item-title >박스조회-공통</v-list-item-title>
                 </v-list-item>
                 <v-list-item :to="{path:'/'}">
                     <v-list-item-title>내 박스-공통</v-list-item-title>
@@ -24,7 +24,7 @@
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-            <v-btn color="white" v-bind="props">WOD-코치</v-btn>
+            <v-btn color="white" v-bind="props" class="rubikMonoOne">WOD-코치</v-btn>
             </template>
             <v-list>
                 <v-list-item :to="{path:'/'}">
@@ -37,7 +37,7 @@
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-            <v-btn color="white" v-bind="props">RESERVATION-공통</v-btn>
+            <v-btn color="white" v-bind="props" class="rubikMonoOne">RESERVATION-공통</v-btn>
             </template>
             <v-list>
                 <v-list-item :to="{path:'/'}">
@@ -56,7 +56,7 @@
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-            <v-btn color="white" v-bind="props">COMMUNITY-공통</v-btn>
+            <v-btn color="white" v-bind="props" class="rubikMonoOne">COMMUNITY-공통</v-btn>
             </template>
             <v-list>
                 <v-list-item :to="{path:'/'}">
@@ -69,7 +69,7 @@
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-            <v-btn color="white" v-bind="props">MY PAGE-공통</v-btn>
+            <v-btn color="white" v-bind="props" class="rubikMonoOne">MY PAGE-공통</v-btn>
             </template>
             <v-list>
                 <v-list-item :to="{path:'/'}">
