@@ -35,7 +35,6 @@ public class PostController {
         return new ResponseEntity<>(commonResDto, code);
     }
 
-    @PreAuthorize("hasAnyRole('CEO', 'COACH')")
     @GetMapping("/list/notice")
     public ResponseEntity<?> postListNotice() {
         List<PostListResDto> posts = postService.postListNotice();
