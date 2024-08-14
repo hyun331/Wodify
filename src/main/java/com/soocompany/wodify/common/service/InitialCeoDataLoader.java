@@ -90,7 +90,7 @@ public class InitialCeoDataLoader implements CommandLineRunner {
         if(memberService.isMemberExist("suguri@naver.com", "N")==null){
             MemberSaveReqDto member = MemberSaveReqDto.builder()
                     .name("김수연")
-                    .email("suguri@naver.com")
+                    .email("eraltndus@gmail.com")
                     .phone("010-1324-8908")
                     .role(Role.CEO)
                     .address("보라매로 87")
