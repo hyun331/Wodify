@@ -17,7 +17,7 @@
                         required>
                     </v-text-field>
 
-                    <v-text-field label="종료일" v-model="newEndDate"  type="date" readonly=""
+                    <v-text-field label="종료일" v-model="newEndDate"  readonly=""
 
                         required>
                         {{ getEndDate }}
@@ -82,8 +82,8 @@ export default {
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/registration/create`, registrationData);
                 console.log(response.data.result);
                 this.closeModal();
-                // window.location.href="/member/list/user";
-                this.$router.push("/member/list/user");
+                window.location.href="/member/list/user";
+                // this.$router.push("/member/list/user");
                 
             
 
