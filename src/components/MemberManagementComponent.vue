@@ -2,22 +2,12 @@
     <div class="background">
     <v-container>
         <v-row class="d-flex justify-content-between mt-5">
-            <!-- <v-col>
-                <v-form @submit.prevent="searchProducts">
-
+            <v-col>
+                <v-form @submit.prevent="searchMember">
                     <v-row>
-                        <v-col cols="auto">
-                            <v-select
-                            v-model="searchType"
-                            :items="searchOptions"
-                            item-title="text"
-                            item-value="value"
-                            >
-                            </v-select>
-                        </v-col>
                         <v-col>
                             <v-text-field
-                                v-model="searchValue" label="Search"
+                                v-model="searchName" label="Search"
                             >
 
                             </v-text-field>
@@ -25,29 +15,22 @@
 
                         <v-col cols="auto">
                             <v-btn type="submit">
-                                검색
+                                회원 검색
                             </v-btn>
                             
                         </v-col>
                     
                     </v-row>
                 </v-form>
-            </v-col> -->
-            <!-- <v-col cols="auto" v-if="!isAdmin">
-                <v-btn color="secondary" class="mr-2">장바구니</v-btn>
-                <v-btn color="success">주문하기</v-btn>
-            </v-col> -->
-<!-- 
-            <v-col cols="auto" v-if="isAdmin">
-                <v-btn href="/product/create" color="success">상품등록</v-btn>    
-            </v-col> -->
+            </v-col> 
+
+
             <h1>회원관리 {{isCEO}}</h1>
         </v-row>
         <v-row>
             <v-col>
                 <v-card>
                     <v-card-title class="text-h6 text-center" style="font-family: ONE-Mobile-POP;">
-                        <!-- {{pageTitle}} -->
                     </v-card-title>
                     <v-card-text>
                         <v-table>
@@ -106,14 +89,6 @@ export default{
     data(){
         return{
 
-            // //검색
-            // searchType:"optional",
-            // searchOptions:[
-            //     {text:"선택", value:"optional"},
-            //     {text:"상품명", value:"name"},
-            //     {text:"카테고리", value:"category"}
-            // ],
-            // searchValue: "",
 
             userList:[],
             pageSize: 5,
@@ -123,6 +98,8 @@ export default{
             registrationModal: false,
             modalUserEmail : "",
             modalNextStartDate: "",
+
+            searchName:"",
 
             
         }
@@ -140,17 +117,17 @@ export default{
     },
 
     methods:{
-        searchProducts(){
-            this.productList = [];
+        searchMember(){
+            this.userList = [];
             this.currentPage = 0;
             this.isLastPage = false;
             // this.isLoading = false;
 
-            this.loadProduct();
+            this.loadUser();
         },
-        deleteProduct(productId){
-            alert(productId);
-        },
+        // deleteProduct(productId){
+        //     alert(productId);
+        // },
         async loadUser(){
             try{
                 if(this.isLoading || this.isLastPage){
@@ -163,6 +140,10 @@ export default{
                     size: this.pageSize,
                     page: this.currentPage,
                 };
+                
+                if(this.searchName != ""){
+                    params.searchName = this.searchName;
+                }
 
                 //params : {size:5, page=0, category:"fruits"}형태 또는{size:5, page=0, name:"apple"}
                 // if(this.searchType === 'name'){
@@ -171,6 +152,8 @@ export default{
                 //     params.category = this.searchValue;
                 // }
                 //localhost:8080/product/list?category=fruits&size=5&pag0
+
+
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member/list/user`, {params});
                 const additionalData = response.data.result.content;
                 console.log(additionalData);

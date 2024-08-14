@@ -6,142 +6,154 @@
                     <v-img :src="require('@/assets/wodify.png')" alt="WODIFY" sizes="70%" contain></v-img>
                 </v-col>
                 <v-col cols="6">
-                    <!-- <div class="rubikMonoOne" style="font-size: 50px;"><h1> USER REGISTER</h1></div> -->
                 </v-col>
             </v-row>
-
-
 
             <v-row class="d-flex justify-content-between mt-5" justify="center">
                 <v-col cols="12" sm="6" md="8">
-                  
+                    <v-form @submit.prevent="memberRegister" ref="form" lazy-validation>
 
-                    <v-form @submit.prevent="memberRegister">
-
-                        <v-row>
-                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">PROFILE IMAGE</v-label></v-col>
-
-                            
+                        <v-row justify="center" class="half-spacing">
+                            <v-col cols="4" class="divField">
+                                <label class="v-label">PROFILE IMAGE</label>
+                            </v-col>
                             <v-col cols="8">
-                                <v-file-input
-                                label="PROFILE"
-                                accept="image/*"
-                                @change="fileUpdate"
-                                ></v-file-input>
+                                <v-file-input accept="image/*" @change="fileUpdate" prepend-icon=""></v-file-input>
                             </v-col>
                         </v-row>
-                        <v-row justify="center">
-                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">NAME</v-label></v-col>
+
+                        <v-row justify="center" class="half-spacing">
+                            <v-col cols="4" class="divField">
+                                <v-label>NAME</v-label>
+                            </v-col>
                             <v-col cols="8">
-                                
-                                <v-text-field v-model="name" required>
+                                <v-text-field  v-model="name" :rules="name_phone_rule" required placeholder="필수 입력"></v-text-field>
+                            </v-col>
+                        </v-row>
+
+                        <v-row justify="center">
+                            <v-col cols="4" class="divField">
+                                <v-label>EMAIL</v-label></v-col>
+                            <v-col cols="8">
+
+                                <v-text-field v-model="email" type="email" required readonly="">
                                 </v-text-field>
                             </v-col>
                         </v-row>
 
                         <v-row justify="center">
-                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">EMAIL</v-label></v-col>
+                            <v-col cols="4" class="divField">
+                                <v-label>PHONE</v-label></v-col>
                             <v-col cols="8">
-                                
-                                <v-text-field  v-model="email" type="email" required disabled="">
+
+                                <v-text-field v-model="phone" :rules="name_phone_rule" placeholder="필수 입력" required>
                                 </v-text-field>
                             </v-col>
                         </v-row>
 
                         <v-row justify="center">
-                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">PHONE</v-label></v-col>
+                            <v-col cols="4" class="divField"><v-label>ADDRESS</v-label></v-col>
                             <v-col cols="8">
-                                
-                                <v-text-field v-model="phone"  required>
+
+                                <v-text-field v-model="address" required>
                                 </v-text-field>
                             </v-col>
                         </v-row>
 
                         <v-row justify="center">
-                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">ADDRESS</v-label></v-col>
+                            <v-col cols="4" class="divField">
+                                <v-label>DEAD LIFT</v-label></v-col>
                             <v-col cols="8">
-                                
-                                <v-text-field v-model="address"  required>
+
+                                <v-text-field v-model="deadLift" required>
                                 </v-text-field>
                             </v-col>
                         </v-row>
 
                         <v-row justify="center">
-                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">DEAD LIFT</v-label></v-col>
+                            <v-col cols="4" class="divField"><v-label>SQUAT</v-label></v-col>
                             <v-col cols="8">
-                                
-                                <v-text-field v-model="deadLift"  required>
+
+                                <v-text-field v-model="squat" required>
                                 </v-text-field>
                             </v-col>
                         </v-row>
 
                         <v-row justify="center">
-                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">SQUAT</v-label></v-col>
+                            <v-col cols="4" class="divField"><v-label>BENCH PRESS</v-label></v-col>
                             <v-col cols="8">
-                                
-                                <v-text-field v-model="squat"  required>
+
+                                <v-text-field v-model="benchPress" required>
                                 </v-text-field>
                             </v-col>
                         </v-row>
 
                         <v-row justify="center">
-                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">BENCH PRESS</v-label></v-col>
+                            <v-col cols="4" class="divField"><v-label>ROLE</v-label></v-col>
                             <v-col cols="8">
-                                
-                                <v-text-field v-model="benchPress"  required>
+
+                                <v-text-field v-model="role" required readonly="">
                                 </v-text-field>
                             </v-col>
                         </v-row>
+                        <br />
+                        <br />
 
                         <v-row justify="center">
-                            <v-col cols="4"><v-label class="rubikMonoOne" style="font-size: 25px;">ROLE</v-label></v-col>
-                            <v-col cols="8">
-                                
-                                <v-text-field v-model="role"  required readonly="">
-                                </v-text-field>
-                            </v-col>
+                            <!-- <v-btn @click="memberRegister" color="primary" block>등록</v-btn> -->
+
+                            <RoundedButtonComponent text="SIGN UP" buttonType="submit">
+                            </RoundedButtonComponent>
                         </v-row>
-
-   
-
-                        <v-btn type="submit" color="primary" block>SIGN UP</v-btn>
-
-
 
                     </v-form>
-
                 </v-col>
             </v-row>
-
         </v-container>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
+import RoundedButtonComponent from './RoundedButtonComponent.vue';
+
 export default {
-    props:['propsRole'],
-    data(){
-        return{
-            name:"",
-            phone:"",
-            email:"",
-            address:"",
-            deadLift:"",
-            squat:"",
-            benchPress:"",
-            role:"",
+    props: ['propsRole'],
+    components: {
+        RoundedButtonComponent
+    },
+    data() {
+        return {
+            name: '',
+            phone: '',
+            email: '',
+            address: '',
+            deadLift: '',
+            squat: '',
+            benchPress: '',
+            role: '',
             memberImage: null,
+            name_phone_rule: [
+                v => !!v || '',
+            ], // Validation rule
         }
     },
-    created(){
+    created() {
         this.email = new URL(window.location.href).searchParams.get('email');
         this.role = this.propsRole;
     },
     methods: {
         async memberRegister() {
-            try{
-                
+        const form = this.$refs.form;
+        if (form) {
+            try {
+                const validationResult = await form.validate(); 
+
+                if (validationResult.valid === false) { 
+                    alert("필수 입력란을 입력해주세요");
+                    return;  
+                }
+
                 let registerData = new FormData();
                 registerData.append("name", this.name);
                 registerData.append("email", this.email);
@@ -151,32 +163,54 @@ export default {
                 registerData.append("squat", this.squat);
                 registerData.append("benchPress", this.benchPress);
                 registerData.append("role", this.role);
-                if(this.memberImage != null){
+
+                if (this.memberImage != null) {
                     registerData.append("memberImage", this.memberImage);
                 }
+
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member/register`, registerData);
                 console.log(response.data.result);
                 window.location.href = "/";
-            }catch(e){
-                console.log(e);
+            } catch (e) {
+                console.error('Error during registration:', e);
             }
-        },
-        fileUpdate(event){
+        }
+    },
+        fileUpdate(event) {
             this.memberImage = event.target.files[0];
         }
     }
-
-
 }
 </script>
 
 <style>
-.background{
+.background {
     min-height: 100vh;
     margin: 0;
     background-image: url("@/assets/background.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.divField {
+    display: flex;
+    justify-content: flex-end;
+    height: 70px;
+}
+
+.v-label {
+    font-size: 20px;
+    font-family: "Rubik Mono One", monospace;
+    font-weight: 400;
+    font-style: normal;
+}
+
+div.v-col-8 {
+    height: 70px;
+}
+
+.v-field {
+    background-color: rgb(203, 203, 203);
 }
 </style>
