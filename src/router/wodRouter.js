@@ -1,5 +1,6 @@
 import WodSave from "@/views/wod/WodSave.vue"
 import WodFind from "@/views/wod/WodFind.vue"
+import SelectDate from "@/views/wod/SelectDate.vue"
 
 export const wodRouter = [
     {
@@ -8,9 +9,14 @@ export const wodRouter = [
         component: WodSave
     },
     {
-        path: '/wod/find/:date',
-        name: 'WodFind',
-        component: WodFind,
-        props: true,
-    },
+        path: '/wod/find',
+        component: SelectDate,
+        children: [
+            {
+                path: ':date',
+                component: WodFind,
+                props: true,
+            },
+        ],
+    }
 ]
