@@ -57,13 +57,6 @@ export default {
   data() {
     return {
       reservationList: [],
-      tableHeaders: [
-        { title: "ID", key: 'id', align: 'center' },
-        { title: 'date', key: 'date', align: 'center' },
-        { title: 'time', key: 'time', align: 'center' },
-        { title: 'maxPeople', key: 'maxPeople', align: 'center' },
-        { title: 'wod', key: 'wod', align: 'center' },
-      ],
       memberListModal :false
     };
   },
