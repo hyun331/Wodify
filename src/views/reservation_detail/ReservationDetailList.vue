@@ -17,15 +17,13 @@
                       <th style="font-weight: bold;">DATE</th>
                       <th style="font-weight: bold;">TIME</th>
                       <th style="font-weight: bold;">COACH</th>
-                      <th style="font-weight: bold;">WOD</th>
                       <th style="font-weight: bold;">RECORD</th></tr>
                 </thead>
                 <tbody>
-                    <tr v-for="r in reservationList" :key="r.id">
+                  <tr v-for="r in reservationList" :key="r.id" @click="goToDetail(r.id)" style="cursor: pointer;">
                     <td>{{r.date}}</td>
                     <td>{{r.time}}</td>
                     <td>{{r.coachName}}</td>
-                    <td><v-btn>view</v-btn></td>
                     <td v-if="r.recordId">{{r.recordSnF}}</td><td v-else><v-btn>create</v-btn></td></tr>
                 </tbody>
             </v-table>
@@ -55,7 +53,12 @@ export default {
         } catch (error) {
             console.log(error);
         }
+  },
+  methods:{
+    goToDetail(id) {
+      this.$router.push(`/reservation-detail/detail/${id}`);
     }
+  }
 };
 </script>
 
