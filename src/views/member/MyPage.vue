@@ -85,8 +85,8 @@
                                 
                             </v-col>
                             <v-col cols="3">
-                                <v-btn v-if="!isOnHold">정지</v-btn>
-                                <v-btn v-else>정지 해제</v-btn>
+                                <v-btn v-if="!isOnHold" @click="showHoldingModal">정지</v-btn>
+                                <v-btn @click="showUnholdingModal" v-else>정지 해제</v-btn>
                             </v-col>
                         </v-row>
 
@@ -98,19 +98,30 @@
 
                 </v-col>
             </v-row>
+            <HoldingModal v-model="holding" @update:dialog="holding = $event">
+            </HoldingModal>
+            <UnholdingModal v-model="unholding" @update:dialog="unholding = $event">
+            </UnholdingModal>
     </v-container>
     </div>
 </template>
 
 <script>
+import HoldingModal from './HoldingModal.vue';
+import UnholdingModal from './UnholdingModal.vue';
 import axios from 'axios';
 export default{
+    components: {
+        HoldingModal,
+        UnholdingModal
+    },
     data(){
         return{
             memberInfo:{},
             isMemberBaseUrl:false,
             isOnHold:false,
-
+            holding: false,
+            unholding: false
         }
     },
     async created(){
@@ -125,7 +136,23 @@ export default{
         }catch(e){
             console.log(e);
         }
+        try{
+            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/isonhold`);
+            console.log(response.data.result);
+            
+            this.isOnHold = response.data.result;
+        }catch(e){
+            console.log(e);
+        }
 
+    },
+    methods: {
+        showHoldingModal() {
+            this.holding=true;
+        },
+        showUnholdingModal() {
+            this.unholding=true;
+        }
     }
 }
 </script>

@@ -28,31 +28,40 @@
                         class="mx-2"
                     ></v-text-field>
                 </v-col>
-                <v-col cols="6" class="d-flex justify-center align-center">
-                    {{ wod.date }}
-                    {{ wod.timeCap }}
-                    {{ wod.rounds }}
-                    {{ wod.info }}
+                <v-col cols="6" class="justify-center align-center bordered">
+                    <div class="flex-between padded">
+                      <span>date</span>
+                      <span>{{ wod.date }}</span>
+                    </div>
+                    <div class="flex-between padded">
+                      <span>timeCap</span>
+                      <span>{{ wod.timeCap }}</span>
+                    </div>
+                    <div class="flex-between padded">
+                      <span>rounds</span>
+                      <span>{{ wod.rounds }}</span>
+                    </div>
+                    <div class="wod-info-container">{{ wod.info }}</div>
                     <v-table>
-                        <thead><tr><th>name</th><th>contents</th></tr></thead>
-                        <tbody>
-                            <tr v-for="detail in wod.wodDetResDtoList" :key="detail.id">
-                                <td>{{detail.name}}</td>
-                                <td>{{detail.contents}}</td>
-                            </tr>
+                        <tbody style="background-color: #D9D9D9;">
+                        <tr v-for="detail in wod.wodDetResDtoList" :key="detail.id">
+                        <td>{{detail.name}}</td>
+                        <td>{{detail.contents}}</td>
+                        </tr>
                         </tbody>
-                    </v-table>
-                </v-col>
+                        </v-table>
+                  </v-col>
             </v-row>
             <v-row>
                 <v-col cols="12">
+
                     <v-select
-                        v-model="time"
-                        :items="timeOptions"
-                        item-text="text"  
-                        item-value="value"
-                        label="시간 선택"
-                        class="mx-2"
+                    v-model="time"
+                    :items="timeOptions"
+                    item-title="text"  
+                    item-value="value"
+                    label="시간 선택"
+                    class="mx-2"
                     ></v-select>
                 </v-col>
             </v-row>
@@ -84,8 +93,6 @@ export default {
             wod:"와드 내용",
             time:"",
             timeOptions: [], // 시간 옵션을 여기에 저장
-            token:"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MjMxOTU1NTAsImV4cCI6MTcyMzIxMzU1MH0.hdvFCt9lzy0UjjaTc0QukWubTUZUYd2ko0o_EsPRn-E",
-            buttonTest: "test\nbutton"
         }
     },
     watch: {
@@ -103,9 +110,6 @@ export default {
             try {
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find`, {
                     params: dateData,
-                    headers: { 
-                        Authorization: `Bearer ${this.token}`
-                    }
                 });
                 console.log(response);
                 this.wod = response.data.result;
@@ -119,14 +123,7 @@ export default {
             console.log(this.date);
             const dateData = {date:this.date};
             try {
-                const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation/box/list/`, 
-                    dateData,
-                    {
-                        headers: { 
-                            Authorization: `Bearer ${this.token}`
-                        }
-                    }
-                );
+                const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation/box/list/`,dateData);
                 console.log(response.data.result.content);
                 this.timeOptions = response.data.result.content.map(item => {
                     return { text: item.time, value: item.id };
@@ -136,12 +133,23 @@ export default {
                 console.log(error);
             }
         },
-        reservation() {
+        async reservation() {
             const reservationData = {
-                date:this.date,
-                time:this.time
+                reservationId: this.time // Use the selected value from the v-select
+            };
+            
+            try {
+                const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/create`, reservationData);
+                console.log(response.data.result.content);
+                this.timeOptions = response.data.result.content.map(item => {
+                    return { text: item.time, value: item.id };
+                });
+                console.log(this.timeOptions);
+            } catch (error) {
+                console.log(error);
             }
-            alert("예약 완료 !!" +reservationData.date);
+            
+            alert("예약 완료 !! Reservation ID: " + reservationData.reservationId);
         }
     }
 }
@@ -170,4 +178,26 @@ export default {
     font-weight: bold;
     font-size: 20px;
 }
+.flex-between {
+    display: flex;
+    justify-content: space-between; /* Aligns items at the two ends of the line */
+}
+
+.padded {
+    padding: 0 10px; /* Adds padding to the left and right sides */
+}
+
+.flex-between span:first-child {
+    text-align: left;
+    margin-right: 10px; /* Adds space between the label and the value */
+}
+
+.flex-between span:last-child {
+    text-align: right;
+    margin-left: 10px; /* Adds space between the value and the label */
+}
+.bordered {
+    border: 1px solid #ccc; /* 테두리 스타일 */
+    padding: 10px; /* 여백 추가 */
+  }
 </style>
