@@ -10,13 +10,27 @@
 
     <v-container>
       <div>
-        <h1 class="title" style="margin-top: 10px;">RESERVATION</h1>
+        <h1 class="rubikMonoOne" style="margin-top: 10px;">RESERVATION</h1>
       </div>
+
+      <!-- Date Search Fields -->
+      <v-row>
+        <v-col cols="4">
+          <v-text-field v-model="startDate" label="Start Date" type="date" class="mx-2"></v-text-field>
+        </v-col>
+        <v-col cols="4">
+          <v-text-field v-model="endDate" label="End Date" type="date" class="mx-2"></v-text-field>
+        </v-col>
+        <v-col cols="4">
+          <v-btn @click="searchByDateRange">Search</v-btn>
+        </v-col>
+      </v-row>
+
       <v-row>
         <v-col>
           <v-card>
             <v-card-text>
-            
+
               <v-table>
                 <thead>
                   <tr>
@@ -24,20 +38,25 @@
                     <th style="font-weight: bold;">TIME</th>
                     <th style="font-weight: bold;">PEOPLE</th>
                     <th style="font-weight: bold;">WOD</th>
+                    <th style="font-weight: bold;">Delete</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="r in reservationList" :key="r.id" @click="viewDetail()" style="cursor: pointer;">
+                  <tr v-for="r in filteredReservationList" :key="r.id" @click="viewDetail(r.reservationDetails)"
+                    style="cursor: pointer;">
                     <td>{{ r.date }}</td>
-                    <td>{{ r.time }}</td>
+                    <td>{{ r.time.slice(0, 5) }}</td>
                     <td>{{ r.maxPeople }}</td>
-                    <ReservationMemberListModal
-                    v-model="memberListModal" @update:dialog="memberListModal = $event"
-                    :memberList="r.reservationDetails" />
-                    <td><v-btn @click="wod">view</v-btn></td>
+                    <td><v-btn :to="{ path: '/wod/find/' + r.date }">view</v-btn></td>
+                    <td><v-btn @click.stop="cancel(r.id)">delete</v-btn></td>
                   </tr>
                 </tbody>
               </v-table>
+
+              <ReservationMemberListModal v-model="memberListModal" @update:dialog="memberListModal = $event"
+                :memberList="selectedMemberList" />
+
+
             </v-card-text>
           </v-card>
         </v-col>
@@ -50,36 +69,99 @@
 <script>
 import axios from 'axios';
 import ReservationMemberListModal from './ReservationMemberListModal.vue';
+
 export default {
-  components :{
+  components: {
     ReservationMemberListModal
   },
   data() {
     return {
       reservationList: [],
-      memberListModal :false
+      memberListModal: false,
+      selectedMemberList: [],
+      filteredReservationList: [],
+      startDate: "",
+      endDate: "",
+      pageSize: 10,
+      currentPage: 0,
+      isLastPage: false,
+      isLoading: false,
     };
   },
   async created() {
-
     try {
-      console.log(`${process.env.VUE_APP_API_BASE_URL}`);
-      const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/reservation/box/list/1`);
-      console.log(response)
-      this.reservationList = response.data.result.content;
+      this.loadList();
+      window.addEventListener('scroll',this.scrollPagination);
+      
+      console.log(this.filteredReservationList);
     } catch (error) {
       console.log(error);
     }
   },
-  methods:{
-    viewDetail(){
-      this.showHoldingModal();
+  beforeUnmount() {
+        window.removeEventListener('scroll', this.scrollPagination);
     },
-    showHoldingModal() {
-      this.memberListModal=true;
+  methods: {
+    async loadList() {
+      try {
+        if (this.isLoading || this.isLastPage) return;
+        this.isLoading = true;
+        let params = {
+          size: this.pageSize,
+          page: this.currentPage
+        }
+        // if (this.searchType == 'name') {
+        //   params.name = this.searchValue;
+        // } else if (this.searchType == 'category') {
+        //   params.category = this.searchValue;
+        // }
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/reservation/box/list/`, { params });
+        const additionalData = response.data.result.content;
+        this.isLastPage = response.data.isLastPage;
+        this.reservationList = [...this.reservationList, ...additionalData];
+        this.filteredReservationList = this.reservationList;
+        this.currentPage++;
+        console.log(response.data);
+        this.isLoading = false;
+
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    scrollPagination() {
+      // 현재 화면 + 스크롤로 이동한 화면 > 전체화면 -N 의 조건이 성립되면 추가 데이터 로드
+      const isBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+      if (isBottom && !this.isLastPage && !this.isLoading) {
+        this.loadList();
+      }
+    },
+    searchByDateRange() {
+      console.log(this.startDate);
+      console.log(this.endDate);
+      if (this.startDate && this.endDate) {
+        this.filteredReservationList = this.reservationList.filter(reservation => {
+          return new Date(reservation.date) >= new Date(this.startDate) &&
+            new Date(reservation.date) <= new Date(this.endDate);
+        });
+        console.log(this.filteredReservationList);
+      } else {
+        this.filteredReservationList = this.reservationList;
+      }
+    },
+    viewDetail(memberList) {
+      this.selectedMemberList = memberList;
+      this.memberListModal = true;
     },
     wod() {
       alert("wod");
+    },
+    async cancel(id) {
+      try {
+        await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/reservation/delete/` + id);
+        window.location.reload();
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 };
