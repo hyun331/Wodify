@@ -27,10 +27,15 @@ public class HoldingInfoController {
         return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "정지정보가 성공적으로 조회되었습니다.", resDto), HttpStatus.OK);
     }
 
-    @PatchMapping("/unholding/{id}")
-    public ResponseEntity<CommonResDto> unholding(@PathVariable Long id) {
-        holdingInfoService.unholding(id);
+    @PatchMapping("/unholding")
+    public ResponseEntity<CommonResDto> unholding() {
+        holdingInfoService.unholding();
         return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "정지가 성공적으로 삭제되었습니다.", null), HttpStatus.OK);
+    }
+    @GetMapping("/isonhold")
+    public ResponseEntity<CommonResDto> holdingInfoList() {
+        boolean isOnHold = holdingInfoService.isOnHold();
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "정지여부가 성공적으로 조회되었습니다.", isOnHold), HttpStatus.OK);
     }
 
 }

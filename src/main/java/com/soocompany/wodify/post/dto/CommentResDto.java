@@ -13,15 +13,18 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class CommentResDto{
     private Long id;
+    private Long memberId;
     private String name;
     private String comment;
     private List<CommentResDto> replies;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
+    private String delYn;
 
     static public CommentResDto fromEntity(Comment comment) {
         return CommentResDto.builder()
                 .id(comment.getId())
+                .memberId(comment.getMember().getId())
                 .name(comment.getMember().getName())
                 .comment(comment.getComment())
                 .replies(comment.getReplies().stream()
@@ -31,6 +34,7 @@ public class CommentResDto{
                 )
                 .createdTime(comment.getCreatedTime())
                 .updatedTime(comment.getUpdatedTime())
+                .delYn(comment.getDelYn())
                 .build();
     }
 }

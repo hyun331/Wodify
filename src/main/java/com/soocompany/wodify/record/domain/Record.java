@@ -55,4 +55,9 @@ public class Record extends BaseEntity {
         this.comments = dto.getComments();
     } // update
 
+    public void recordDelete(){
+        this.updateDelYn();
+        this.snf = null;
+    }
+
 }

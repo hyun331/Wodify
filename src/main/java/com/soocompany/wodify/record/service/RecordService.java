@@ -52,7 +52,7 @@ public class RecordService {
 //                throw new IllegalArgumentException("운동수행시간이 입력되지 않았습니다.");
 //            }
 
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
             LocalTime exerciseTime = LocalTime.parse(dto.getExerciseTime(), dateTimeFormatter);
 
             reservationDetail.updateRecord(record);
@@ -72,7 +72,7 @@ public class RecordService {
 //        } // 디폴트값없고 NOT NULL인 컬럼값에 대해 한번 더 확인 // 앞단에서 처리
 
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         LocalTime exerciseTime = LocalTime.parse(dto.getExerciseTime(), dateTimeFormatter); // 현재 받아오는 운동수행시간(string) // 앞단에서 무슨값으로(string? localtime?) 들어올지 몰라서 string으로 생각하고 처리해서 넣는다.
 
         Record record = recordReository.save(dto.toEntity(reservationDetail, exerciseTime));
@@ -117,7 +117,7 @@ public class RecordService {
             log.error("recordDelete() : EntityNotFoundException");
             return new EntityNotFoundException("운동기록이 없습니다.");
         });
-        record.updateDelYn();
+        record.recordDelete();
         return record.detFromEntity();
     }
 
