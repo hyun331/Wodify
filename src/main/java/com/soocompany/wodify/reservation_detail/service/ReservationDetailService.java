@@ -111,6 +111,8 @@ public class ReservationDetailService {
             log.error("delete() : 예약을 삭제할 수 있는 권한이 없습니다.");
             throw new IllegalArgumentException("예약을 삭제할 수 있는 권한이 없습니다.");
         }
+        Reservation reservation = reservationDetail.getReservation();
+        reservation.increaseAvailablePeople();
         reservationDetail.updateDelYn();
         reservationDetailRepository.save(reservationDetail);
     }
