@@ -3,6 +3,7 @@ package com.soocompany.wodify.box.repository;
 import com.soocompany.wodify.box.domain.Box;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +22,8 @@ public interface BoxRepository extends JpaRepository<Box, Long> {
     Page<Box> findAllByDelYn(String delYn, Pageable pageable);
 
     List<Box> findByDelYn(String delYn);
+
+    Page<Box> findAll(Specification<Box> specification, Pageable pageable);
 
 
 }

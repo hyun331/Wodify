@@ -3,10 +3,7 @@ package com.soocompany.wodify.box.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soocompany.wodify.box.domain.Box;
-import com.soocompany.wodify.box.dto.BoxDetailResDto;
-import com.soocompany.wodify.box.dto.BoxListResDto;
-import com.soocompany.wodify.box.dto.BoxSaveReqDto;
-import com.soocompany.wodify.box.dto.BoxUpdateReqDto;
+import com.soocompany.wodify.box.dto.*;
 import com.soocompany.wodify.box.service.BoxService;
 import com.soocompany.wodify.common.dto.CommonResDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,13 +56,10 @@ public class BoxController {
     }
 
 
-
-
     // Box 수정
-    @PatchMapping("/update/{id}")
+    @PatchMapping("/update")
     @PreAuthorize("hasRole('CEO')")
     public ResponseEntity<CommonResDto> boxUpdate(
-            @PathVariable Long id,
             @RequestPart("name") String name,
             @RequestPart(value = "logo", required = false) MultipartFile logo,
             @RequestPart("operatingHours") String operatingHours,
@@ -83,7 +77,7 @@ public class BoxController {
                 .build();
 
         try {
-            BoxSaveReqDto updatedBoxDto = boxService.boxUpdate(id, boxUpdateReqDto);
+            BoxSaveReqDto updatedBoxDto = boxService.boxUpdate(boxUpdateReqDto);
             CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box 수정 완료", updatedBoxDto);
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
         } catch (Exception e) {
@@ -103,26 +97,28 @@ public class BoxController {
     }
 
 
+    // Box 목록 조회
+    @GetMapping("/list")
+    public ResponseEntity<CommonResDto> boxList(
+            BoxSearchDto searchDto,
+            Pageable pageable) {
+        Page<BoxListResDto> boxes = boxService.boxList(searchDto, pageable);
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box 목록이 성공적으로 조회되었습니다", boxes);
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
 
-//    // Box 목록 조회
-//    @GetMapping("/list")
-//    public ResponseEntity<CommonResDto> boxList(Pageable pageable) {
-//        Page<BoxListResDto> boxes = boxService.boxList(pageable);
-//        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box 목록이 성공적으로 조회되었습니다", boxes);
-//        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
-//    }
+    // Box 상세 조회
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<CommonResDto> boxDetail(@PathVariable Long id) {
+        try {
+            BoxDetailResDto boxDetail = boxService.boxDetail(id);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box가 성공적으로 조회되었습니다", boxDetail);
 
-//    // Box 상세 조회
-//    @GetMapping("/detail/{id}")
-//    public ResponseEntity<CommonResDto> boxDetail(@PathVariable Long id) {
-//        try {
-//            BoxDetailResDto boxDetail = boxService.boxDetail(id);
-//            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box가 성공적으로 조회되었습니다", boxDetail);
-//            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
-//        } catch (IllegalArgumentException e) {
-//            CommonResDto commonResDto = new CommonResDto(HttpStatus.NOT_FOUND, e.getMessage(), null);
-//            return new ResponseEntity<>(commonResDto, HttpStatus.NOT_FOUND);
-//        }
-//    }
+            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.NOT_FOUND, e.getMessage(), null);
+            return new ResponseEntity<>(commonResDto, HttpStatus.NOT_FOUND);
+        }
+    }
 
 }

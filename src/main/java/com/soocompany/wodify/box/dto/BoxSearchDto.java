@@ -9,10 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoxListResDto {
-    private String logoPath;
-    private String name;
-    private String address;
-    private String operatingHours;
-    private String fee;
+public class BoxSearchDto {
+    private String searchName;
+
+    private String searchAddress;
 }
