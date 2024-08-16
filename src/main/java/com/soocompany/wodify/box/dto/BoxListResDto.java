@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoxListResDto {
+    private String logoPath;
     private String name;
-    private String logo;
-    private String operatingHours;
     private String address;
+    private String operatingHours;
+    private String fee;
 }

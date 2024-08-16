@@ -70,23 +70,22 @@ public class HoldingInfoService {
         return listResDtos;
     }
 
-    public void unholding(Long id) {
-        HoldingInfo holdingInfo = holdingInfoRepository.findByIdAndDelYn(id, "N").orElseThrow(() -> {
-            log.error("unholding() : 해당 id의 정지정보를 찾을 수 없습니다.");
-            return new EntityNotFoundException("해당 id의 정지정보를 찾을 수 없습니다.");
-        });
+    public void unholding() {
         Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
         Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
-            log.error("unholding() : 해당 id의 회원을 찾을 수 없습니다.");
+            log.error("reservationList() : 해당 id의 회원을 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
         });
         Box box = member.getBox();
         if (box==null){
             throw new IllegalArgumentException("box등록 정보가 없습니다.");
         }
-        if (!holdingInfo.getMember().equals(member)||!holdingInfo.getBox().equals(box)) {
-            log.error("unholding() : 정지정보에 대한 접근이 잘못되었습니다.");
-            throw  new IllegalArgumentException("정지정보에 대한 접근이 잘못되었습니다.");
+        HoldingInfo holdingInfo = null;
+        List<HoldingInfo> holdingInfoList = holdingInfoRepository.findByMemberAndBoxAndDelYn(member, box, "N");
+        for (HoldingInfo h : holdingInfoList) {
+            if (h.isOnHold()){
+                holdingInfo = h;
+            }
         }
         holdingInfo.updateHoldingInfo();
         LocalDate start = holdingInfo.getHoldingStart();
@@ -100,5 +99,24 @@ public class HoldingInfoService {
         RegistrationInfo registrationInfo = registrationInfos.get(0);
         registrationInfo.updateEndDate(holdingPeriod);
 
+    }
+
+    public boolean isOnHold() {
+        Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
+            log.error("reservationList() : 해당 id의 회원을 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
+        });
+        Box box = member.getBox();
+        if (box==null){
+            throw new IllegalArgumentException("box등록 정보가 없습니다.");
+        }
+        List<HoldingInfo> holdingInfoList = holdingInfoRepository.findByMemberAndBoxAndDelYn(member, box, "N");
+        for (HoldingInfo holdingInfo : holdingInfoList) {
+            if (holdingInfo.isOnHold()){
+                return true;
+            }
+        }
+        return false;
     }
 }

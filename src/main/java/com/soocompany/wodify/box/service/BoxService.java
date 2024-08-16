@@ -1,10 +1,7 @@
 package com.soocompany.wodify.box.service;
 
 import com.soocompany.wodify.box.domain.Box;
-import com.soocompany.wodify.box.dto.BoxDetailResDto;
-import com.soocompany.wodify.box.dto.BoxListResDto;
-import com.soocompany.wodify.box.dto.BoxSaveReqDto;
-import com.soocompany.wodify.box.dto.BoxUpdateReqDto;
+import com.soocompany.wodify.box.dto.*;
 import com.soocompany.wodify.box.repository.BoxRepository;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.repository.MemberRepository;
@@ -13,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -25,6 +23,10 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,6 +34,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import java.util.Optional;
@@ -114,31 +117,31 @@ public class BoxService {
     }
 
 
-    public BoxSaveReqDto boxUpdate(Long id, BoxUpdateReqDto dto){
+
+
+    public BoxSaveReqDto boxUpdate(BoxUpdateReqDto dto){
+        // 현재 로그인한 사용자 ID 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
 
-        Box box = boxRepository.findByIdAndDelYn(id, "N")
+        // 로그인한 사용자의 Box를 찾음
+        Box box = boxRepository.findByMemberIdAndDelYn(Long.parseLong(memberId), "N")
+                .stream()
+                .findFirst()
                 .orElseThrow(() -> {
-                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
+                    String errorMessage = "해당 사용자의 Box를 찾을 수 없습니다.";
                     log.error("boxUpdate() : " + errorMessage);
-                    throw new IllegalArgumentException(errorMessage);
+                    throw new EntityNotFoundException(errorMessage);
                 });
-
-        if (!box.getMember().getId().toString().equals(memberId)) {
-            String errorMessage = "현재 사용자가 해당 Box를 수정할 권한이 없습니다.";
-            log.error("boxUpdate() : " + errorMessage);
-            throw new SecurityException(errorMessage);
-        }
 
         // 파일 저장 로직 처리 및 AWS S3에 업로드
         MultipartFile logoFile = dto.getLogo();
         if (logoFile != null && !logoFile.isEmpty()) {
-            byte[] bytes = null;
+            byte[] bytes;
             try {
                 bytes = logoFile.getBytes();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("이미지 처리 중 오류가 발생했습니다.", e);
             }
             String fileName = UUID.randomUUID() + "_" + logoFile.getOriginalFilename();
             Path path = Paths.get("C:/Users/rnjsc/Desktop/tmp/", fileName);
@@ -147,7 +150,7 @@ public class BoxService {
             try {
                 Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("이미지 저장 실패", e);
             }
 
             // AWS S3에 업로드
@@ -155,14 +158,14 @@ public class BoxService {
                     .bucket(bucket)
                     .key(fileName)
                     .build();
-            PutObjectResponse putObjectResponse = s3Client.putObject(putObjectRequest, RequestBody.fromFile(path));
+            s3Client.putObject(putObjectRequest, RequestBody.fromFile(path));
             String s3Path = s3Client.utilities().getUrl(a -> a.bucket(bucket).key(fileName)).toExternalForm();
             box.updateLogo(s3Path);
         }
 
         // 로고 업데이트를 제외한 다른 필드만 업데이트
         box.updateDetails(dto.getName(),
-                box.getLogo(),
+                box.getLogoPath(),
                 dto.getOperatingHours(),
                 dto.getFee(),
                 dto.getIntro(),
@@ -172,7 +175,6 @@ public class BoxService {
         Box updatedBox = boxRepository.save(box);
         return BoxSaveReqDto.fromEntity(updatedBox);
     }
-
 
 
     //박스 폐업 -> 대표, 코치, 회원의 box 정보 null변경
@@ -191,40 +193,53 @@ public class BoxService {
         box.updateDelYn();
         //박스에 연관된 코치, 회원 리스트
         List<Member> boxMemberList = memberRepository.findByBoxAndDelYn(box, "N");
-        for(Member m: boxMemberList){
+        for (Member m : boxMemberList) {
             m.memberBoxUpdate(null);
         }
 
+    }
+
+
+    public Page<BoxListResDto> boxList(BoxSearchDto searchDto, Pageable pageable) {
+        Specification<Box> specification = (Root<Box> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (searchDto.getSearchName() != null) {
+                predicates.add(criteriaBuilder.like(root.get("name"), "%" + searchDto.getSearchName() + "%"));
             }
-        }
+
+            if (searchDto.getSearchAddress() != null) {
+                predicates.add(criteriaBuilder.like(root.get("address"), "%" + searchDto.getSearchAddress() + "%"));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<Box> boxPage = boxRepository.findAll(specification, pageable);
+        return boxPage.map(box -> BoxListResDto.builder()
+                .logoPath(box.getLogoPath())
+                .name(box.getName())
+                .address(box.getAddress())
+                .operatingHours(box.getOperatingHours())
+                .fee(box.getFee())
+                .build());
+    }
 
 
-//    public Page<BoxListResDto> boxList(Pageable pageable) {
-//        Page<Box> boxPage = boxRepository.findAllByDelYn("N", pageable);
-//        return boxPage.map(box -> BoxListResDto.builder()
-//                .name(box.getName())
-//                .logo(box.getLogo())
-//                .operatingHours(box.getOperatingHours())
-//                .address(box.getAddress())
-//                .build());
-//    }
+    public BoxDetailResDto boxDetail(Long id) {
+        Box box = boxRepository.findByIdAndDelYn(id, "N")
+                .orElseThrow(() -> {
+                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
+                    log.error("boxDetail() : " + errorMessage);
+                    throw new IllegalArgumentException(errorMessage);
+                });
 
-
-//    public BoxDetailResDto boxDetail(Long id) {
-//        Box box = boxRepository.findByIdAndDelYn(id, "N")
-//                .orElseThrow(() -> {
-//                    String errorMessage = "id가 " + id + "인 Box를 찾을 수 없거나 이미 삭제되었습니다";
-//                    log.error("boxDetail() : " + errorMessage);
-//                    throw  new IllegalArgumentException(errorMessage);
-//                });
-//
-//        return BoxDetailResDto.builder()
-//                .name(box.getName())
-//                .logo(box.getLogo())
-//                .operatingHours(box.getOperatingHours())
-//                .fee(box.getFee())
-//                .address(box.getAddress())
-//                .build();
-//    }
-
+        return BoxDetailResDto.builder()
+                .name(box.getName())
+                .logo(box.getLogoPath())
+                .operatingHours(box.getOperatingHours())
+                .fee(box.getFee())
+                .address(box.getAddress())
+                .build();
+    }
+}
 

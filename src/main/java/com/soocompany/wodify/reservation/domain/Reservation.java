@@ -7,6 +7,8 @@ import com.soocompany.wodify.reservation.dto.ReservationDetailResDto;
 import com.soocompany.wodify.reservation.dto.ReservationListResDto;
 import com.soocompany.wodify.reservation.dto.ReservationUpdateReqDto;
 import com.soocompany.wodify.reservation.repository.ReservationRepository;
+import com.soocompany.wodify.reservation_detail.domain.ReservationDetail;
+import com.soocompany.wodify.reservation_detail.dto.ReservationDetListResDto;
 import com.soocompany.wodify.wod.domain.Wod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +18,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -50,12 +55,18 @@ public class Reservation extends BaseEntity {
     public void decreaseAvailablePeople() {
         this.availablePeople -= 1;
     }
-    public ReservationListResDto ListResDtoFromEntity() {
+    public void increaseAvailablePeople() {
+        this.availablePeople += 1;
+    }
+    public ReservationListResDto ListResDtoFromEntity(List<ReservationDetListResDto> dtoList) {
         return ReservationListResDto.builder()
                 .id(this.id)
                 .date(this.date)
                 .time(this.time)
+                .maxPeople(this.maximumPeople)
+                .reservationPeople(this.maximumPeople - this.availablePeople)
                 .coach(this.coach.getName())
+                .reservationDetails(dtoList)
                 .build();
 
     }

@@ -17,16 +17,12 @@ public class WodDetResDto {
     private Long id;
     private String name;
     private String contents;
-    private LocalDateTime createdTime;
-    private String delYn;
 
     public static WodDetResDto fromEntity(WodDetail wodDetail) {
         return WodDetResDto.builder()
                 .id(wodDetail.getId())
                 .name(wodDetail.getName())
                 .contents(wodDetail.getContents())
-                .createdTime(wodDetail.getCreatedTime())
-                .delYn(wodDetail.getDelYn())
                 .build();
     }
 }

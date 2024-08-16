@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CommentSaveReqDto {
 
-    private Long postId;
     private String comment;
     private String parentId;
 

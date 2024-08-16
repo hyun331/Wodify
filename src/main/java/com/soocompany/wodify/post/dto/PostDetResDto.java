@@ -25,6 +25,7 @@ public class PostDetResDto {
     private String title;
     private String contents;
     private Long likeCount;
+    private Long memberId;
     private String name;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
@@ -38,11 +39,12 @@ public class PostDetResDto {
                 .title(post.getTitle())
                 .contents(post.getContents())
                 .likeCount(post.getLikeCount())
+                .memberId(post.getMember().getId())
                 .name(post.getMember().getName())
                 .createdTime(post.getCreatedTime())
                 .updatedTime(post.getUpdatedTime())
                 .comments(post.getComments().stream()
-                        .filter(comment -> comment.getDelYn().equals("N") && comment.getParent() == null)
+                        .filter(comment -> comment.getParent() == null)
                         .map(CommentResDto::fromEntity)
                         .collect(Collectors.toList())
                 )

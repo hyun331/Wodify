@@ -36,7 +36,6 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, secretKey)  //암호화할건데 secret key 넣음.
                 .compact();
         return token;
-
     }
 
     //refresh token

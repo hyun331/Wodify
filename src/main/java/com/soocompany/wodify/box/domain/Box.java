@@ -25,7 +25,7 @@ public class Box extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    private String logo;
+    private String logoPath;
 
     private String operatingHours;
 
@@ -46,9 +46,9 @@ public class Box extends BaseEntity {
 
 
     //    수정할 때 null값을 넣으면 그 값은 그냥 원래 값 그대로 저장
-    public void updateDetails(String name, String logo, String operatingHours, String fee, String intro, String address) {
+    public void updateDetails(String name, String logoPath, String operatingHours, String fee, String intro, String address) {
         if (name != null) this.name = name;
-        if (logo != null) this.logo = logo;
+        if (logoPath != null) this.logoPath = logoPath;
         if (operatingHours != null) this.operatingHours = operatingHours;
         if (fee != null) this.fee = fee;
         if (intro != null) this.intro = intro;
@@ -62,9 +62,9 @@ public class Box extends BaseEntity {
     }
 
     // boxCode 분리
-    public Box(String name, String logo, String operatingHours, String fee, String intro, String address, Member member) {
+    public Box(String name, String logoPath, String operatingHours, String fee, String intro, String address, Member member) {
         this.name = name;
-        this.logo = logo;
+        this.logoPath = logoPath;
         this.operatingHours = operatingHours;
         this.fee = fee;
         this.intro = intro;
@@ -75,8 +75,8 @@ public class Box extends BaseEntity {
 
 
     // 로고
-    public void updateLogo(String logo){
-        this.logo =logo;
+    public void updateLogo(String logoPath){
+        this.logoPath =logoPath;
     }
 
 }

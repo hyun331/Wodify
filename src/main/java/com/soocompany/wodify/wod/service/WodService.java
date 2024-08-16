@@ -1,11 +1,9 @@
 package com.soocompany.wodify.wod.service;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.box.repository.BoxRepository;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.domain.Role;
 import com.soocompany.wodify.member.repository.MemberRepository;
-import com.soocompany.wodify.reservation.domain.Reservation;
 import com.soocompany.wodify.reservation.repository.ReservationRepository;
 import com.soocompany.wodify.wod.domain.Wod;
 import com.soocompany.wodify.wod.domain.WodDetail;
@@ -40,7 +38,7 @@ public class WodService {
             log.error("wodSave() : 해당 Email 의 멤버를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 Email 의 멤버를 찾을 수 없습니다.");
         });
-        if (member.getRole() == Role.USER) {
+        if (member.getRole() != Role.COACH) {
             log.error("wodSave() : WOD 생성 권한이 없습니다.");
             throw new IllegalArgumentException("WOD 생성 권한이 없습니다.");
         }
@@ -60,7 +58,7 @@ public class WodService {
         return wodRepository.save(wod);
     }
 
-    public WodResDto wodFind(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    public WodResDto wodFind(LocalDate date) {
         String id = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(() -> {
             log.error("wodFind() : 해당 이메일의 멤버를 찾을 수 없습니다.");
@@ -83,7 +81,7 @@ public class WodService {
         return wodResDto;
     }
 
-    public Wod wodDelete(WodCancelReqDto wodCancelReqDto) {
+    public Wod wodDelete(LocalDate date) {
         String id = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(() -> {
             log.error("wodDelete() : 해당 이메일의 멤버를 찾을 수 없습니다.");
@@ -93,7 +91,7 @@ public class WodService {
             log.error("wodDelete() : 해당 ID의 박스를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 ID의 박스를 찾을 수 없습니다.");
         });
-        Wod wod = wodRepository.findByBoxIdAndDateAndDelYn(box.getId(), wodCancelReqDto.getDate(), "N").orElseThrow(() -> {
+        Wod wod = wodRepository.findByBoxIdAndDateAndDelYn(box.getId(), date, "N").orElseThrow(() -> {
             log.error("wodDelete() : 해당 날짜에 등록된 WOD 가 없습니다.");
             return new EntityNotFoundException("해당 날짜에 등록된 WOD 가 없습니다.");
         });
@@ -101,7 +99,7 @@ public class WodService {
             log.error("wodDelete() : 해당 WOD 가 등록된 Box 와 본인의 Box 가 다릅니다.");
             throw new IllegalArgumentException("해당 WOD 가 등록된 Box 와 본인의 Box 가 다릅니다.");
         }
-        if (!reservationRepository.findByBoxAndDateAndDelYn(box, wodCancelReqDto.getDate(), "N", Pageable.unpaged()).isEmpty()) {
+        if (!reservationRepository.findByBoxAndDateAndDelYn(box, date, "N", Pageable.unpaged()).isEmpty()) {
             log.error("wodDelete() : 해당 와드에 대한 예약이 있습니다.");
             throw new EntityNotFoundException("해당 와드에 대한 예약이 있습니다.");
         }

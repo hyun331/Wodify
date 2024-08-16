@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -21,14 +22,18 @@ public class PostListResDto {
     private String title;
     private Long likeCount;
     private String name;
+    private LocalDateTime createdTime;
+    private int commentCount;
 
-    public PostListResDto listFromEntity(Post post) {
+    static public PostListResDto fromEntity(Post post) {
         return PostListResDto.builder()
                 .id(post.getId())
                 .type(post.getType())
                 .title(post.getTitle())
                 .likeCount(post.getLikeCount())
                 .name(post.getMember().getName())
+                .createdTime(post.getCreatedTime())
+                .commentCount(post.getComments().size())
                 .build();
     }
 
