@@ -91,16 +91,16 @@ export default {
   async created() {
     try {
       this.loadList();
-      window.addEventListener('scroll',this.scrollPagination);
-      
+      window.addEventListener('scroll', this.scrollPagination);
+
       console.log(this.filteredReservationList);
     } catch (error) {
       console.log(error);
     }
   },
   beforeUnmount() {
-        window.removeEventListener('scroll', this.scrollPagination);
-    },
+    window.removeEventListener('scroll', this.scrollPagination);
+  },
   methods: {
     async loadList() {
       try {
@@ -110,11 +110,10 @@ export default {
           size: this.pageSize,
           page: this.currentPage
         }
-        // if (this.searchType == 'name') {
-        //   params.name = this.searchValue;
-        // } else if (this.searchType == 'category') {
-        //   params.category = this.searchValue;
-        // }
+        if (this.startDate && this.endDate) {
+          params.startDate = this.startDate;
+          params.endDate = this.endDate;
+        }
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/reservation/box/list/`, { params });
         const additionalData = response.data.result.content;
         this.isLastPage = response.data.isLastPage;
@@ -138,15 +137,11 @@ export default {
     searchByDateRange() {
       console.log(this.startDate);
       console.log(this.endDate);
-      if (this.startDate && this.endDate) {
-        this.filteredReservationList = this.reservationList.filter(reservation => {
-          return new Date(reservation.date) >= new Date(this.startDate) &&
-            new Date(reservation.date) <= new Date(this.endDate);
-        });
-        console.log(this.filteredReservationList);
-      } else {
-        this.filteredReservationList = this.reservationList;
-      }
+      this.reservationList = [];
+      this.currentPage = 0;
+      this.isLastPage = false;
+      this.isLoading = false;
+      this.loadList();
     },
     viewDetail(memberList) {
       this.selectedMemberList = memberList;
