@@ -126,6 +126,19 @@ public class InitialCeoDataLoader implements CommandLineRunner {
                     .build();
             memberService.memberRegister(member);
         }
+        if(memberService.isMemberExist("eraltndus@daum.net", "N")==null){
+            MemberSaveReqDto member = MemberSaveReqDto.builder()
+                    .name("김수연")
+                    .email("eraltndus@daum.net")
+                    .phone("010-1231-6484")
+                    .role(Role.CEO)
+                    .address("보라매로 87")
+                    .deadLift(BigDecimal.valueOf(80.5))
+                    .squat(BigDecimal.valueOf(60.5))
+                    .benchPress(BigDecimal.valueOf(40.5))
+                    .build();
+            memberService.memberRegister(member);
+        }
 
 
 
