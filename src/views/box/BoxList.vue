@@ -18,11 +18,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="b in boxList" :key="b.id">
-                                            <td>{{ b.name }}</td>
-                                            <td>{{ b.address }}</td>
-                                            <td>{{ b.operating_hours }}</td>
-                                            <td>{{ b.fee }}</td>
+                                        <tr v-for="(box, index) in boxes" :key="`box-${index}`">
+                                            <td>{{ box.name }}</td>
+                                            <td>{{ box.address }}</td>
+                                            <td>{{ box.operatingHours }}</td>
+                                            <td>{{ box.fee }}</td>
                                         </tr>
                                     </tbody>
                                 </v-table>
@@ -31,28 +31,57 @@
                     </v-col>
                 </v-row>
             </div>
+
+            <v-pagination v-model="currentPage" :length="totalPages" :total-visible="5" class="mt-4"
+                @input="fetchBoxes" />
         </v-container>
     </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data() {
         return {
-
+            currentPage: 1, 
+            itemsPerPage: 10, 
+            boxes: [], 
+            totalPages: 1, 
         };
     },
+    mounted() {
+        this.fetchBoxes(); 
+    },
     methods: {
+        async fetchBoxes() {
+            try {
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/box/list`, {
+                    params: {
+                        page: this.currentPage - 1, 
+                        size: this.itemsPerPage, 
+                    },
+                });
 
-    }
+                this.boxes = response.data.result.content;
+                this.totalPages = response.data.result.totalPages;
+            } catch (error) {
+                alert("BOX LIST 불러오기가 실패 하였습니다.");
+            }
+        },
+    },
 };
 </script>
 
+
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap');
+
 .title {
     font-family: 'Rubik Mono One', sans-serif;
-  }
+}
+
 .container {
     background-color: #D9D9D9;
     min-height: 100vh;
