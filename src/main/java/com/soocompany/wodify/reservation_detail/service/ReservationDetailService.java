@@ -13,6 +13,7 @@ import com.soocompany.wodify.reservation.service.ReservationManageEventHandler;
 import com.soocompany.wodify.reservation.service.ReservationManagementService;
 import com.soocompany.wodify.reservation.domain.Reservation;
 import com.soocompany.wodify.reservation.repository.ReservationRepository;
+import com.soocompany.wodify.reservation_detail.controller.SseController;
 import com.soocompany.wodify.reservation_detail.domain.ReservationDetail;
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetCreateReqDto;
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetailDetResDto;
@@ -44,9 +45,13 @@ public class ReservationDetailService {
     private final ReservationManagementService reservationManagementService;
     private final ReservationManageEventHandler reservationManageEventHandler;
 
+    private final SseController sseController; //  수연
+
     public ReservationDetailDetResDto reservationCreate(ReservationDetCreateReqDto dto) {
         Reservation reservation = reservationRepository.findByIdAndDelYn(dto.getReservationId(), "N").orElseThrow(() -> new EntityNotFoundException("해당 id의 예약이 존재하지 않습니다."));
         Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName(); // 수연
+
         Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
             log.error("reservationCreate() : 해당 id의 회원을 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
@@ -83,9 +88,12 @@ public class ReservationDetailService {
         if (reservationManagementService.decreaseAvailable(reservation.getId(),1) < 0) {
             throw new IllegalStateException("예약 인원이 초과되어 예약이 불가능합니다.");
         }
+
+
         reservationManageEventHandler.publish(new ReservationManageEvent(reservation.getId(), 1));
 
         ReservationDetail reservationDetail = dto.toEntity(reservation, member);
+        sseController.publishMessage(reservationDetail,memberEmail); // 수연
         ReservationDetail savedDetail = reservationDetailRepository.save(reservationDetail);
         return savedDetail.detFromEntity();
     }
