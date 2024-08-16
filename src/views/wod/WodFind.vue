@@ -45,6 +45,7 @@ export default {
       try {
         await axios.patch(`http://localhost:8090/wod/delete/${this.localWod.date}`);
         console.log('Delete successful');
+        this.$emit('wod-deleted', this.wod.date);
       } catch (error) {
         console.error('Error deleting WOD data:', error);
         this.errorMessage = 'WOD 데이터를 삭제하는 중 오류가 발생했습니다.';

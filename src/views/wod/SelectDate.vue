@@ -14,9 +14,13 @@
           </div>
         </v-col>
         <v-col cols="12" md="8" class="content-col">
-          <!-- fetchWodData의 결과에 따라 WodFind 또는 WodSave 컴포넌트를 렌더링 -->
-          <WodFind v-if="wod" :wod="wod" :key="formattedDate" />
-          <WodSave v-else :date="formattedDate" :key="formattedDate" />
+          <WodFind v-show="wod" :wod="wod" :key="wod" @wod-deleted="onWodDeleted" />
+          <WodSave
+            v-show="!wod"
+            :date="formattedDate"
+            :key="formattedDate"
+            @wod-saved="onWodSaved"
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -36,10 +40,15 @@ export default {
   data() {
     return {
       wod: null,
-      selectedDate: null,
+      selectedDate: new Date(), // 초기 값을 오늘 날짜로 설정
       errorMessage: '',
-      formattedDate: null,
+      formattedDate: this.formatDate(new Date()), // 초기화된 날짜를 포맷
+      isLoading: false,
     };
+  },
+  mounted() {
+    // 페이지 로드 시 오늘 날짜로 데이터 조회
+    this.fetchWodData(this.formattedDate);
   },
   methods: {
     onDateSelected(date) {
@@ -54,7 +63,8 @@ export default {
     },
     async fetchWodData(date) {
       try {
-        this.wod = null; // 초기화
+        this.isLoading = true;
+        this.wod = null;
         const response = await axios.get(`http://localhost:8090/wod/find/${date}`);
 
         if (response.status === 200) {
@@ -69,11 +79,20 @@ export default {
           this.errorMessage = 'WOD 데이터를 불러오는 중 오류가 발생했습니다.';
           console.error('Error fetching WOD data:', error.response ? error.response.data : error.message);
         }
+      } finally {
+        this.isLoading = false;
       }
+    },
+    onWodSaved(date) {
+      this.fetchWodData(date);
+    },
+    onWodDeleted(date) {
+      this.fetchWodData(date);
     },
   },
 };
 </script>
+
 
 <style scoped>
 .background-image {

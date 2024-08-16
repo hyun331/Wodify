@@ -69,7 +69,7 @@ export default {
                 );
                 if (response.status === 201) {
                     alert("WOD가 성공적으로 등록되었습니다.");
-                    this.$router.push(`/wod/find/${this.wodSaveReqDto.date}`); // 성공적으로 등록되면 해당 날짜의 WOD 페이지로 리디렉션
+                    this.$emit('wod-saved', this.date);
                 } else {
                     alert("WOD 등록에 실패했습니다.");
                 }
