@@ -17,7 +17,13 @@ import java.util.Optional;
 @Repository
 public interface ReservationDetailRepository extends JpaRepository<ReservationDetail,Long> {
     Optional<ReservationDetail> findByIdAndDelYn(Long id, String delYn);
-    Page<ReservationDetail> findByMemberAndDelYn(Member member, String delYn, Pageable pageable);
+    @Query("SELECT rd FROM ReservationDetail rd " +
+            "JOIN rd.reservation r " +
+            "JOIN rd.member m " +
+            "WHERE rd.delYn = 'N' " +
+            "AND m = :member " +
+            "ORDER BY r.date DESC")
+    Page<ReservationDetail> findByMemberAndDelYn(@Param("member") Member member, Pageable pageable);
     List<ReservationDetail> findByReservationAndDelYn(Reservation reservation, String delYn);
     @Query("SELECT rd FROM ReservationDetail rd " +
             "JOIN rd.reservation r " +
@@ -25,7 +31,7 @@ public interface ReservationDetailRepository extends JpaRepository<ReservationDe
             "WHERE r.date BETWEEN :startDate AND :endDate " +
             "AND rd.delYn = 'N' " +
             "AND m = :member " +
-            "ORDER BY r.date ASC")
+            "ORDER BY r.date DESC")
     Page<ReservationDetail> findAllByMemberAndDateRange(
             @Param("member") Member member,
             @Param("startDate") LocalDate startDate,

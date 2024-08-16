@@ -97,7 +97,7 @@ public class ReservationDetailService {
 
     public Page<ReservationDetailDetResDto> listByMember(Long memberId, @PageableDefault(sort = "date",direction = Sort.Direction.DESC) Pageable pageable) {
         Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다."));
-        Page<ReservationDetail> details = reservationDetailRepository.findByMemberAndDelYn(member, "N", pageable);
+        Page<ReservationDetail> details = reservationDetailRepository.findByMemberAndDelYn(member, pageable);
         return details.map(ReservationDetail::detFromEntity);
     }
 
@@ -128,7 +128,7 @@ public class ReservationDetailService {
         if (dto.getStartDate()!=null&&dto.getEndDate()!=null) {
             details = reservationDetailRepository.findAllByMemberAndDateRange(member, dto.getStartDate(),dto.getEndDate(), pageable);
         }else {
-            details = reservationDetailRepository.findByMemberAndDelYn(member,"N", pageable);
+            details = reservationDetailRepository.findByMemberAndDelYn(member, pageable);
         }
         return details.map(ReservationDetail::detFromEntity);
     }
