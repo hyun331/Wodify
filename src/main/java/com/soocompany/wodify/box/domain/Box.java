@@ -38,7 +38,7 @@ public class Box extends BaseEntity {
     @Column(unique = true)
     private String code;
 
-    @JoinColumn(name = "representative_id", unique = true)
+    @JoinColumn(name = "representative_id")
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Member member;
