@@ -101,35 +101,35 @@ export default {
   background-position: center;
   background-repeat: no-repeat;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh; /* 변경: 100vh에서 min-height: 100vh로 수정 */
   position: relative;
-  overflow: hidden;
+  overflow: auto; /* 변경: overflow: hidden에서 overflow: auto로 수정 */
 }
 
 .content-container {
   max-width: 1200px;
-  margin: 0 auto; /* 가로 중앙 정렬 */
-  padding-top: 20px; /* 상단에 위치하게 설정 */
+  margin: 0 auto;
+  padding-top: 20px;
 }
 
 .fixed-layout {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
-  flex-wrap: nowrap; /* 줄 바꿈을 방지 */
+  flex-wrap: nowrap;
 }
 
 .date-picker-col {
   flex: 0 0 auto;
   max-width: 300px;
   position: sticky;
-  top: 55px; /* 상단에서의 간격 설정 */
-  min-width: 300px; /* 최소 너비 설정 */
+  top: 55px;
+  min-width: 300px;
 }
 
 .content-col {
   flex: 1;
-  margin-left: 20px; /* v-date-picker와 컴포넌트 간 20px 간격 설정 */
+  margin-left: 20px;
   box-sizing: border-box;
 }
 

@@ -46,9 +46,9 @@ export default {
             count: 0,
             wodSaveReqDto: {
                 date: this.date || "", // props로 받은 date를 사용
-                timeCap: "00:30:00",
-                rounds: "3",
-                info: "WOD 설명 텍스트입니다.",
+                timeCap: null,
+                rounds: null,
+                info: '',
                 wodDetSaveReqDtoList: [],
             },
         };
