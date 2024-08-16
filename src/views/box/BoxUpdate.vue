@@ -12,7 +12,7 @@
                 BOX REVISE
               </v-card-title>
               <v-card-text>
-                <v-form @submit.prevent="boxCreate">
+                <v-form @submit.prevent="boxUpdate">
                   <v-text-field label="BOX NAME" v-model="name" placeholder="박스 이름을 입력해주세요." prepend-icon="mdi-home"
                     required>
                   </v-text-field>
@@ -80,16 +80,11 @@ export default {
       dialogText: ''
     };
   },
-  computed: {
-    userId() {
-      return this.$store.state.userId;
-    },
-    token() {
-      return this.$store.state.token;
-    },
-  },
   methods: {
-    async boxCreate() {
+    fileUpdate(event) {
+      this.logoPath = event.target.files[0]
+    },
+    async boxUpdate() {
       try {
         let registerData = new FormData();
         registerData.append("name", this.name);
@@ -99,23 +94,13 @@ export default {
         registerData.append("intro", this.intro);
         registerData.append("logoPath", this.logoPath);
 
-        await axios.post(`${process.env.VUE_APP_API_BASE_URL}/box/update/${this.userId}`,
-        registerData,
-          {
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            }
-          }
-        );
+        await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/box/update`, registerData);
         this.$router.push('/box/success');
       } catch (e) {
         this.dialogTitle = 'Error';
         this.dialogText = '박스수정에 실패했습니다.';
         this.dialog = true;
       }
-    },
-    fileUpdate(event) {
-      this.logoPath = event.target.files[0]
     },
   },
 };

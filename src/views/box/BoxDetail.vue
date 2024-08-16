@@ -19,9 +19,11 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap');
+
 .title {
     font-family: 'Rubik Mono One', sans-serif;
-  }
+}
+
 .container {
     background-color: #D9D9D9;
     min-height: 100vh;
