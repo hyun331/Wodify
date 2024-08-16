@@ -63,7 +63,7 @@ export default {
       filteredReservationList: [],
       startDate: "",
       endDate: "",
-      pageSize: 5,
+      pageSize: 10,
       currentPage: 0,
       isLastPage: false,
       isLoading: false,
@@ -72,7 +72,7 @@ export default {
   async created() {
     try {
       this.loadList();
-      this.filteredReservationList = this.reservationList;
+      window.addEventListener('scroll', this.scrollPagination);
     } catch (error) {
       console.log(error);
     }
@@ -91,7 +91,7 @@ export default {
           params.endDate = this.endDate;
         }
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/mylist`, { params });
-        const additionalData = response.data.result.content.map(p => ({ ...p, quantity: 0 }));
+        const additionalData = response.data.result.content;
         this.isLastPage = response.data.isLastPage;
         this.reservationList = [...this.reservationList, ...additionalData]
         this.filteredReservationList = this.reservationList;

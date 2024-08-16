@@ -104,13 +104,9 @@ export default {
         }
     },
     methods: {
-        async fetchWod (date){
-            const dateData = {date:this.date}
-            console.log(date)
+        async fetchWod (){
             try {
-                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find`, {
-                    params: dateData,
-                });
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find/`+this.date);
                 console.log(response);
                 this.wod = response.data.result;
             } catch (error) {

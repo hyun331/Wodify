@@ -54,7 +54,7 @@
                         </div>
                     
                         <div v-else class="d-flex justify-center">
-                            <v-btn :to="{ path: '/wod/find' }">
+                            <v-btn :to="{ path: '/wod/select-date' }">
                                 wod 생성
                             </v-btn>
                         </div>
@@ -113,12 +113,8 @@ export default {
     },
     methods: {
         async fetchWod() {
-            const dateData = { date: this.date };
             try {
-
-                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find`, {
-                    params: dateData
-                });
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find/`+this.date);
                 this.wod = response.data.result;
                 if (!this.wod) {
                     throw new Error("No data found");
