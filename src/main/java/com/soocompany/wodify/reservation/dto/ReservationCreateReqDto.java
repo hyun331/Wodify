@@ -18,11 +18,10 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReservationCreateReqDto {
-    private Long boxId;
     private Long wodId;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
-    @JsonFormat(pattern = "kk:mm:ss")
+    @JsonFormat(pattern = "kk:mm")
     private LocalTime time;
     private int maximumPeople;
 

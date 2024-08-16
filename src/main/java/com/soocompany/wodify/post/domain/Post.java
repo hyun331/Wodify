@@ -1,4 +1,5 @@
 package com.soocompany.wodify.post.domain;
+import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.domain.BaseEntity;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.post.dto.PostUpdateReqDto;
@@ -40,13 +41,17 @@ public class Post extends BaseEntity {
     @UpdateTimestamp
     private LocalDateTime updatedTime;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> files = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "box_id")
+    private Box box;
 
     public void updatePost(PostUpdateReqDto postUpdateReqDto) {
         this.type = postUpdateReqDto.getType();
