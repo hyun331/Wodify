@@ -5,6 +5,7 @@ import HomeView from '@/views/common/HomeView.vue';
 import {reservationRouter} from './reservationRouter';
 import { wodRouter } from './wodRouter';
 import { boxRouter } from './BoxRouter';
+import { hallOfFameRouter } from './HallOfFame';
 import { postRouter } from './postRouter';
 
 const routes = [
@@ -17,6 +18,7 @@ const routes = [
     ...reservationRouter,
     ...wodRouter,
     ...boxRouter,
+    ...hallOfFameRouter,
     ...postRouter
 ]
 
