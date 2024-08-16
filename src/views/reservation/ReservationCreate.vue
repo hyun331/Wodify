@@ -7,7 +7,7 @@
             </span>
             <br>
         </div>
-    
+
         <v-container>
             <br>
             <v-row class="reservationHead">
@@ -28,39 +28,46 @@
                             class="mx-2"
                         ></v-text-field>
                     </v-col>
-                    <v-col cols="6" class="d-flex justify-center align-center">
-                        {{ wod.date }}
-                        {{ wod.timeCap }}
-                        {{ wod.rounds }}
-                        {{ wod.info }}
-                        <v-table>
-                            <tbody v-if="wod!=''">
-                                <tr v-for="detail in wod.wodDetResDtoList" :key="detail.id">
-                                    <td>{{detail.name}}</td>
-                                    <td>{{detail.contents}}</td>
-                                </tr>
-                            </tbody>
-                            <v-btn v-else>
+                    <v-col cols="6" class="justify-center align-center">
+                        <div v-if="wod && wod.wodDetResDtoList.length > 0" class="bordered">
+                            <div class="flex-between padded">
+                                <span>date</span>
+                                <span>{{ wod.date }}</span>
+                            </div>
+                            <div class="flex-between padded">
+                                <span>timeCap</span>
+                                <span>{{ wod.timeCap }}</span>
+                            </div>
+                            <div class="flex-between padded">
+                                <span>rounds</span>
+                                <span>{{ wod.rounds }}</span>
+                            </div>
+                            <div class="wod-info-container">{{ wod.info }}</div>
+                            <v-table>
+                                <tbody>
+                                    <tr v-for="detail in wod.wodDetResDtoList" :key="detail.id">
+                                        <td>{{ detail.name }}</td>
+                                        <td>{{ detail.contents }}</td>
+                                    </tr>
+                                </tbody>
+                            </v-table>
+                        </div>
+                    
+                        <div v-else class="d-flex justify-center">
+                            <v-btn :to="{ path: '/wod/select-date' }">
                                 wod 생성
                             </v-btn>
-                        </v-table>
+                        </div>
                     </v-col>
                 </v-row>
+                
                 <v-row v-for="(entry, index) in entries" :key="index">
                     <v-col cols="6">
-                        <v-text-field 
-                            label="Time" 
-                            v-model="entry.time" 
-                            placeholder="시간을 입력해주세요" 
-                            required>
+                        <v-text-field label="Time" type="time" v-model="entry.time" placeholder="시간을 입력해주세요" required>
                         </v-text-field>
                     </v-col>
                     <v-col cols="5">
-                        <v-text-field 
-                            label="People" 
-                            v-model="entry.people" 
-                            placeholder="인원을 입력해주세요" 
-                            required>
+                        <v-text-field label="People" v-model="entry.people" placeholder="인원을 입력해주세요" required>
                         </v-text-field>
                     </v-col>
                     <v-col cols="1">
@@ -70,17 +77,8 @@
                     </v-col>
                 </v-row>
                 <v-row class="d-flex justify-center align-center">
-                    <RoundedButtonComponent
-                        text="Add Time Slot"
-                        buttonType="button"
-                        @click="addEntry"
-                        class="mx-2"
-                    />
-                    <RoundedButtonComponent
-                        text="Book Create"
-                        buttonType="submit"
-                        class="mx-2"
-                    />
+                    <RoundedButtonComponent text="Add Time Slot" buttonType="button" @click="addEntry" class="mx-2" />
+                    <RoundedButtonComponent text="Book Create" buttonType="submit" class="mx-2" />
                 </v-row>
 
             </v-form>
@@ -92,7 +90,7 @@
 import RoundedButtonComponent from '@/components/RoundedButtonComponent.vue';
 import axios from 'axios';
 
-export default {    
+export default {
     components: {
         RoundedButtonComponent
     },
@@ -100,33 +98,35 @@ export default {
         return {
             date: "",
             wod: "",
+            error: false,
             entries: [
                 { time: "", people: "" }
             ],
-            token: "token-here"
         };
     },
     watch: {
         date(newDate) {
             if (newDate) {
-                // this.fetchWod(newDate);
+                this.fetchWod(newDate);
             }
         }
     },
     methods: {
         async fetchWod() {
-            const dateData = { date: this.date };
             try {
-                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find`, {
-                    params: dateData,
-                    headers: { 
-                        Authorization: `Bearer ${this.token}`
-                    }
-                });
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find/`+this.date);
                 this.wod = response.data.result;
+                if (!this.wod) {
+                    throw new Error("No data found");
+                }
             } catch (error) {
-                this.wod = null;
-                console.log(error);
+                if (error.response && error.response.status === 404) {
+                    this.error = true; // 에러 상태를 true로 설정하여 WodSave 컴포넌트를 표시합니다.
+                    this.wod = "";
+                } else {
+                    this.errorMessage = 'WOD 데이터를 불러오는 중 오류가 발생했습니다.';
+                    console.error('Error fetching WOD data:', error);
+                }
             }
         },
         addEntry() {
@@ -138,20 +138,20 @@ export default {
         reservation() {
             const reservationData = this.entries.map(entry => ({
                 date: this.date,
+                wodId: this.wod.id,
                 time: entry.time,
-                people: entry.people
+                maximumPeople: entry.people
             }));
-            
+
             alert(JSON.stringify(reservationData, null, 2));
-            // axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation/create`, reservationData, {
-            //     headers: {
-            //         Authorization: `Bearer ${this.token}`
-            //     }
-            // }).then(response => {
-            //     alert("예약이 완료되었습니다!");
-            // }).catch(error => {
-            //     console.error("예약 실패", error);
-            // });
+            axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation/create`, reservationData)
+            .then(response => {
+                console.log(response);
+                alert("예약이 완료되었습니다!");
+                this.$router.push("/reservation/list");
+            }).catch(error => {
+                console.error("예약 실패", error);
+            });
         }
     }
 }
@@ -165,17 +165,22 @@ export default {
 .right-align {
     text-align: right;
 }
+
 .boxLocation {
     color: white;
-    font-weight:1000;
+    font-weight: 1000;
     font-size: 70px;
     font-family: "Oswald", sans-serif;
 }
+
 .page-container {
     /* 전체 페이지의 배경색을 설정합니다 */
-    background-color: #D9D9D9; /* 원하는 배경색으로 변경 */
-    min-height: 100vh; /* 전체 화면 높이로 설정 */
-  }
+    background-color: #D9D9D9;
+    /* 원하는 배경색으로 변경 */
+    min-height: 100vh;
+    /* 전체 화면 높이로 설정 */
+}
+
 .reservationHead {
     font-weight: bold;
     font-size: 20px;

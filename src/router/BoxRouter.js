@@ -21,7 +21,7 @@ export const boxRouter = [
         component: BoxList
     },
     {
-        path: '/box/detail',
+        path: '/box/detail/:id',
         name: 'BoxDetail',
         component: BoxDetail
     },

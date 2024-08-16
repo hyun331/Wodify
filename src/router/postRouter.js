@@ -2,7 +2,7 @@ import PostCreate from "@/views/post/PostCreate.vue";
 import PostDetail from "@/views/post/PostDetail.vue";
 import PostList from "@/views/post/PostList.vue";
 import PostUpdate from "@/views/post/PostUpdate.vue";
-
+import PostTest from "@/views/post/PostTest.vue";
 export const postRouter = [
 	{
 		path: "/post/create",
@@ -18,12 +18,17 @@ export const postRouter = [
 		path: "/post/detail/:id",
 		name: "PostDetail",
 		component: PostDetail,
-		props: true, // route params를 컴포넌트에 props로 전달
+		props: true,
 	},
     {
         path: '/post/update/:id',
         name: 'PostUpdate',
         component: PostUpdate,
         props: true,
-      }
+    },
+	{
+		path: '/post/test',
+		name: 'PostTest',
+		component: PostTest,
+	}
 ];

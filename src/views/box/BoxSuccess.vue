@@ -45,7 +45,7 @@ export default {
     },
     methods: {
         myBox() {
-            window.location.href = '/';
+            window.location.href = (`${process.env.VUE_APP_API_BASE_URL}/box/detail/${this.boxDetailId}`);
         },
         home() {
             window.location.href = '/';
