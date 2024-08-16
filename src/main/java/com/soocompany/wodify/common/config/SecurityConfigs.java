@@ -28,13 +28,8 @@ public class SecurityConfigs {
                 .httpBasic().disable()
                 .authorizeRequests()
                     //doLogin은 postman 테스트용. 나중에 필요없으면 삭제
-                    .antMatchers(
-                            "/member/register"
-                            , "/"
-                            , "/member/auth/kakao/callback"
-                            , "/member/doLogin"
-                            , "/box/list"
-                            , "/member/refresh-token"
+                    .antMatchers( "/member/register" , "/" , "/member/auth/kakao/callback" , "/member/doLogin"
+                            , "/box/list" , "/member/refresh-token"
                     )
                     .permitAll()
                 .anyRequest().authenticated()
