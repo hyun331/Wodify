@@ -32,8 +32,8 @@ public class ReservationController {
      */
     @PreAuthorize("hasAnyRole('COACH','CEO')")
     @GetMapping("/box/list/")
-    public ResponseEntity<CommonResDto> reservationList(@PageableDefault(sort = "date",direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<ReservationListResDto> listResDtos = reservationService.reservationList(pageable);
+    public ResponseEntity<CommonResDto> reservationList(ReservationSearchDto searchDto, @PageableDefault(sort = "date",direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<ReservationListResDto> listResDtos = reservationService.reservationList(searchDto, pageable);
         return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약 리스트 조회 성공",listResDtos),HttpStatus.OK);
     }
     /**

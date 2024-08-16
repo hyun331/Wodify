@@ -82,7 +82,7 @@ public class ReservationService {
         return reservation.detailResDtoFromEntity();
     }
 
-    public Page<ReservationListResDto> reservationList(Pageable pageable) {
+    public Page<ReservationListResDto> reservationList(ReservationSearchDto searchDto, Pageable pageable) {
         Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
         Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
             log.error("reservationList() : 해당 id의 회원을 찾을 수 없습니다.");
@@ -93,8 +93,12 @@ public class ReservationService {
             log.error("reservationCreate() : 박스에 대한 권한이 없습니다.");
             throw new IllegalArgumentException("박스에 대한 권한이 없습니다.");
         }
-
-        Page<Reservation> reservationList = reservationRepository.findByBoxAndDelYn(box, "N", pageable);
+        Page<Reservation> reservationList;
+        if (searchDto.getStartDate()!=null&&searchDto.getEndDate()!=null) {
+            reservationList = reservationRepository.findByBoxAndDateBetweenAndDelYn(box, searchDto.getStartDate(), searchDto.getEndDate(), "N", pageable);
+        }else {
+            reservationList = reservationRepository.findByBoxAndDelYn(box,"N", pageable);
+        }
         List<ReservationListResDto> list = new ArrayList<>();
 
         // Convert each Reservation to ReservationListResDto

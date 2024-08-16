@@ -8,6 +8,7 @@ import com.soocompany.wodify.member.repository.MemberRepository;
 import com.soocompany.wodify.registration_info.domain.RegistrationInfo;
 import com.soocompany.wodify.registration_info.repository.RegistrationInfoRepository;
 import com.soocompany.wodify.reservation.dto.ReservationManageEvent;
+import com.soocompany.wodify.reservation.dto.ReservationSearchDto;
 import com.soocompany.wodify.reservation.service.ReservationManageEventHandler;
 import com.soocompany.wodify.reservation.service.ReservationManagementService;
 import com.soocompany.wodify.reservation.domain.Reservation;
@@ -117,13 +118,18 @@ public class ReservationDetailService {
         reservationDetailRepository.save(reservationDetail);
     }
 
-    public Page<ReservationDetailDetResDto> myReservationList(Pageable pageable) {
+    public Page<ReservationDetailDetResDto> myReservationList(ReservationSearchDto dto, Pageable pageable) {
         Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
         Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
             log.error("reservationCreate() : 해당 id의 회원을 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
         });
-        Page<ReservationDetail> details = reservationDetailRepository.findByMemberAndDelYn(member, "N", pageable);
+        Page<ReservationDetail> details;
+        if (dto.getStartDate()!=null&&dto.getEndDate()!=null) {
+            details = reservationDetailRepository.findAllByMemberAndDateRange(member, dto.getStartDate(),dto.getEndDate(), pageable);
+        }else {
+            details = reservationDetailRepository.findByMemberAndDelYn(member,"N", pageable);
+        }
         return details.map(ReservationDetail::detFromEntity);
     }
 }
