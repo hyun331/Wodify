@@ -150,7 +150,7 @@ export default {
                 alert("예약이 완료되었습니다!");
                 this.$router.push("/reservation/list");
             }).catch(error => {
-                console.error("예약 실패", error);
+                alert("예약 실패, 등록 폼을 정확히 입력해주세요!", error);
             });
         }
     }

@@ -134,15 +134,12 @@ export default {
             try {
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/create`, reservationData);
                 console.log(response.data.result.content);
-                this.timeOptions = response.data.result.content.map(item => {
-                    return { text: item.time, value: item.id };
-                });
-                console.log(this.timeOptions);
+                alert("예약 완료 !! ");
+                this.$router.push('/reservation-detail/list');
             } catch (error) {
                 console.log(error);
             }
             
-            alert("예약 완료 !! Reservation ID: " + reservationData.reservationId);
         }
     }
 }
