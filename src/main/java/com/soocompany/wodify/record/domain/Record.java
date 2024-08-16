@@ -22,7 +22,6 @@ public class Record extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // id
-    @Column(nullable = false, columnDefinition = "char(1) default 'N'")
     private String snf; // 성공여부 success or failure
     @Column(nullable = false)
     private LocalTime exerciseTime; // 운동 수행 시간
@@ -57,7 +56,7 @@ public class Record extends BaseEntity {
 
     public void recordDelete(){
         this.updateDelYn();
-        this.snf = null;
+        this.snf = "";
     }
 
 }

@@ -1,6 +1,7 @@
 package com.soocompany.wodify.reservation_detail.controller;
 
 import com.soocompany.wodify.common.dto.CommonResDto;
+import com.soocompany.wodify.reservation.dto.ReservationSearchDto;
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetCreateReqDto;
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetailDetResDto;
 import com.soocompany.wodify.reservation_detail.service.ReservationDetailService;
@@ -35,8 +36,8 @@ public class ReservationDetailController {
         return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약싱세 조회 성공",detResDtoList),HttpStatus.OK);
     }
     @GetMapping("/mylist")
-    public ResponseEntity<CommonResDto> reservationDetail(Pageable pageable) {
-        Page<ReservationDetailDetResDto> detResDtoList = reservationDetailService.myReservationList(pageable);
+    public ResponseEntity<CommonResDto> reservationDetail(ReservationSearchDto searchDto, Pageable pageable) {
+        Page<ReservationDetailDetResDto> detResDtoList = reservationDetailService.myReservationList(searchDto, pageable);
         return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"예약싱세 조회 성공",detResDtoList),HttpStatus.OK);
     }
 

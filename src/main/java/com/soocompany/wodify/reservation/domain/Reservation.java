@@ -55,6 +55,9 @@ public class Reservation extends BaseEntity {
     public void decreaseAvailablePeople() {
         this.availablePeople -= 1;
     }
+    public void increaseAvailablePeople() {
+        this.availablePeople += 1;
+    }
     public ReservationListResDto ListResDtoFromEntity(List<ReservationDetListResDto> dtoList) {
         return ReservationListResDto.builder()
                 .id(this.id)

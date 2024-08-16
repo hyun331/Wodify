@@ -18,8 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 public class WodResDto {
     private Long id;
-    private Long boxId;
-    private Long memberId;
+    private String boxName;
+    private String memberName;
     private LocalDate date;
     private Time timeCap;
     private int rounds;
@@ -30,8 +30,8 @@ public class WodResDto {
     public static WodResDto fromEntity(Wod wod) {
         return WodResDto.builder()
                 .id(wod.getId())
-                .boxId(wod.getBox().getId())
-                .memberId(wod.getMember().getId())
+                .boxName(wod.getBox().getName())
+                .memberName(wod.getMember().getName())
                 .date(wod.getDate())
                 .timeCap(wod.getTimeCap())
                 .rounds(wod.getRounds())

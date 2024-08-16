@@ -102,7 +102,7 @@ public class RecordService {
             return new EntityNotFoundException("운동기록이 없습니다.");
         });
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         LocalTime exerciseTime = LocalTime.parse(dto.getExerciseTime(), dateTimeFormatter);
 
         record.recordUpdateEntity(dto,exerciseTime);
