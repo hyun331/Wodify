@@ -86,15 +86,15 @@ export default {
           size: this.pageSize,
           page: this.currentPage
         }
-        // if (this.searchType == 'name') {
-        //   params.name = this.searchValue;
-        // } else if (this.searchType == 'category') {
-        //   params.category = this.searchValue;
-        // }
+        if (this.startDate && this.endDate) {
+          params.startDate = this.startDate;
+          params.endDate = this.endDate;
+        }
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/mylist`, { params });
         const additionalData = response.data.result.content.map(p => ({ ...p, quantity: 0 }));
         this.isLastPage = response.data.isLastPage;
         this.reservationList = [...this.reservationList, ...additionalData]
+        this.filteredReservationList = this.reservationList;
         this.currentPage++;
         console.log(response.data);
         this.isLoading = false;
@@ -113,14 +113,11 @@ export default {
     searchByDateRange() {
       console.log(this.startDate);
       console.log(this.endDate);
-      if (this.startDate && this.endDate) {
-        this.filteredReservationList = this.reservationList.filter(reservation => {
-          return new Date(reservation.date) >= new Date(this.startDate) &&
-            new Date(reservation.date) <= new Date(this.endDate);
-        });
-      } else {
-        this.filteredReservationList = this.reservationList;
-      }
+      this.reservationList = [];
+      this.currentPage = 0;
+      this.isLastPage = false;
+      this.isLoading = false;
+      this.loadList();
     },
     goToDetail(id) {
       this.$router.push(`/reservation-detail/detail/${id}`);
