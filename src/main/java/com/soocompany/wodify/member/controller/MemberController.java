@@ -219,8 +219,8 @@ public class MemberController {
     //박스의 회원 리스트 - 코치, 대표
     @PreAuthorize("hasAnyRole('COACH', 'CEO')")
     @GetMapping("/list/user")
-    public ResponseEntity<CommonResDto> boxUserList(Pageable pageable){
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치가 다니는 박스의 현재 멤버 리스트", memberService.boxUserList(pageable));
+    public ResponseEntity<CommonResDto> boxUserList(MemberSearchDto memberSearchDto, Pageable pageable){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치가 다니는 박스의 현재 멤버 리스트", memberService.boxUserList(memberSearchDto, pageable));
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
