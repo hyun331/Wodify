@@ -1,8 +1,6 @@
 package com.soocompany.wodify.wod.controller;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.soocompany.wodify.common.dto.CommonResDto;
 import com.soocompany.wodify.wod.domain.Wod;
-import com.soocompany.wodify.wod.dto.WodCancelReqDto;
 import com.soocompany.wodify.wod.dto.WodResDto;
 import com.soocompany.wodify.wod.dto.WodSaveReqDto;
 import com.soocompany.wodify.wod.service.WodService;
@@ -29,8 +27,8 @@ public class WodController {
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/find")
-    public ResponseEntity<?> wodFind(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    @GetMapping("/find/{date}")
+    public ResponseEntity<?> wodFind(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 
         HttpStatus code = HttpStatus.OK;
         String msg = "WOD 를 찾았습니다.";
@@ -40,11 +38,11 @@ public class WodController {
     }
 
 //    @PreAuthorize("hasRole('COACH')")
-    @PatchMapping("/delete")
-    public ResponseEntity<?> wodDelete(@RequestBody WodCancelReqDto wodCancelReqDto) {
+    @PatchMapping("/delete/{date}")
+    public ResponseEntity<?> wodDelete(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         String msg = "WOD 를 삭제했습니다.";
         HttpStatus code = HttpStatus.OK;
-        Wod wod = wodService.wodDelete(wodCancelReqDto);
+        Wod wod = wodService.wodDelete(date);
         return new ResponseEntity<>(new CommonResDto(code, msg, wod.getId()), code);
     }
 }
