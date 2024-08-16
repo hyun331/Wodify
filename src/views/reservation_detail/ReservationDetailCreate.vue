@@ -72,8 +72,6 @@
                 />
             </v-row>
         </v-form>
-        <v-date-picker v-model="vdate" @input="menu = false" :max="maxDate"></v-date-picker>
-        
     </v-container>
     </div>
 </template>
@@ -88,7 +86,6 @@ export default {
     data() {
         return {
             menu: false,
-            vdate: null,
             date:"",
             wod:"와드 내용",
             time:"",
