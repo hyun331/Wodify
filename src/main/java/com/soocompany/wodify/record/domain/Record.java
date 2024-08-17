@@ -43,6 +43,7 @@ public class Record extends BaseEntity {
 
     public RecordDetResDto detFromEntity(){
         return RecordDetResDto.builder()
+                .id(this.id)
                 .snf(this.snf).exerciseTime(this.exerciseTime)
                 .comments(this.comments)
                 .build();
