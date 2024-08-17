@@ -2,7 +2,6 @@ import PostCreate from "@/views/post/PostCreate.vue";
 import PostDetail from "@/views/post/PostDetail.vue";
 import PostList from "@/views/post/PostList.vue";
 import PostUpdate from "@/views/post/PostUpdate.vue";
-import PostTest from "@/views/post/PostTest.vue";
 export const postRouter = [
 	{
 		path: "/post/create",
@@ -26,9 +25,4 @@ export const postRouter = [
         component: PostUpdate,
         props: true,
     },
-	{
-		path: '/post/test',
-		name: 'PostTest',
-		component: PostTest,
-	}
 ];

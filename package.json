@@ -9,13 +9,17 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.7.3",
     "bootstrap": "^5.3.3",
     "bootstrap-vue-3": "^0.5.1",
     "core-js": "^3.8.3",
+    "interactjs": "^1.10.27",
     "jwt-decode": "^4.0.0",
+    "quill-blot-formatter": "^1.0.5",
     "vue": "^3.2.13",
     "vue-router": "^4.4.2",
+    "vue3-quill": "^0.3.1",
     "vuetify": "^3.6.14"
   },
   "devDependencies": {

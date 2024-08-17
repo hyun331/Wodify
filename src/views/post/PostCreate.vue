@@ -1,123 +1,208 @@
 <template>
   <v-container>
-    <v-form ref="form" @submit.prevent="submitForm">
-      <v-row>
-        <v-col cols="12" md="6" v-if="userRole !== 'USER'">
-          <v-select 
-            v-model="formData.type" 
-            :items="typeOptions" 
-            label="Type" 
-            required 
-            :disabled="userRole === 'USER'"
-          ></v-select>
-        </v-col>
-
-        <v-col cols="12" md="6">
-          <v-text-field v-model="formData.title" label="Title" required></v-text-field>
-        </v-col>
-
-        <v-col cols="12">
-          <v-textarea v-model="formData.contents" label="Contents" required></v-textarea>
-        </v-col>
-
-        <!-- 이미지 업로드 부분 -->
-        <v-col cols="12">
-          <input type="file" multiple @change="handleFileUpload" />
-        </v-col>
-
-        <!-- 미리보기 및 삭제 버튼 -->
+    <v-card>
+      <v-card-title>
         <v-row>
-          <v-col v-for="(file, index) in newFiles" :key="index" cols="12" sm="6" md="4">
-            <v-img :src="file.preview" aspect-ratio="1.75"></v-img>
-            <v-btn color="error" @click="removeNewFile(index)">Remove</v-btn>
+          <v-col cols="12">
+            <v-select v-model="formData.type" :items="typeOptions" label="Type" required outlined dense :disabled="userRole === 'USER'" />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field v-model="formData.title" label="Title" required outlined dense />
+          </v-col>
+          <v-col cols="12">
+            <quill-editor ref="quillEditorRef" v-model:value="formData.contents" :options="editorOptions" @blur="onEditorBlur" @focus="onEditorFocus" @ready="onEditorReady" @change="onEditorChange" class="custom-quill-editor" />
           </v-col>
         </v-row>
-
-        <v-col cols="12" class="d-flex justify-end">
-          <v-btn color="primary" type="submit" class="mr-4">Submit</v-btn>
-          <v-btn color="secondary" @click="cancel">Cancel</v-btn>
-        </v-col>
-      </v-row>
-    </v-form>
+      </v-card-title>
+      <v-card-actions class="d-flex justify-end">
+        <v-btn color="primary" @click="submitForm">저장</v-btn>
+        <v-btn color="secondary" @click="cancel">취소</v-btn>
+      </v-card-actions>
+    </v-card>
   </v-container>
 </template>
 
 <script>
+import { quillEditor } from 'vue3-quill';
+import 'quill/dist/quill.snow.css';
+import { reactive, ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
+import BlotFormatter from 'quill-blot-formatter';
+import Quill from 'quill';
+import interact from 'interactjs';
+
+// Register BlotFormatter as a module in Quill
+Quill.register('modules/blotFormatter', BlotFormatter);
+
+// Custom Video Blot 정의
+const BlockEmbed = Quill.import('blots/block/embed');
+class VideoBlot extends BlockEmbed {
+  static create(value) {
+    let node = super.create();
+    node.setAttribute('controls', '');
+    node.setAttribute('src', value);
+    node.style.width = '320px'; // 기본 너비 설정 (작은 크기)
+    node.style.height = '180px'; // 기본 높이 설정 (작은 크기)
+    node.style.display = 'block'; // block으로 설정하여 부모 요소에 맞춰짐
+    node.classList.add('resizable-video'); // 동영상에 고유한 클래스 추가
+    return node;
+  }
+  static value(node) {
+    return node.getAttribute('src');
+  }
+}
+VideoBlot.blotName = 'video';
+VideoBlot.tagName = 'video';
+Quill.register(VideoBlot);
 
 export default {
-  data() {
-    return {
-      formData: {
-        type: null,
-        title: '',
-        contents: '',
-      },
-      newFiles: [], // 이미지 파일과 미리보기 URL을 담을 배열
-      typeOptions: ['NOTICE', 'POST'], // 가능한 타입 선택지
-      userRole: null, // 사용자의 역할을 저장
-      isLogin: false, // 로그인 상태를 저장
-    };
-  },
-  created() {
-    // 로그인 상태와 사용자 역할을 localStorage에서 가져옴
-    const token = localStorage.getItem('token');
-    if (token) {
-      this.isLogin = true;
-      this.userRole = localStorage.getItem("role");
+  components: { quillEditor },
+  setup() {
+    const router = useRouter();
+    const quillEditorRef = ref(null);
+    let quillInstance = null;
 
-      // userRole이 'user'일 경우 type을 'POST'로 설정
-      if (this.userRole === 'USER') {
-        this.formData.type = 'POST';
-      }
+    const formData = reactive({
+      type: null,
+      title: '',
+      contents: '',
+    });
+
+    const typeOptions = ['NOTICE', 'POST'];
+    const userRole = localStorage.getItem("role");
+    const isLogin = !!localStorage.getItem('token');
+
+    if (userRole === 'USER') {
+      formData.type = 'POST';
     }
-  },
-  methods: {
-    handleFileUpload(event) {
-      const files = event.target.files;
-      for (let i = 0; i < files.length; i++) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.newFiles.push({
-            file: files[i], // 원본 파일 객체
-            preview: e.target.result // 미리보기 URL
-          });
-        };
-        reader.readAsDataURL(files[i]);
+
+    const handleMediaUpload = async (acceptType) => {
+      if (!quillInstance) {
+        console.error("Quill Editor is not initialized yet.");
+        return;
       }
-    },
-    removeNewFile(index) {
-      this.newFiles.splice(index, 1); // 선택된 파일을 배열에서 제거
-    },
-    async submitForm() {
-      const data = new FormData();
-      data.append('type', this.formData.type);
-      data.append('title', this.formData.title);
-      data.append('contents', this.formData.contents);
+      const fileInput = document.createElement('input');
+      fileInput.setAttribute('type', 'file');
+      fileInput.setAttribute('accept', acceptType);
+      fileInput.click();
 
-      // 선택된 이미지 파일들을 FormData에 추가
-      this.newFiles.forEach(file => {
-        data.append('files', file.file);
-      });
+      fileInput.onchange = async () => {
+        const file = fileInput.files[0];
+        const mediaUrl = await uploadMedia(file);
 
+        if (mediaUrl) {
+          const range = quillInstance.getSelection();
+          if (range) {
+            const extension = mediaUrl.split('.').pop().toLowerCase();
+            const videoExtensions = ['mp4', 'webm', 'ogg'];
+
+            if (videoExtensions.includes(extension)) {
+              quillInstance.insertEmbed(range.index, 'video', mediaUrl);
+              onMounted(() => makeResizable()); // 동영상 크기 조절 가능하게 설정
+            } else {
+              quillInstance.insertEmbed(range.index, 'image', mediaUrl);
+            }
+          }
+        }
+      };
+    };
+
+    const uploadMedia = async (file) => {
+      const formData = new FormData();
+      formData.append('file', file);
       try {
-        // 백엔드로 POST 요청
-        const response = await axios.post('http://localhost:8090/post/create', data, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        console.log('Response:', response.data);
+        const response = await axios.post('http://localhost:8090/post/upload-media', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        return response.data.result;
+      } catch (error) {
+        console.error('Error uploading media:', error);
+        return null;
+      }
+    };
 
-        this.$router.push('/post/list');
+    const makeResizable = () => {
+      interact('.resizable-video').resizable({
+        edges: { left: true, right: true, bottom: true, top: true },
+        listeners: {
+          move(event) {
+            let { x, y } = event.target.dataset;
+            x = (parseFloat(x) || 0) + event.deltaRect.left;
+            y = (parseFloat(y) || 0) + event.deltaRect.top;
+            Object.assign(event.target.style, {
+              width: `${event.rect.width}px`,
+              height: `${event.rect.height}px`,
+              transform: `translate(${x}px, ${y}px)`
+            });
+            event.target.dataset.x = x;
+            event.target.dataset.y = y;
+          }
+        }
+      });
+    };
+
+    const onEditorReady = (quill) => {
+      quillInstance = quill;
+      console.log('Editor ready!', quill);
+      makeResizable(); // 에디터가 준비되면 동영상 크기 조절 활성화
+    };
+
+    const editorOptions = {
+      theme: 'snow',
+      placeholder: 'Write your contents here...',
+      modules: {
+        toolbar: {
+          container: [
+            [{ header: [1, 2, false] }],
+            ['bold', 'italic', 'underline'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['link', 'image', 'video'],
+          ],
+          handlers: {
+            image: () => handleMediaUpload('image/*'),
+            video: () => handleMediaUpload('video/*'),
+          },
+        },
+        blotFormatter: {},
+      },
+    };
+
+    const onEditorBlur = (quill) => {
+      console.log('Editor blur!', quill);
+    };
+
+    const onEditorFocus = (quill) => {
+      console.log('Editor focus!', quill);
+    };
+
+    const onEditorChange = (event) => {
+      formData.contents = event.html;
+    };
+
+    const submitForm = async () => {
+      const data = new FormData();
+      data.append('type', formData.type);
+      data.append('title', formData.title);
+      data.append('contents', formData.contents);
+      try {
+        const response = await axios.post('http://localhost:8090/post/create', data, { headers: { 'Content-Type': 'multipart/form-data' } });
+        const createdPostId = response.data.result;
+        router.push(`/post/detail/${createdPostId}`);
       } catch (error) {
         console.error('Error submitting form:', error);
       }
-    },
-    cancel() {
-      // /post/list로 이동
-      this.$router.push('/post/list');
-    },
+    };
+
+    const cancel = () => { router.push('/post/list'); };
+
+    return {
+      formData, typeOptions, userRole, isLogin, quillEditorRef, editorOptions, onEditorBlur, onEditorFocus, onEditorReady, onEditorChange, submitForm, cancel,
+    };
   },
 };
 </script>
+
+<style scoped>
+.custom-quill-editor {
+  min-height: 300px; /* 기본 높이 설정 */
+}
+</style>
