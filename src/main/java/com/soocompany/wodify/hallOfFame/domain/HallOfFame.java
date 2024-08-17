@@ -40,6 +40,7 @@ public class HallOfFame {
                 .id(this.id)
                 .rank(this.rank)
                 .name(this.member.getName())
+                .email(this.member.getEmail())
                 .deadLift(this.deadLift)
                 .squat(this.squat)
                 .benchPress(this.benchPress)

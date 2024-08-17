@@ -45,7 +45,7 @@ public class InitialCeoDataLoader implements CommandLineRunner {
             Member newMember = memberRepository.findByEmailAndDelYn("hongildong@naver.com", "N").orElseThrow(()->new EntityNotFoundException("Test Ceo Initial Data Loader Exception"));
 
             Box box = Box.builder().name("홍길동의 크로스핏")
-                    .logo("http://s3 어쩌구 위치")
+                    .logoPath("http://s3 어쩌구 위치")
                     .fee("1개월 10만원")
                     .intro("대충 홍길동 크로스핏에 대한 설명")
                     .operatingHours("09:00-23:00")
@@ -118,7 +118,20 @@ public class InitialCeoDataLoader implements CommandLineRunner {
                     .name("권채훈")
                     .email("tls99rnjs@nate.com")
                     .phone("010-1231-6484")
-                    .role(Role.COACH)
+                    .role(Role.CEO)
+                    .address("보라매로 87")
+                    .deadLift(BigDecimal.valueOf(80.5))
+                    .squat(BigDecimal.valueOf(60.5))
+                    .benchPress(BigDecimal.valueOf(40.5))
+                    .build();
+            memberService.memberRegister(member);
+        }
+        if(memberService.isMemberExist("eraltndus@daum.net", "N")==null){
+            MemberSaveReqDto member = MemberSaveReqDto.builder()
+                    .name("김수연")
+                    .email("eraltndus@daum.net")
+                    .phone("010-1231-6484")
+                    .role(Role.CEO)
                     .address("보라매로 87")
                     .deadLift(BigDecimal.valueOf(80.5))
                     .squat(BigDecimal.valueOf(60.5))
