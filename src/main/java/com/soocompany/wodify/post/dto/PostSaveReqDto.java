@@ -23,7 +23,6 @@ public class PostSaveReqDto {
     private Type type;
     private String title;
     private String contents;
-    private MultipartFile[] files;
 
     public Post toEntity(Member member) {
         return Post.builder()

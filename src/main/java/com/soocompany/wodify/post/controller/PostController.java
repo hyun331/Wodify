@@ -3,6 +3,7 @@ import com.soocompany.wodify.common.dto.CommonResDto;
 import com.soocompany.wodify.post.domain.Post;
 import com.soocompany.wodify.post.dto.*;
 import com.soocompany.wodify.post.service.CommentService;
+import com.soocompany.wodify.post.service.ImageService;
 import com.soocompany.wodify.post.service.LikeService;
 import com.soocompany.wodify.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -23,6 +25,7 @@ public class PostController {
     private final PostService postService;
     private final LikeService likeService;
     private final CommentService commentService;
+    private final ImageService imageService;
 
     @PostMapping("/create")
     public ResponseEntity<?> postCreate(@ModelAttribute PostSaveReqDto dto) {
@@ -30,6 +33,15 @@ public class PostController {
         HttpStatus code = HttpStatus.CREATED;
         String msg = "글이 등록되었습니다.";
         CommonResDto commonResDto = new CommonResDto(code, msg, post.getId());
+        return new ResponseEntity<>(commonResDto, code);
+    }
+
+    @PostMapping("/upload-media")
+    public ResponseEntity<?> uploadMedia(@ModelAttribute ImageSaveReqDto dto) throws IOException {
+        String url = imageService.uploadMedia(dto.getFile());
+        HttpStatus code = HttpStatus.OK;
+        String msg = "이미지가 s3에 업로드 되었습니다.";
+        CommonResDto commonResDto = new CommonResDto(code, msg, url);
         return new ResponseEntity<>(commonResDto, code);
     }
 

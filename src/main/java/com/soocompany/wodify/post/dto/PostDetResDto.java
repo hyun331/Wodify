@@ -1,6 +1,5 @@
 package com.soocompany.wodify.post.dto;
 
-import com.soocompany.wodify.post.domain.Comment;
 import com.soocompany.wodify.post.domain.Post;
 import com.soocompany.wodify.post.domain.Type;
 import lombok.AllArgsConstructor;
@@ -30,7 +29,6 @@ public class PostDetResDto {
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
     List<CommentResDto> comments;
-    List<ImageResDto> files;
 
     static public PostDetResDto fromEntity(Post post) {
         return PostDetResDto.builder()
@@ -46,11 +44,6 @@ public class PostDetResDto {
                 .comments(post.getComments().stream()
                         .filter(comment -> comment.getParent() == null)
                         .map(CommentResDto::fromEntity)
-                        .collect(Collectors.toList())
-                )
-                .files(post.getFiles().stream()
-                        .filter(image -> image.getDelYn().equals("N"))
-                        .map(ImageResDto::fromEntity)
                         .collect(Collectors.toList())
                 )
                 .build();

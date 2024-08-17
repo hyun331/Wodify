@@ -38,7 +38,7 @@ public class WodService {
             log.error("wodSave() : 해당 Email 의 멤버를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 Email 의 멤버를 찾을 수 없습니다.");
         });
-        if (member.getRole() != Role.COACH) {
+        if (member.getRole() == Role.USER) {
             log.error("wodSave() : WOD 생성 권한이 없습니다.");
             throw new IllegalArgumentException("WOD 생성 권한이 없습니다.");
         }
@@ -66,7 +66,7 @@ public class WodService {
         });
         if (member.getBox() == null)
             throw new EntityNotFoundException("db 에 box 설정하고 wod 를 조회해주세요");
-        Box box = boxRepository.findByMemberIdAndDelYn(member.getBox().getId(), "N").orElseThrow(() -> {
+        Box box = boxRepository.findByIdAndDelYn(member.getBox().getId(), "N").orElseThrow(() -> {
             log.error("wodFind() : 해당 ID의 박스를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 ID의 박스를 찾을 수 없습니다.");
         });

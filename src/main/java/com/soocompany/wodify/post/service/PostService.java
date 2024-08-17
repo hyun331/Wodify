@@ -2,7 +2,6 @@ package com.soocompany.wodify.post.service;
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.repository.MemberRepository;
-import com.soocompany.wodify.post.domain.Image;
 import com.soocompany.wodify.post.domain.Post;
 import com.soocompany.wodify.post.domain.Type;
 import com.soocompany.wodify.post.dto.*;
@@ -36,24 +35,13 @@ public class PostService {
         });
         Box box = member.getBox();
         if (box == null) { throw new IllegalArgumentException("box 에 등록되지 않은 사용자입니다.");}
-        Post post = postRepository.save(dto.toEntity(member));
-        try {
-            if (dto.getFiles() != null && dto.getFiles().length > 0) {
-                List<Image> images = imageService.uploadImages(post, dto.getFiles());
-                post.getFiles().addAll(images);
-                postRepository.save(post);
-            }
-        } catch (IOException e) {
-            log.error("postCreate() : 이미지 저장 실패", e);
-            throw new RuntimeException("이미지 저장 실패", e);
-        }
-        return post;
+        return postRepository.save(dto.toEntity(member));
     }
 
     public List<PostListResDto> postListNotice() {
         String id = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByIdAndDelYn(Long.parseLong(id), "N").orElseThrow(() -> {
-            log.error("postCreate() : Email 에 해당하는 member 가 없습니다.");
+            log.error("postListNotice() : Email 에 해당하는 member 가 없습니다.");
             return new EntityNotFoundException("Email 에 해당하는 member 가 없습니다.");
         });
         List<Post> posts = postRepository.findAllByTypeAndBoxAndDelYnOrderByCreatedTimeDesc(Type.NOTICE, member.getBox(), "N");
@@ -121,22 +109,7 @@ public class PostService {
             log.error("postUpdate() : 본인의 게시글이 아닙니다.");
             throw new IllegalArgumentException("본인의 게시글이 아닙니다.");
         }
-        if (postUpdateReqDto.getRemovedFileIds() != null) {
-            for (Long fileId : postUpdateReqDto.getRemovedFileIds()) {
-                imageService.imageDelete(fileId);
-            }
-        }
         post.updatePost(postUpdateReqDto);
-        try {
-            MultipartFile[] files = postUpdateReqDto.getNewFiles();
-            if (files != null && files.length > 0) {
-                List<Image> images = imageService.uploadImages(post, files);
-                post.getFiles().addAll(images);
-            }
-        } catch (IOException e) {
-            log.error("postCreate() : 이미지 저장 실패", e);
-            throw new RuntimeException("이미지 저장 실패", e);
-        }
         Post savedPost = postRepository.save(post);
         return PostDetResDto.fromEntity(savedPost);
     }

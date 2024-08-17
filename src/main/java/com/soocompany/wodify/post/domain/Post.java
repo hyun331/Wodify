@@ -31,7 +31,7 @@ public class Post extends BaseEntity {
     @Column(length = 50, nullable = false)
     private String title;
 
-    @Column(length = 3000)
+    @Column(columnDefinition = "LONGTEXT")
     private String contents;
 
     @Builder.Default
@@ -40,10 +40,6 @@ public class Post extends BaseEntity {
 
     @UpdateTimestamp
     private LocalDateTime updatedTime;
-
-    @Builder.Default
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> files = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
