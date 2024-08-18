@@ -57,7 +57,6 @@ public class MemberController {
     //kakao login
     @GetMapping("/auth/kakao/callback")
     public ResponseEntity<?> kakaoLogin(@RequestParam(value = "code")String code) {
-        System.out.println("왜 안돼...");
         RestTemplate rt = new RestTemplate();   //Post방식으로 key=value 데이터를 요청 //이때 필요한 라이브러리가 RestTemplate. http 요청을 용이하게
 
         //토큰
@@ -118,9 +117,6 @@ public class MemberController {
             e.printStackTrace();
         }
 
-
-//        System.out.println(email+"\n\n\n\n\n\n\n");
-
         //현재 데이터베이스에 있는지 확인
         MemberDetResDto member = memberService.isMemberExist(email, "N");
 
@@ -129,7 +125,6 @@ public class MemberController {
             String jwtToken = jwtTokenProvider.createToken(member.getId().toString(), member.getRole().toString());
             String refreshToken = jwtTokenProvider.createRefreshToken(member.getId().toString(), member.getRole().toString());
 
-            System.out.println("홈화면");
 
             redisTemplate.opsForValue().set(member.getId().toString(), refreshToken, 240, TimeUnit.HOURS);
             Map<String, Object> loginInfo = new HashMap<>();
@@ -144,7 +139,6 @@ public class MemberController {
         }else{
             //회원가입 해야함
             CommonResDto commonResDto = new CommonResDto(HttpStatus.NOT_FOUND, email+" 이메일이 존재하지 않습니다. 회원가입 필요", email);
-            System.out.println("회원가입 화면");
             return new ResponseEntity<>(commonResDto, HttpStatus.NOT_FOUND);
         }
 

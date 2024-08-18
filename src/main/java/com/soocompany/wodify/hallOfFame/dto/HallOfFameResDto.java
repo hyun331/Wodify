@@ -12,6 +12,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HallOfFameResDto {
+    private Long id;
     private int rank;
     private String name;
     private String email;

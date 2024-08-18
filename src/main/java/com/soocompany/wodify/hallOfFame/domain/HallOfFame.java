@@ -41,6 +41,7 @@ public class HallOfFame {
 
     public HallOfFameResDto fromEntity(){
         return HallOfFameResDto.builder()
+                .id(this.id)
                 .rank(this.rank)
                 .name(this.member.getName())
                 .email(this.member.getEmail())
