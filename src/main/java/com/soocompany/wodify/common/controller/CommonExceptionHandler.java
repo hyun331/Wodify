@@ -31,6 +31,13 @@ public class CommonExceptionHandler {
         e.printStackTrace();
         return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<CommonErrorDto> IllegalStateExceptionHandler(IllegalStateException e){
+        CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.CONFLICT, e.getMessage());
+        e.printStackTrace();
+        return new ResponseEntity<>(commonErrorDto, HttpStatus.CONFLICT);
+    }
   
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonErrorDto> exceptionHandler(Exception e){
