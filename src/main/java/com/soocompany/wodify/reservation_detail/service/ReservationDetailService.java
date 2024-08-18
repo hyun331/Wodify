@@ -17,6 +17,7 @@ import com.soocompany.wodify.reservation_detail.domain.ReservationDetail;
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetCreateReqDto;
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetailDetResDto;
 import com.soocompany.wodify.reservation_detail.repository.ReservationDetailRepository;
+import com.soocompany.wodify.waiting.service.WaitingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -43,10 +44,10 @@ public class ReservationDetailService {
     private final HoldingInfoRepository holdingInfoRepository;
     private final ReservationManagementService reservationManagementService;
     private final ReservationManageEventHandler reservationManageEventHandler;
+    private final WaitingService waitingService;
 
-    public ReservationDetailDetResDto reservationCreate(ReservationDetCreateReqDto dto) {
+    public ReservationDetailDetResDto reservationCreate(ReservationDetCreateReqDto dto, Long memberId) {
         Reservation reservation = reservationRepository.findByIdAndDelYn(dto.getReservationId(), "N").orElseThrow(() -> new EntityNotFoundException("해당 id의 예약이 존재하지 않습니다."));
-        Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
         Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
             log.error("reservationCreate() : 해당 id의 회원을 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
@@ -113,9 +114,20 @@ public class ReservationDetailService {
             throw new IllegalArgumentException("예약을 삭제할 수 있는 권한이 없습니다.");
         }
         Reservation reservation = reservationDetail.getReservation();
+
         reservation.increaseAvailablePeople();
+        reservationManagementService.increaseAvailable(reservation.getId(), 1);
         reservationDetail.updateDelYn();
         reservationDetailRepository.save(reservationDetail);
+        // 대기자 명단에서 첫 번째 사용자에게 예약 기회 제공
+        String nextMemberId = waitingService.getNextMember(String.valueOf(reservation.getId()));
+        if (nextMemberId!=null) {
+            memberRepository.findByIdAndDelYn(Long.valueOf(nextMemberId), "N").orElseThrow(() -> {
+                log.error("delete() : 해당 id의 회원을 찾을 수 없습니다.");
+                return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
+            });
+            reservationCreate(ReservationDetCreateReqDto.builder().reservationId(reservation.getId()).build(), Long.valueOf(nextMemberId));
+        }
     }
 
     public Page<ReservationDetailDetResDto> myReservationList(ReservationSearchDto dto, Pageable pageable) {
