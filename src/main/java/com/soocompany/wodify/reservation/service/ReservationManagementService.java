@@ -18,7 +18,7 @@ public class ReservationManagementService {
     public Long decreaseAvailable(Long reservationId,int people) {
         Object remains = redisTemplate.opsForValue().get(String.valueOf(reservationId));
         int longRemains = Integer.parseInt(remains.toString());
-        if (longRemains < 0) {
+        if (longRemains == 0) {
             return -1L;
         } else {
             return redisTemplate.opsForValue().decrement(String.valueOf(reservationId), people);
