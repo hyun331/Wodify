@@ -5,19 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
+import java.time.LocalTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class HallOfFameResDto {
-    private Long id;
     private int rank;
     private String name;
     private String email;
-    private BigDecimal deadLift;
-    private BigDecimal squat;
-    private BigDecimal benchPress;
-    private BigDecimal total;
+    private LocalTime exerciseTime;
+
 }

@@ -5,13 +5,17 @@ import com.soocompany.wodify.hallOfFame.dto.HallOfFameResDto;
 import com.soocompany.wodify.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class HallOfFame {
@@ -28,24 +32,22 @@ public class HallOfFame {
     private Box box;
 
     private int rank;
+    private LocalTime exerciseTime;
 
-    private BigDecimal deadLift;
-    private BigDecimal squat;
-    private BigDecimal benchPress;
-    private BigDecimal total;
-
+//    private BigDecimal deadLift;
+//    private BigDecimal squat;
+//    private BigDecimal benchPress;
+//    private BigDecimal total;
 
     public HallOfFameResDto fromEntity(){
         return HallOfFameResDto.builder()
-                .id(this.id)
                 .rank(this.rank)
                 .name(this.member.getName())
                 .email(this.member.getEmail())
-                .deadLift(this.deadLift)
-                .squat(this.squat)
-                .benchPress(this.benchPress)
-                .total(this.total)
+                .exerciseTime(this.exerciseTime)
                 .build();
-
     }
+
+
+
 }
