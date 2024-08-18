@@ -94,8 +94,6 @@ export default{
     },
     data(){
         return{
-
-
             userList:[],
             pageSize: 5,
             currentPage:0,
