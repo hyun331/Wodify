@@ -15,6 +15,7 @@ public class HallOfFameResDto {
     private Long id;
     private int rank;
     private String name;
+    private String email;
     private BigDecimal deadLift;
     private BigDecimal squat;
     private BigDecimal benchPress;
