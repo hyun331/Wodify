@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoxDetailResDto {
+    private Long id;
     private String name;
     private String logo;
     private String operatingHours;
