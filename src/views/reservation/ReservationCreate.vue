@@ -19,21 +19,17 @@
                 </v-col>
             </v-row>
             <v-form @submit.prevent="reservation">
-                <v-row cols="6" class="d-flex justify-center align-center">
-                    <div class="date-picker-container">
-                        <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected"
-                            class="custom-date-picker">
-                            <template v-slot:header></template>
-                        </v-date-picker>
-                    </div>
-                </v-row>
-
                 <v-row>
                     <v-col cols="6" class="d-flex justify-center align-center">
-                        <v-text-field v-model="date" label="날짜 입력" type="date" class="mx-2"></v-text-field>
+                        <div class="date-picker-container">
+                            <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected"
+                                class="custom-date-picker">
+                                <template v-slot:header></template>
+                            </v-date-picker>
+                        </div>
                     </v-col>
                     <v-col cols="6" class="justify-center align-center">
-                        <div v-if="wod && wod.wodDetResDtoList.length > 0" class="bordered">
+                        <div v-if="wod && wod.wodDetResDtoList.length > 0" class="bordered wod">
                             <div class="flex-between padded">
                                 <span>date</span>
                                 <span>{{ wod.date }}</span>
@@ -48,7 +44,7 @@
                             </div>
                             <div class="wod-info-container">{{ wod.info }}</div>
                             <v-table>
-                                <tbody>
+                                <tbody style="background-color: #D9D9D9;">
                                     <tr v-for="detail in wod.wodDetResDtoList" :key="detail.id">
                                         <td>{{ detail.name }}</td>
                                         <td>{{ detail.contents }}</td>
@@ -57,7 +53,7 @@
                             </v-table>
                         </div>
 
-                        <div v-else class="d-flex justify-center">
+                        <div v-else class="d-flex justify-center wod" >
                             <v-btn :to="{ path: '/wod/select-date' }">
                                 wod 생성
                             </v-btn>
@@ -106,6 +102,7 @@ export default {
     data() {
         return {
             selectedDate: new Date(),
+            formattedDate: "",
             date: "",
             wod: "",
             error: false,
@@ -125,8 +122,8 @@ export default {
         },
         selectedDate(selectDate) {
             if (selectDate) {
-                let formattedDate = this.formatDate(selectDate);
-                this.fetchWod(formattedDate);
+                this.formattedDate = this.formatDate(selectDate);
+                this.fetchWod(this.formattedDate);
             }
         }
     },
@@ -161,7 +158,7 @@ export default {
             this.entries.splice(index, 1);
         },
         async reservation() {
-            if (!this.date) {
+            if (!this.formattedDate) {
                 this.dialogTitle = "입력사항을 모두 입력해주세요";
                 this.dialogText = "입력사항을 모두 입력해주세요";
                 this.alertModal = true;
@@ -169,7 +166,7 @@ export default {
             }
 
             const reservationData = this.entries.map(entry => ({
-                date: this.date,
+                date: this.formattedDate,
                 wodId: this.wod.id,
                 time: entry.time,
                 maximumPeople: entry.people
@@ -230,13 +227,16 @@ export default {
 .wod-info-container {
     margin: 10px;
     text-align: center;
-    border: 1px solid #ccc;
     padding: 10px;
     border-radius: 40px;
+    background-color: #f8f8f8;
 }
 
 .custom-date-picker {
     background-color: rgba(255, 255, 255, 0.5);
+    margin-top: 20px;
+}
+.wod {
     margin-top: 20px;
 }
 </style>
