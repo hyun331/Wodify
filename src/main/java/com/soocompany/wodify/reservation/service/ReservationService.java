@@ -116,7 +116,7 @@ public class ReservationService {
     }
 
 
-    public Page<ReservationListResDto> reservationListByDate(ReservationListReqDto dto, Pageable pageable){
+    public Page<ReservationTimeResDto> reservationListByDate(ReservationListReqDto dto, Pageable pageable){
         Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
         Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
             log.error("reservationList() : 해당 id의 회원을 찾을 수 없습니다.");
@@ -128,19 +128,8 @@ public class ReservationService {
             throw new IllegalArgumentException("박스에 대한 권한이 없습니다.");
         }
         LocalDate date = dto.getDate();
-        List<ReservationListResDto> list = new ArrayList<>();
         Page<Reservation> reservationList = reservationRepository.findByBoxAndDateAndDelYn(box, date, "N", pageable);
-        for (Reservation reservation : reservationList) {
-            List<ReservationDetListResDto> dtoList = new ArrayList<>();
-            List<ReservationDetail> reservationDetails = reservationDetailRepository.findByReservationAndDelYn(reservation, "N");
-            for (ReservationDetail reservationDetail : reservationDetails) {
-                dtoList.add(reservationDetail.listDetFromEntity());
-            }
-            list.add(reservation.ListResDtoFromEntity(dtoList));
-        }
-
-        // Convert the list to a Page object
-        return new PageImpl<>(list, pageable, reservationList.getTotalElements());
+        return reservationList.map(Reservation::timeFromEntity);
     }
 
     public ReservationDetailResDto reservationUpdate(Long id, ReservationUpdateReqDto dto) {
