@@ -7,8 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -22,10 +23,15 @@ public class RecordSaveReqDto { // 앞단에서 받아와 저장하는 값이에
 
     private Long reservationDetailId; // 이거 앞단에서 받겠징
 
+    private List<RecordSaveReqDetDto> recordSaveReqDetDtoList;
+
+
     public Record toEntity(ReservationDetail reservationDetail, LocalTime exerciseTime){
         return Record.builder()
                 .snf(this.snf).exerciseTime(exerciseTime)
                 .comments(this.comments)
-                .reservationDetail(reservationDetail).build();
+                .reservationDetail(reservationDetail)
+                .recordDetails(new ArrayList<>()).build();
+
     }
 }

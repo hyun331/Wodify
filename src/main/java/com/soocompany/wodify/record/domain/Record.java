@@ -1,8 +1,9 @@
 package com.soocompany.wodify.record.domain;
 
 import com.soocompany.wodify.common.domain.BaseEntity;
-import com.soocompany.wodify.record.dto.RecordDetResDto;
+import com.soocompany.wodify.record.dto.RecordResDto;
 import com.soocompany.wodify.record.dto.RecordSaveReqDto;
+import com.soocompany.wodify.record.dto.RecordUpdateReqDetDto;
 import com.soocompany.wodify.record.dto.RecordUpdateReqDto;
 import com.soocompany.wodify.reservation_detail.domain.ReservationDetail;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -33,6 +36,9 @@ public class Record extends BaseEntity {
     @JoinColumn(name = "reservation_detail_id")
     private ReservationDetail reservationDetail; // FK 예약내역ID
 
+    @OneToMany(mappedBy = "record", cascade = CascadeType.PERSIST)
+    private List<RecordDetail> recordDetails;
+
 
     public void existedRecordUpdateEntity(RecordSaveReqDto dto, LocalTime exerciseTime){
         this.snf = dto.getSnf();
@@ -41,10 +47,11 @@ public class Record extends BaseEntity {
         this.updateDelyN(); // delYN을 N으로 바꾼다.
     } // create   // 삭제된거 새로 생성(=수정)할때
 
-    public RecordDetResDto detFromEntity(){
-        return RecordDetResDto.builder()
+    public RecordResDto detFromEntity(){
+        return RecordResDto.builder()
                 .snf(this.snf).exerciseTime(this.exerciseTime)
                 .comments(this.comments)
+                .recordResDetDtoList(new ArrayList<>())
                 .build();
     } // review
 

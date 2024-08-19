@@ -82,37 +82,37 @@ public class RedisConfig {
 
 
 
-    @Bean
-    @Qualifier("5")
-    public RedisConnectionFactory sseFactory() {
-        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
-        configuration.setHostName(host);
-        configuration.setPort(port);
-        configuration.setDatabase(4);
-        return new LettuceConnectionFactory(configuration);
-
-    }
-
-    @Bean
-    @Qualifier("5")
-    public RedisTemplate<String, Object> sseRedisTemplate(@Qualifier("5") RedisConnectionFactory sseFactory){
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
-        ObjectMapper objectMapper = new ObjectMapper();
-        serializer.setObjectMapper(objectMapper);
-        redisTemplate.setValueSerializer(serializer);
-        redisTemplate.setConnectionFactory(sseFactory);
-        return redisTemplate;
-    }
-
-    @Bean
-    @Qualifier("5")
-    public RedisMessageListenerContainer redisMessageListenerContainer(@Qualifier("5")RedisConnectionFactory sseFactory){
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(sseFactory);
-        return container;
-    }
+//    @Bean
+//    @Qualifier("5")
+//    public RedisConnectionFactory sseFactory() {
+//        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
+//        configuration.setHostName(host);
+//        configuration.setPort(port);
+//        configuration.setDatabase(4);
+//        return new LettuceConnectionFactory(configuration);
+//
+//    }
+//
+//    @Bean
+//    @Qualifier("5")
+//    public RedisTemplate<String, Object> sseRedisTemplate(@Qualifier("5") RedisConnectionFactory sseFactory){
+//        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+//        redisTemplate.setKeySerializer(new StringRedisSerializer());
+//        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        serializer.setObjectMapper(objectMapper);
+//        redisTemplate.setValueSerializer(serializer);
+//        redisTemplate.setConnectionFactory(sseFactory);
+//        return redisTemplate;
+//    }
+//
+//    @Bean
+//    @Qualifier("5")
+//    public RedisMessageListenerContainer redisMessageListenerContainer(@Qualifier("5")RedisConnectionFactory sseFactory){
+//        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+//        container.setConnectionFactory(sseFactory);
+//        return container;
+//    }
 
 
 }
