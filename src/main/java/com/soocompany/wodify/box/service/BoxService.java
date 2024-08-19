@@ -245,5 +245,15 @@ public class BoxService {
                 .address(box.getAddress())
                 .build();
     }
+
+    public String boxName() {
+        Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
+            log.error("delete() : 해당 id의 회원을 찾을 수 없습니다.");
+            return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
+        });
+        String name = member.getBox().getName();
+        return name;
+    }
 }
 

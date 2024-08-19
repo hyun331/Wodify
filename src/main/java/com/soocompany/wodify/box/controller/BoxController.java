@@ -121,4 +121,10 @@ public class BoxController {
         }
     }
 
+    @GetMapping("/name")
+    public ResponseEntity<CommonResDto> boxName() {
+        String boxName = boxService.boxName();
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box 이름이 성공적으로 조회되었습니다", boxName);
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
 }
