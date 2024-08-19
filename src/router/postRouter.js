@@ -25,5 +25,5 @@ export const postRouter = [
         name: 'PostUpdate',
         component: PostUpdate,
         props: true,
-      }
+    },
 ];
