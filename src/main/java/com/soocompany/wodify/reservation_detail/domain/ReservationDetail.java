@@ -47,8 +47,8 @@ public class ReservationDetail extends BaseEntity {
                 .time(String.valueOf(reservation.getTime()))
                 .coachName(reservation.getCoach().getName())
                 .wodId(reservation.getWod().getId())
-                .recordId(Optional.ofNullable(record).map(Record::getId).orElse(null))
-                .recordSnF(Optional.ofNullable(record).map(Record::getSnf).orElse(null))
+                .recordId(this.record != null && "N".equals(this.record.getDelYn()) ? this.record.getId() : null)
+                .recordSnF(this.record != null && "N".equals(this.record.getDelYn()) ? this.record.getSnf() : null)
                 .build();
     }
 
