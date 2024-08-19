@@ -8,16 +8,16 @@
         <h1 class="rubikMonoOne">RESERVATION</h1>
       </div>
 
-      <v-row style="margin-top: 20px;">
+      <v-row style="margin-top: 20px;" justify="end">
         <v-col cols="4">
           <v-text-field v-model="startDate" label="Start Date" type="date" class="mx-2"></v-text-field>
         </v-col>
         <v-col cols="4">
           <v-text-field v-model="endDate" label="End Date" type="date" class="mx-2"></v-text-field>
         </v-col>
-        <v-col cols="4">
-          <v-btn @click="searchByDateRange">Search</v-btn>
-        </v-col>
+        <v-btn @click="searchByDateRange" icon style="margin-top: 16px; margin-right: 20px;">
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
       </v-row>
       <v-row>
         <v-col>
@@ -26,22 +26,24 @@
               <v-table>
                 <thead>
                   <tr>
-                    <th style="font-weight: bold;">DATE</th>
-                    <th style="font-weight: bold;">TIME</th>
-                    <th style="font-weight: bold;">COACH</th>
-                    <th style="font-weight: bold;">RECORD</th>
-                    <th style="font-weight: bold;">Delete</th>
+                    <th style="font-weight: bold; text-align: center;">DATE</th>
+                    <th style="font-weight: bold; text-align: center;">TIME</th>
+                    <th style="font-weight: bold; text-align: center;">COACH</th>
+                    <th style="font-weight: bold; text-align: center;">RECORD</th>
+                    <th style="font-weight: bold; text-align: center;">Delete</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="r in filteredReservationList" :key="r.id" @click="goToDetail(r.id)"
                     style="cursor: pointer;">
-                    <td>{{ r.date }}</td>
-                    <td>{{ r.time.slice(0, 5) }}</td>
-                    <td>{{ r.coachName }}</td>
-                    <td v-if="r.recordId">{{ r.recordSnF }}</td>
-                    <td v-else><v-btn size=small>create</v-btn></td>
-                    <td><v-btn @click.stop="cancel(r.id)" size=small>delete</v-btn></td>
+                    <td style="text-align: center;">{{ r.date }}</td>
+                    <td style="text-align: center;">{{ r.time.slice(0, 5) }}</td>
+                    <td style="text-align: center;">{{ r.coachName }}</td>
+                    <td style="text-align: center;" v-if="r.recordId">{{ r.recordSnF }}</td>
+                    <td style="text-align: center;" v-else><v-btn size=small>create</v-btn></td>
+                    <td style="text-align: center;">
+                      <v-btn @click.stop="confirmDelete(r.id)" size="small">delete</v-btn>
+                    </td>
                   </tr>
                 </tbody>
               </v-table>
@@ -51,6 +53,17 @@
       </v-row>
       <AlertModalComponent v-model="alertModal" @update:dialog="alertModal = $event" :dialogTitle="dialogTitle"
         :dialogText="dialogText" />
+
+        <v-dialog v-model="deleteModal" max-width="400px">
+          <v-card>
+            <v-card-title class="headline">{{ dialogTitle }}</v-card-title>
+            <v-card-text>정말로 예약을 삭제하시겠습니까?</v-card-text>
+            <v-card-actions>
+              <v-btn text @click="deleteModal = false">아니오</v-btn>
+              <v-btn class="hover-btn" text @click="cancel">예</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
     </v-container>
   </div>
 </template>
@@ -75,6 +88,8 @@ export default {
       alertModal: false,
       dialogTitle: "",
       dialogText: "",
+      deleteModal: false,
+      reservationIdToDelete: null,
     };
   },
   async created() {
@@ -150,9 +165,14 @@ export default {
     goToDetail(id) {
       this.$router.push(`/reservation-detail/detail/${id}`);
     },
-    async cancel(id) {
+    confirmDelete(id) {
+      this.reservationIdToDelete = id; // Store the ID of the reservation to delete
+      this.dialogTitle = "예약 삭제 확인";
+      this.deleteModal = true; // Show the delete confirmation modal
+    },
+    async cancel() {
       try {
-        await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/delete/` + id);
+        await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/delete/${this.reservationIdToDelete}`);
         window.location.reload();
       } catch (error) {
         let errorMessage = "";

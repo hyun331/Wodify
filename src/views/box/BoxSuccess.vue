@@ -45,7 +45,7 @@ export default {
     },
     methods: {
         myBox() {
-            window.location.href = '/box/detail';
+            window.location.href = '/box/mybox';
         },
         home() {
             window.location.href = '/';

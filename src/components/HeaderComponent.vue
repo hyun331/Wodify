@@ -12,7 +12,7 @@
                 <v-list-item :to="{ path: '/box/list' }">
                     <v-list-item-title>박스조회-공통</v-list-item-title>
                 </v-list-item>
-                <v-list-item :to="{ path: '/box/detail' }">
+                <v-list-item :to="{ path: '/box/mybox' }">
                     <v-list-item-title>내 박스-공통</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/member/list/user' }">
@@ -22,8 +22,13 @@
         </v-menu>
         <v-menu v-if="userRole === 'COACH' || userRole === 'CEO'" open-on-hover>
             <template v-slot:activator="{ props }">
-                <v-btn :to="{ path: '/wod/select-date' }" color="white" v-bind="props" class="rubikMonoOne">WOD</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne">WOD-코치,CEO</v-btn>
             </template>
+            <v-list>
+                <v-list-item :to="{path:'/wod/find'}">
+                    <v-list-item-title>와드조회</v-list-item-title>
+                </v-list-item>
+            </v-list>
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">

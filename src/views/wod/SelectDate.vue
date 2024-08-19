@@ -1,26 +1,16 @@
 <template>
-  <div class="background-image">
-    <v-container class="content-container">
-      <v-row class="fixed-layout">
-        <v-col cols="12" md="4" class="date-picker-col">
-          <div class="date-picker-container">
-            <v-date-picker
-              v-model="selectedDate"
-              @update:model-value="onDateSelected"
-              class="custom-date-picker"
-            >
-              <template v-slot:header></template>
+    <div>
+      <v-container>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-date-picker 
+              v-model="selectedDate" 
+              @update:model-value="onDateSelected">
             </v-date-picker>
-          </div>
         </v-col>
         <v-col cols="12" md="8" class="content-col">
           <WodFind v-show="wod" :wod="wod" :key="wod" @wod-deleted="onWodDeleted" />
-          <WodSave
-            v-show="!wod"
-            :date="formattedDate"
-            :key="formattedDate"
-            @wod-saved="onWodSaved"
-          />
+          <WodSave v-show="!wod" :date="formattedDate" :key="formattedDate" @wod-saved="onWodSaved" />
         </v-col>
       </v-row>
     </v-container>
@@ -101,9 +91,11 @@ export default {
   background-position: center;
   background-repeat: no-repeat;
   width: 100%;
-  min-height: 100vh; /* 변경: 100vh에서 min-height: 100vh로 수정 */
+  min-height: 100vh;
+  /* 변경: 100vh에서 min-height: 100vh로 수정 */
   position: relative;
-  overflow: auto; /* 변경: overflow: hidden에서 overflow: auto로 수정 */
+  overflow: auto;
+  /* 변경: overflow: hidden에서 overflow: auto로 수정 */
 }
 
 .content-container {
