@@ -65,7 +65,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .background {
     min-height: 100vh;
     margin: 0;

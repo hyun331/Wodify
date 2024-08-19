@@ -4,7 +4,7 @@
             <v-card-title class="text-h5 text-center">회원 등록</v-card-title>
             <v-card-text>
                 <v-form @submit.prevent="registrationCreate">
-                    <v-text-field label="email" v-model="email" type="email" prepend-icon="mdi-email" required>
+                    <v-text-field label="email" v-model="email" type="email" prepend-icon="" required>
                     
                     </v-text-field>
 
