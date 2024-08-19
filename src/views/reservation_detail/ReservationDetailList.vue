@@ -49,31 +49,49 @@
           </v-card>
         </v-col>
       </v-row>
+      <AlertModalComponent v-model="alertModal" @update:dialog="alertModal = $event" :dialogTitle="dialogTitle"
+        :dialogText="dialogText" />
     </v-container>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import AlertModalComponent from '@/components/AlertModalComponent.vue';
 export default {
-
+  components: {
+    AlertModalComponent
+  },
   data() {
     return {
       reservationList: [],
       filteredReservationList: [],
       startDate: "",
       endDate: "",
-      pageSize: 5,
+      pageSize: 10,
       currentPage: 0,
       isLastPage: false,
       isLoading: false,
+      alertModal: false,
+      dialogTitle: "",
+      dialogText: "",
     };
   },
   async created() {
     try {
       this.loadList();
-      this.filteredReservationList = this.reservationList;
+      window.addEventListener('scroll', this.scrollPagination);
     } catch (error) {
+      let errorMessage = "";
+      if (error.response && error.response.data) {
+        // 서버에서 반환한 에러 메시지가 있는 경우
+        errorMessage += `: ${error.response.data.error_message}`;
+      } else if (error.message) {
+        errorMessage += `: ${error.message}`;
+      }
+      this.dialogTitle = "예약 로드 실패";
+      this.dialogText = errorMessage;
+      this.alertModal = true;
       console.log(error);
     }
   },
@@ -91,7 +109,7 @@ export default {
           params.endDate = this.endDate;
         }
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/mylist`, { params });
-        const additionalData = response.data.result.content.map(p => ({ ...p, quantity: 0 }));
+        const additionalData = response.data.result.content;
         this.isLastPage = response.data.isLastPage;
         this.reservationList = [...this.reservationList, ...additionalData]
         this.filteredReservationList = this.reservationList;
@@ -99,8 +117,18 @@ export default {
         console.log(response.data);
         this.isLoading = false;
 
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        let errorMessage = "";
+        if (error.response && error.response.data) {
+          // 서버에서 반환한 에러 메시지가 있는 경우
+          errorMessage += `: ${error.response.data.error_message}`;
+        } else if (error.message) {
+          errorMessage += `: ${error.message}`;
+        }
+        this.dialogTitle = "예약 로드 실패";
+        this.dialogText = errorMessage;
+        this.alertModal = true;
+        console.log(error);
       }
     },
     scrollPagination() {
@@ -127,6 +155,16 @@ export default {
         await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/delete/` + id);
         window.location.reload();
       } catch (error) {
+        let errorMessage = "";
+        if (error.response && error.response.data) {
+          // 서버에서 반환한 에러 메시지가 있는 경우
+          errorMessage += `: ${error.response.data.error_message}`;
+        } else if (error.message) {
+          errorMessage += `: ${error.message}`;
+        }
+        this.dialogTitle = "예약 삭제 실패";
+        this.dialogText = errorMessage;
+        this.alertModal = true;
         console.log(error);
       }
     }
