@@ -1,5 +1,7 @@
 package com.soocompany.wodify.record.service;
 
+import com.soocompany.wodify.member.domain.Member;
+import com.soocompany.wodify.member.repository.MemberRepository;
 import com.soocompany.wodify.record.dto.RecordDetResDto;
 import com.soocompany.wodify.record.dto.RecordSaveReqDto;
 import com.soocompany.wodify.record.dto.RecordUpdateReqDto;
@@ -11,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +29,27 @@ public class RecordService {
 
     private final RecordReository recordReository;
     private final ReservationDetailRepository reservationDetailRepository;
+    private final MemberRepository memberRepository;
     @Autowired
-    public RecordService(RecordReository recordReository, ReservationDetailRepository reservationDetailRepository) {
+    public RecordService(RecordReository recordReository, ReservationDetailRepository reservationDetailRepository, MemberRepository memberRepository) {
         this.recordReository = recordReository;
         this.reservationDetailRepository = reservationDetailRepository;
+        this.memberRepository = memberRepository;
     }
 
 
     @Transactional
     public RecordDetResDto recordCreate(RecordSaveReqDto dto){
+
+        // 인증 정보에서 현재 로그인한 사용자의 이름(아이디) 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberIdStr = authentication.getName();
+
+        Long memberId = Long.parseLong(memberIdStr);
+
+        // dto에 memberId 설정
+        dto.setMemberId(memberId);
+
         ReservationDetail reservationDetail = reservationDetailRepository.findByIdAndDelYn(dto.getReservationDetailId(), "N").orElseThrow(()->{
             log.error("recordCreate() : EntityNotFoundException:reservationDetail");
             return new EntityNotFoundException("예약내역이 없습니다"); }
@@ -51,6 +67,7 @@ public class RecordService {
 //                log.error("recordCreate() : IllegalArgumentException");
 //                throw new IllegalArgumentException("운동수행시간이 입력되지 않았습니다.");
 //            }
+
 
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
             LocalTime exerciseTime = LocalTime.parse(dto.getExerciseTime(), dateTimeFormatter);
@@ -71,11 +88,13 @@ public class RecordService {
 //            throw new IllegalArgumentException("운동수행시간이 입력되지 않았습니다.");
 //        } // 디폴트값없고 NOT NULL인 컬럼값에 대해 한번 더 확인 // 앞단에서 처리
 
+        Member member = memberRepository.findById(dto.getMemberId())
+                .orElseThrow(() -> new EntityNotFoundException("회원이 없습니다"));
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         LocalTime exerciseTime = LocalTime.parse(dto.getExerciseTime(), dateTimeFormatter); // 현재 받아오는 운동수행시간(string) // 앞단에서 무슨값으로(string? localtime?) 들어올지 몰라서 string으로 생각하고 처리해서 넣는다.
 
-        Record record = recordReository.save(dto.toEntity(reservationDetail, exerciseTime));
+        Record record = recordReository.save(dto.toEntity(reservationDetail, exerciseTime, member));
         reservationDetail.updateRecord(record);
         return record.detFromEntity();
     }
@@ -89,10 +108,16 @@ public class RecordService {
         return record.detFromEntity();
     }
 
-//    public Page<RecordDetResDto> recordList(Pageable pageable){
-//        Page<Record> records = recordReository.findByDelYn("N", pageable);
-//        return records.map(Record::detFromEntity);
-//    } // 예외처리, 누구 기준으로 보는 리스트인가. 운동기록은 예약내역을 통해 보기때문에 리스트업할 일이 없다.
+    public Page<RecordDetResDto> recordList(Pageable pageable){
+        Page<Record> records = recordReository.findByDelYn("N", pageable);
+        return records.map(Record::detFromEntity);
+    } // 예외처리, 누구 기준으로 보는 리스트인가. 운동기록은 예약내역을 통해 보기때문에 리스트업할 일이 없다.
+
+
+    public Page<RecordDetResDto> recordListByMemberId(Long memberId, Pageable pageable) {
+        return recordReository.findByMemberId(memberId, pageable)
+                .map(record -> new RecordDetResDto(record));
+    }
 
 
     @Transactional

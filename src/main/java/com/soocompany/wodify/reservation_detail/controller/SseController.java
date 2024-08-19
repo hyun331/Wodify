@@ -2,6 +2,8 @@ package com.soocompany.wodify.reservation_detail.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soocompany.wodify.reservation_detail.domain.ReservationDetail;
+import com.soocompany.wodify.reservation_detail.dto.ReservationDetailDetResDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
@@ -20,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
+@Slf4j
 @RestController
 public class SseController implements MessageListener {
 
@@ -41,7 +43,7 @@ public class SseController implements MessageListener {
 
     public void subscribeChannel(String email){
         if(!subscribeList.contains(email)){
-            MessageListenerAdapter listenerAdapter = new MessageListenerAdapter(this);
+            MessageListenerAdapter listenerAdapter = createListenerAdapter(this);
             redisMessageListenerContainer.addMessageListener(listenerAdapter, new PatternTopic(email));
             subscribeList.add(email);
         }
@@ -55,39 +57,44 @@ public class SseController implements MessageListener {
     public SseEmitter subscribe() {
         SseEmitter emitter = new SseEmitter(14400 * 60 * 1000L);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        emitters.put(email, emitter);
-        emitter.onCompletion(() -> emitters.remove((email)));
-        emitter.onTimeout(() -> emitters.remove(email));
+        String memberId = authentication.getName();
+
+        emitters.put(memberId, emitter);
+        emitter.onCompletion(() -> emitters.remove((memberId)));
+        emitter.onTimeout(() -> emitters.remove(memberId));
 
         try {
             emitter.send(SseEmitter.event().name("connect").data("connected!"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        subscribeChannel(email);
+        subscribeChannel(memberId);
         return emitter;
     }
 
-    public void publishMessage(ReservationDetail dto, String email){
-        SseEmitter emitter = emitters.get(email);
-        sseRedisTemplate.convertAndSend(email, dto);
-//        }
+    public void publishMessage(ReservationDetailDetResDto dto, String memberId){
+        SseEmitter emitter = emitters.get(memberId);
+        sseRedisTemplate.convertAndSend(memberId, dto);
     }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
         ObjectMapper objectMapper = new ObjectMapper();
+        String email = new String(pattern, StandardCharsets.UTF_8);
         try {
             System.out.println("listening");
-            ReservationDetail dto = objectMapper.readValue(message.getBody(), ReservationDetail.class);
-            String email = new String(pattern, StandardCharsets.UTF_8);
+            ReservationDetailDetResDto dto = objectMapper.readValue(message.getBody(), ReservationDetailDetResDto.class);
             SseEmitter emitter = emitters.get(email);
             if(emitter!=null){
                 emitter.send(SseEmitter.event().name("reservation").data(dto));
             }
+            System.out.println(dto);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("IOException while sending SSE: {}", e.getMessage());
+            emitters.remove(email); // 해당 클라이언트의 Emitter 제거
+        } catch (IllegalStateException e) {
+            log.error("IllegalStateException while sending SSE: {}", e.getMessage());
+            emitters.remove(email); // 해당 클라이언트의 Emitter 제거
         }
     }
 }

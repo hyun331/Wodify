@@ -4,6 +4,7 @@ import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.holding_info.domain.HoldingInfo;
 import com.soocompany.wodify.holding_info.repository.HoldingInfoRepository;
 import com.soocompany.wodify.member.domain.Member;
+import com.soocompany.wodify.member.domain.Role;
 import com.soocompany.wodify.member.repository.MemberRepository;
 import com.soocompany.wodify.registration_info.domain.RegistrationInfo;
 import com.soocompany.wodify.registration_info.repository.RegistrationInfoRepository;
@@ -13,11 +14,13 @@ import com.soocompany.wodify.reservation.service.ReservationManageEventHandler;
 import com.soocompany.wodify.reservation.service.ReservationManagementService;
 import com.soocompany.wodify.reservation.domain.Reservation;
 import com.soocompany.wodify.reservation.repository.ReservationRepository;
+//import com.soocompany.wodify.reservation_detail.controller.SseController;
 import com.soocompany.wodify.reservation_detail.controller.SseController;
 import com.soocompany.wodify.reservation_detail.domain.ReservationDetail;
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetCreateReqDto;
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetailDetResDto;
 import com.soocompany.wodify.reservation_detail.repository.ReservationDetailRepository;
+import com.soocompany.wodify.waiting.service.WaitingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,14 +47,11 @@ public class ReservationDetailService {
     private final HoldingInfoRepository holdingInfoRepository;
     private final ReservationManagementService reservationManagementService;
     private final ReservationManageEventHandler reservationManageEventHandler;
+    private final WaitingService waitingService;
+      private final SseController sseController;
 
-    private final SseController sseController; //  수연
-
-    public ReservationDetailDetResDto reservationCreate(ReservationDetCreateReqDto dto) {
+    public ReservationDetailDetResDto reservationCreate(ReservationDetCreateReqDto dto, Long memberId) {
         Reservation reservation = reservationRepository.findByIdAndDelYn(dto.getReservationId(), "N").orElseThrow(() -> new EntityNotFoundException("해당 id의 예약이 존재하지 않습니다."));
-        Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
-        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName(); // 수연
-
         Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
             log.error("reservationCreate() : 해당 id의 회원을 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
@@ -88,14 +88,17 @@ public class ReservationDetailService {
         if (reservationManagementService.decreaseAvailable(reservation.getId(),1) < 0) {
             throw new IllegalStateException("예약 인원이 초과되어 예약이 불가능합니다.");
         }
-
-
         reservationManageEventHandler.publish(new ReservationManageEvent(reservation.getId(), 1));
 
         ReservationDetail reservationDetail = dto.toEntity(reservation, member);
-        sseController.publishMessage(reservationDetail,memberEmail); // 수연
         ReservationDetail savedDetail = reservationDetailRepository.save(reservationDetail);
-        return savedDetail.detFromEntity();
+        ReservationDetailDetResDto reservationDetailDetResDto = savedDetail.detFromEntity();
+        List<Member> coachs = memberRepository.findByBoxAndRoleAndDelYn(box, Role.COACH,"N");
+        for (Member coach : coachs) {
+            Long coachId = coach.getId();
+            sseController.publishMessage(reservationDetailDetResDto, String.valueOf(coachId));
+        }
+        return reservationDetailDetResDto;
     }
 
     public ReservationDetailDetResDto detail(Long id) {
@@ -121,9 +124,22 @@ public class ReservationDetailService {
             throw new IllegalArgumentException("예약을 삭제할 수 있는 권한이 없습니다.");
         }
         Reservation reservation = reservationDetail.getReservation();
+        reservationManagementService.increaseAvailable(reservation.getId(),1);
         reservation.increaseAvailablePeople();
         reservationDetail.updateDelYn();
         reservationDetailRepository.save(reservationDetail);
+        // 대기자 명단에서 첫 번째 사용자에게 예약 기회 제공
+        String nextMemberId = waitingService.getNextMember(String.valueOf(reservation.getId()));
+        if (nextMemberId!=null) {
+            memberRepository.findByIdAndDelYn(Long.valueOf(nextMemberId), "N").orElseThrow(() -> {
+                log.error("delete() : 해당 id의 회원을 찾을 수 없습니다.");
+                return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
+            });
+            ReservationDetailDetResDto reservationDetailDetResDto = reservationCreate(ReservationDetCreateReqDto.builder().reservationId(reservation.getId()).build(), Long.valueOf(nextMemberId));
+            waitingService.removeFromQueue(String.valueOf(reservation.getId()), nextMemberId);
+            // 대기자에게 알림
+            sseController.publishMessage(reservationDetailDetResDto, nextMemberId);
+        }
     }
 
     public Page<ReservationDetailDetResDto> myReservationList(ReservationSearchDto dto, Pageable pageable) {

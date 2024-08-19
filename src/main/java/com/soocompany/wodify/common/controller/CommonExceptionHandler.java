@@ -38,7 +38,14 @@ public class CommonExceptionHandler {
     public ResponseEntity<String> handleMaxSizeException(MaxUploadSizeExceededException exc) {
         return ResponseEntity.status(413).body("File size exceeds the maximum limit!");
     }
-  
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<CommonErrorDto> IllegalStateExceptionHandler(IllegalStateException e){
+        CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.CONFLICT, e.getMessage());
+        e.printStackTrace();
+        return new ResponseEntity<>(commonErrorDto, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonErrorDto> exceptionHandler(Exception e){
         CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.INTERNAL_SERVER_ERROR, "server error");

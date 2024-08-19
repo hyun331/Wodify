@@ -32,7 +32,6 @@ public class ReservationManageEventHandler {
     @RabbitListener(queues = RabbitMqConfig.RESERVATION_MANAGE_QUEUE)
     public void listen(Message message) {
         String messageBody = new String(message.getBody());
-        System.out.println(messageBody);
 //        json 메시지를 ObjectMapper로 직접 parsing
         ObjectMapper objectMapper = new ObjectMapper();
         ReservationManageEvent dto = null;

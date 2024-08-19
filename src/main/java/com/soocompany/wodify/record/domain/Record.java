@@ -1,7 +1,7 @@
 package com.soocompany.wodify.record.domain;
 
 import com.soocompany.wodify.common.domain.BaseEntity;
-import com.soocompany.wodify.post.dto.PostRecordResDto;
+import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.record.dto.RecordDetResDto;
 import com.soocompany.wodify.record.dto.RecordSaveReqDto;
 import com.soocompany.wodify.record.dto.RecordUpdateReqDto;
@@ -19,17 +19,6 @@ import java.time.LocalTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@SqlResultSetMapping(
-        name = "PostRecordMapping",
-        classes = @ConstructorResult(
-                targetClass = PostRecordResDto.class,
-                columns = {
-                        @ColumnResult(name = "id", type = Long.class),
-                        @ColumnResult(name = "field1", type = String.class),
-                        @ColumnResult(name = "field2", type = String.class)
-                }
-        )
-)
 public class Record extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +34,10 @@ public class Record extends BaseEntity {
     @JoinColumn(name = "reservation_detail_id")
     private ReservationDetail reservationDetail; // FK 예약내역ID
 
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
 
     public void existedRecordUpdateEntity(RecordSaveReqDto dto, LocalTime exerciseTime){
         this.snf = dto.getSnf();
@@ -55,6 +48,7 @@ public class Record extends BaseEntity {
 
     public RecordDetResDto detFromEntity(){
         return RecordDetResDto.builder()
+                .id(this.id)
                 .snf(this.snf).exerciseTime(this.exerciseTime)
                 .comments(this.comments)
                 .build();
