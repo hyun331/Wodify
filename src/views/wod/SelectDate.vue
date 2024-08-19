@@ -1,17 +1,17 @@
 <template>
-  <div>
-    <v-container>
-      <v-row>
-        <v-col cols="12" md="4">
-          <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected">
-          </v-date-picker>
+    <div>
+      <v-container>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-date-picker 
+              v-model="selectedDate" 
+              @update:model-value="onDateSelected">
+            </v-date-picker>
         </v-col>
-      </v-row>
-      <v-row>
-      <v-col cols="12" md="8" class="content-col">
-        <WodFind v-show="wod" :wod="wod" :key="wod" @wod-deleted="onWodDeleted" />
-        <WodSave v-show="!wod" :date="formattedDate" :key="formattedDate" @wod-saved="onWodSaved" />
-      </v-col>
+        <v-col cols="12" md="8" class="content-col">
+          <WodFind v-show="wod" :wod="wod" :key="wod" @wod-deleted="onWodDeleted" />
+          <WodSave v-show="!wod" :date="formattedDate" :key="formattedDate" @wod-saved="onWodSaved" />
+        </v-col>
       </v-row>
     </v-container>
   </div>

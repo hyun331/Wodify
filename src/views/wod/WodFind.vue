@@ -1,46 +1,77 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="12" v-if="error">
-        <!-- 에러 발생 시 WodSave 컴포넌트를 표시하고, 선택한 날짜를 전달 -->
-        <WodSave :date="formattedDate" />
+  <v-container style="min-width: 345px; min-height: 600px;">
+    <v-row class="rubikMonoOne" style="font-size: 50px; margin-left: 3px">
+      <v-col class="auto-width" style="padding: 0; margin-right: 15px;">
+        Wod
       </v-col>
-      <v-col cols="12" v-else-if="wod">
-        <v-card :style="{ width: 'fit-content' }">
-          <v-card-title>WOD</v-card-title>
-          <v-card-text>
-            <p><strong>Date:</strong> {{ wod.date }}</p>
-            <p><strong>Box Name:</strong> {{ wod.boxName }}</p>
-            <p><strong>Member Name:</strong> {{ wod.memberName }}</p>
-            <p><strong>Info:</strong> {{ wod.info }}</p>
-            <p><strong>Time Cap:</strong> {{ wod.timeCap }}</p>
-            <p><strong>Rounds:</strong> {{ wod.rounds }}</p>
-            <p><strong>Created Time:</strong> {{ wod.createdTime }}</p>
-          </v-card-text>
-          <v-card-text v-for="(wodDet, index) in wod.wodDetResDtoList" :key="wodDet.id" class="mb-4"
-            :style="{ width: 'fit-content' }">
-            Exercise {{ index + 1 }}
-            <p><strong>Name:</strong> {{ wodDet.name }}</p>
-            <p><strong>Contents:</strong> {{ wodDet.contents }}</p>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12" v-else>
-        <v-progress-circular indeterminate color="primary"></v-progress-circular>
-        <p>Loading WOD data...</p>
+      <v-col class="auto-width" style="padding: 0;">
+        find
       </v-col>
     </v-row>
+
+    <v-row style="margin:1px">
+      <v-text-field 
+      class="custom-text-box" 
+      style="margin-right:2px" 
+      v-model="localWod.date" 
+      label="Date" 
+      readonly></v-text-field>
+      <v-text-field 
+      class="custom-text-box" 
+      style="margin-right:2px" 
+      v-model="localWod.timeCap" 
+      label="Time Cap" 
+      readonly></v-text-field>
+      <v-text-field 
+      class="custom-text-box" 
+      v-model="localWod.rounds" 
+      label="Rounds" 
+      readonly
+      outlined></v-text-field>
+    </v-row>
+    <v-row style="margin:1px">
+      <v-textarea 
+      class="custom-text-box" 
+      v-model="localWod.info" 
+      label="Info" 
+      readonly 
+      auto-grow
+      :rows="2"
+      outlined></v-textarea>
+    </v-row>
+    <div v-for="(wodDet, index) in localWod.wodDetResDtoList" :key="wodDet.id" class="exercise-group" outlined>
+      <v-text-field 
+      class="exercise-box" 
+      style="border-radius: 4px 4px 0 0;" 
+      :label="`Exercise ${index + 1} Name`"
+      v-model="wodDet.name" 
+      readonly 
+      outlined></v-text-field>
+      <v-text-field 
+      class="exercise-box" 
+      style="border-radius: 0 0 4px 4px;" 
+      v-model="wodDet.contents" 
+      :label="`Exercise ${index + 1} Contents`"
+      readonly 
+      outlined></v-text-field>
+    </div>
+    <!-- <v-text-field label="Box Name" v-model="localWod.boxName" readonly outlined class="custom-field"></v-text-field> -->
+    <!-- <v-text-field label="Member Name" v-model="localWod.memberName" readonly outlined class="custom-field"></v-text-field> -->
+    <!-- <v-text-field label="Created Time" v-model="localWod.createdTime" readonly outlined class="custom-field"></v-text-field> -->
+    <div style="display: flex; justify-content: flex-end;">
+      <v-btn color="black" @click="deleteWod">삭제</v-btn>
+    </div>
   </v-container>
 </template>
 
 <script>
 import axios from 'axios';
-import WodSave from '@/views/wod/WodSave.vue'; // WodSave 컴포넌트를 가져옵니다.
-
 export default {
-  props: ['date'],
-  components: {
-    WodSave,
+  props: {
+    wod: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -58,39 +89,38 @@ export default {
         this.errorMessage = 'WOD 데이터를 삭제하는 중 오류가 발생했습니다.';
       }
     },
-    watch: {
-      '$route.params.date': 'fetchWodData',
-    },
-    mounted() {
-      this.fetchWodData();
-    },
-    async fetchWodData() {
-      try {
-        this.error = false;
-        this.wod = null;
-
-        const response = await axios.get(`http://localhost:8090/wod/find/${this.date}`);
-        this.wod = response.data.result;
-
-        if (!this.wod) {
-          throw new Error("No data found");
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          this.error = true; // 에러 상태를 true로 설정하여 WodSave 컴포넌트를 표시합니다.
-        } else {
-          this.errorMessage = 'WOD 데이터를 불러오는 중 오류가 발생했습니다.';
-          console.error('Error fetching WOD data:', error);
-        }
-      }
-    },
-    formatDate(date) {
-      const year = date.getFullYear();
-      const month = ('0' + (date.getMonth() + 1)).slice(-2);
-      const day = ('0' + date.getDate()).slice(-2);
-
-      return `${year}-${month}-${day}`;
-    },
   },
 };
 </script>
+
+<style scoped>
+.auto-width {
+  flex: 0 1 auto;
+  width: auto;
+  display: inline-block;
+}
+
+.custom-field {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.custom-text-box {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  margin-bottom: 2px;
+}
+
+.custom-text-box {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  margin-bottom: 2px;
+}
+
+.exercise-group {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  margin: 2px;
+  margin-bottom: 4px;
+  position: relative;
+}
+</style>
