@@ -62,6 +62,8 @@ public class RegistrationService {
 
         List<RegistrationInfo> registrationInfoList = registrationInfoRepository.findByMemberAndBoxAndDelYnOrderByRegistrationDateDesc(userMember, box, "N");
         //기존 회원인 경우 registrationDate가 기존 등록 종료일보다 전이면 안됨
+        for(RegistrationInfo r : registrationInfoList)
+            System.out.println(r.getId());
         if(!registrationInfoList.isEmpty()){
             //가장 최신 등록
             RegistrationInfo latelyRegistrationInfo = registrationInfoList.get(0);
@@ -80,7 +82,7 @@ public class RegistrationService {
         EmailDto emailDto = EmailDto.builder()
                 .receiverEmail(dto.getEmail())
                 .emailTitle(box.getName()+" 박스 등록/연장 이메일 공지")
-                .emailContent("회원님의 박스 등록기간이 변경되었습니다. <br> "+dto.getRegistrationDate()+" ~ "+dto.getRegistrationDate().plusMonths(dto.getRegistrationMonth()))
+                .emailContent("<h3>회원님의 박스 등록기간이 변경되었습니다.</h3> <br> <h4>"+dto.getRegistrationDate()+" ~ "+dto.getRegistrationDate().plusMonths(dto.getRegistrationMonth())+"</h4>")
                 .build();
         emailService.sendEmail(emailDto);
 

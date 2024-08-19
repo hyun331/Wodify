@@ -2,6 +2,8 @@ package com.soocompany.wodify.member.service;
 
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.box.repository.BoxRepository;
+import com.soocompany.wodify.common.dto.EmailDto;
+import com.soocompany.wodify.common.service.EmailService;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.domain.Role;
 import com.soocompany.wodify.member.dto.*;
@@ -38,13 +40,15 @@ public class MemberService {
     private final BoxRepository boxRepository;
     private final RegistrationInfoRepository registrationInfoRepository;
     private final S3Client s3Client;
+    private final EmailService emailService;
 
     @Autowired
-    public MemberService(MemberRepository memberRepository, BoxRepository boxRepository, RegistrationInfoRepository registrationInfoRepository, S3Client s3Client){
+    public MemberService(MemberRepository memberRepository, BoxRepository boxRepository, RegistrationInfoRepository registrationInfoRepository, S3Client s3Client, EmailService emailService){
         this.memberRepository = memberRepository;
         this.boxRepository = boxRepository;
         this.registrationInfoRepository = registrationInfoRepository;
         this.s3Client = s3Client;
+        this.emailService = emailService;
     }
 
 
@@ -244,6 +248,19 @@ public class MemberService {
             throw new EntityNotFoundException("탈퇴할 회원이 조회되지 않습니다.");
         });
         leaveUser.memberBoxUpdate(null);
+        List<RegistrationInfo> registrationList = registrationInfoRepository.findByMemberAndBoxAndDelYnOrderByRegistrationDateDesc(leaveUser, box, "N");
+        if(registrationList.isEmpty()){
+            log.error("userLeaveBox() : 등록이 조회되지 않습니다.");
+            throw new EntityNotFoundException("등록이 조회되지 않습니다.");
+        }
+        registrationList.get(0).updateDelYn();
+
+        EmailDto emailDto = EmailDto.builder()
+                .receiverEmail(userEmail)
+                .emailTitle(box.getName()+" 박스 탈퇴 이메일 공지")
+                .emailContent("<h3>"+box.getName()+"과 함께 해주셔서 감사합니다.</h3>")
+                .build();
+        emailService.sendEmail(emailDto);
 
 
         return "성공적으로 회원을 탈퇴시켰습니다.";
