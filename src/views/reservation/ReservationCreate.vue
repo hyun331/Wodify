@@ -3,7 +3,7 @@
         <div class="box right-align">
             <br>
             <span class="boxLocation">
-                CROSSFIT RICH NANGOK
+                {{ this.boxName }}
             </span>
             <br>
         </div>
@@ -53,8 +53,8 @@
                             </v-table>
                         </div>
 
-                        <div v-else class="d-flex justify-center wod" >
-                            <v-btn :to="{ path: '/wod/select-date' }">
+                        <div v-else class="d-flex justify-center wod">
+                            <v-btn :to="{ path: '/wod/select-date' }" class="freesentation">
                                 wod 생성
                             </v-btn>
                         </div>
@@ -99,6 +99,23 @@ export default {
         RoundedButtonComponent,
         AlertModalComponent
     },
+    async created() {
+        try {
+            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/box/name/`);
+            this.boxName = response.data.result;
+        } catch (error) {
+            let errorMessage = "";
+            if (error.response && error.response.data) {
+                // 서버에서 반환한 에러 메시지가 있는 경우
+                errorMessage += `: ${error.response.data.error_message}`;
+            } else if (error.message) {
+                errorMessage += `: ${error.message}`;
+            }
+            this.dialogTitle = "박스명 로드 실패";
+            this.dialogText = errorMessage;
+            this.alertModal = true;
+        }
+    },
     data() {
         return {
             selectedDate: new Date(),
@@ -112,6 +129,7 @@ export default {
             alertModal: false,
             dialogTitle: "",
             dialogText: "",
+            boxName: "",
         };
     },
     watch: {
@@ -236,6 +254,7 @@ export default {
     background-color: rgba(255, 255, 255, 0.5);
     margin-top: 20px;
 }
+
 .wod {
     margin-top: 20px;
 }
