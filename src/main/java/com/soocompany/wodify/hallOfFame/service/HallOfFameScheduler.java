@@ -45,6 +45,7 @@ public class HallOfFameScheduler {
     @Transactional
     public void updateHallOfFame(){
         for(Box box : boxRepository.findByDelYn("N")){
+            System.out.println(box.getName()+" box!");
             //각 박스의 멤버 리스트
             List<Member> memberList = memberRepository.findByBoxAndRoleAndDelYn(box, Role.USER, "N");
             LocalDate yesterday = LocalDate.now().minusDays(1);
@@ -52,6 +53,7 @@ public class HallOfFameScheduler {
             List<Reservation> reservationList = reservationRepository.findAllByBoxAndDateAndDelYn(box, yesterday, "N");
             List<HallOfFame> hallOfFameList = new ArrayList<>();
             for(Reservation r : reservationList){
+                System.out.println(r.getId()+" 예약");
                 List<ReservationDetail> reservationDetailList = reservationDetailRepository.findByReservationAndDelYn(r, "N");
                 for(ReservationDetail rd : reservationDetailList){
                     if(rd.getRecord() != null && rd.getRecord().getSnf().equals("s")){

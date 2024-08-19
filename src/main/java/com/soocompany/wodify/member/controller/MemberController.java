@@ -232,6 +232,12 @@ public class MemberController {
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member id에 맞는 멤버 상세 정보 출력", memberService.memberDetail());
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
+    //코치, 대표가 보는 멤버 상세정보
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<CommonResDto> memberDetailById(@PathVariable Long id){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member id에 맞는 멤버 상세 정보 출력", memberService.memberDetailById(id));
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
 
     //멤버 개인정보 수정
     @PatchMapping("/update")

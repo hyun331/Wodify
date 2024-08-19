@@ -2,6 +2,8 @@ package com.soocompany.wodify.registration_info.service;
 
 import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.common.dto.CommonResDto;
+import com.soocompany.wodify.common.dto.EmailDto;
+import com.soocompany.wodify.common.service.EmailService;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.domain.Role;
 import com.soocompany.wodify.member.repository.MemberRepository;
@@ -28,11 +30,13 @@ import java.util.List;
 public class RegistrationService {
     private final MemberRepository memberRepository;
     private final RegistrationInfoRepository registrationInfoRepository;
+    private final EmailService emailService;
 
     @Autowired
-    public RegistrationService(MemberRepository memberRepository, RegistrationInfoRepository registrationInfoRepository) {
+    public RegistrationService(MemberRepository memberRepository, RegistrationInfoRepository registrationInfoRepository, EmailService emailService) {
         this.memberRepository = memberRepository;
         this.registrationInfoRepository = registrationInfoRepository;
+        this.emailService = emailService;
     }
 
 
@@ -58,6 +62,8 @@ public class RegistrationService {
 
         List<RegistrationInfo> registrationInfoList = registrationInfoRepository.findByMemberAndBoxAndDelYnOrderByRegistrationDateDesc(userMember, box, "N");
         //기존 회원인 경우 registrationDate가 기존 등록 종료일보다 전이면 안됨
+        for(RegistrationInfo r : registrationInfoList)
+            System.out.println(r.getId());
         if(!registrationInfoList.isEmpty()){
             //가장 최신 등록
             RegistrationInfo latelyRegistrationInfo = registrationInfoList.get(0);
@@ -73,6 +79,12 @@ public class RegistrationService {
 
         //member table에도 적용되야함
         userMember.memberBoxUpdate(box);
+        EmailDto emailDto = EmailDto.builder()
+                .receiverEmail(dto.getEmail())
+                .emailTitle(box.getName()+" 박스 등록/연장 이메일 공지")
+                .emailContent("<h3>회원님의 박스 등록기간이 변경되었습니다.</h3> <br> <h4>"+dto.getRegistrationDate()+" ~ "+dto.getRegistrationDate().plusMonths(dto.getRegistrationMonth())+"</h4>")
+                .build();
+        emailService.sendEmail(emailDto);
 
         return newRegistration.fromEntity() ;
     }
