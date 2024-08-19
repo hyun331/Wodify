@@ -60,28 +60,23 @@ public class BoxService {
 
 
     public BoxSaveReqDto boxCreate(BoxSaveReqDto dto) {
-        System.out.println("boxCreate");
         // 현재 로그인한 사용자 ID 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
 
-        System.out.println("memberId = " + memberId);
         // 대표 ID가 유일한지 확인
         Optional<Box> existingBoxByMember = boxRepository.findByMemberIdAndDelYn(Long.parseLong(memberId), "N").stream().findFirst();
         if (existingBoxByMember.isPresent()) {
-            System.out.println("existingBoxByMember.isPresent()");
             String errorMessage = "id가 " + memberId + "인 Member가 이미 다른 Box를 가지고 있습니다";
             log.error("boxCreate() : " + errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
 
         Member member = memberRepository.getReferenceById(Long.parseLong(memberId));
-        System.out.println("member = " + member.toString());
 
         //맴버에 박스 넣어주기
         Member newMember = memberRepository.findByEmailAndDelYn(member.getEmail(), "N")
                 .orElseThrow(() -> new EntityNotFoundException("Test Ceo Initial Data Loader Exception"));
-        System.out.println("newMember = " + newMember.toString());
 
         // MultipartFile에서 파일 저장 경로 얻기 및 AWS S3에 업로드
         MultipartFile logoFile = dto.getLogoPath();
