@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -32,13 +34,18 @@ public class CommonExceptionHandler {
         return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<String> handleMaxSizeException(MaxUploadSizeExceededException exc) {
+        return ResponseEntity.status(413).body("File size exceeds the maximum limit!");
+    }
+
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<CommonErrorDto> IllegalStateExceptionHandler(IllegalStateException e){
         CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.CONFLICT, e.getMessage());
         e.printStackTrace();
         return new ResponseEntity<>(commonErrorDto, HttpStatus.CONFLICT);
     }
-  
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonErrorDto> exceptionHandler(Exception e){
         CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.INTERNAL_SERVER_ERROR, "server error");
