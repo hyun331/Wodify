@@ -97,20 +97,13 @@ public class BoxService {
             }
         }
 
-        System.out.println("before save");
         Box box = boxRepository.save(dto.toEntity(member));
-        System.out.println("box.getId() = " + box.getId());
         if (s3Path != null) {
-            System.out.println("s3Path != null");
             box.updateLogo(s3Path);
-            System.out.println("boxRepository.save(box)");
             boxRepository.save(box);
         }
-
         newMember.memberBoxUpdate(box);
-        System.out.println("memberRepository.save(box)");
         memberRepository.save(newMember);
-
         return BoxSaveReqDto.fromEntity(box);
     }
 
