@@ -24,8 +24,13 @@
         </v-menu>
         <v-menu v-if="userRole === 'COACH' || userRole === 'CEO'" open-on-hover>
             <template v-slot:activator="{ props }">
-                <v-btn :to="{ path: '/wod/select-date' }" color="white" v-bind="props" class="rubikMonoOne">WOD</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne">WOD-코치,CEO</v-btn>
             </template>
+            <v-list>
+                <v-list-item :to="{path:'/wod/find'}">
+                    <v-list-item-title>와드조회</v-list-item-title>
+                </v-list-item>
+            </v-list>
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
@@ -48,7 +53,7 @@
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-            <v-btn color="white" v-bind="props" class="rubikMonoOne">COMMUNITY</v-btn>
+            <v-btn color="white" v-bind="props" class="rubikMonoOne">COMMUNITY-공통</v-btn>
             </template>
             <v-list>
                 <v-list-item :to="{path:'/post/list'}">
