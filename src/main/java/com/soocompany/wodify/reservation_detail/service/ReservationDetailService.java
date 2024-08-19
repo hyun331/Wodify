@@ -46,7 +46,6 @@ public class ReservationDetailService {
     private final ReservationManagementService reservationManagementService;
     private final ReservationManageEventHandler reservationManageEventHandler;
     private final WaitingService waitingService;
-  //    private final SseController sseController; //  수연
 
     public ReservationDetailDetResDto reservationCreate(ReservationDetCreateReqDto dto, Long memberId) {
         Reservation reservation = reservationRepository.findByIdAndDelYn(dto.getReservationId(), "N").orElseThrow(() -> new EntityNotFoundException("해당 id의 예약이 존재하지 않습니다."));
@@ -89,7 +88,6 @@ public class ReservationDetailService {
         reservationManageEventHandler.publish(new ReservationManageEvent(reservation.getId(), 1));
 
         ReservationDetail reservationDetail = dto.toEntity(reservation, member);
-//        sseController.publishMessage(reservationDetail,memberEmail); // 수연
         ReservationDetail savedDetail = reservationDetailRepository.save(reservationDetail);
         return savedDetail.detFromEntity();
     }
