@@ -45,10 +45,10 @@ public class ReservationService {
             log.error("reservationCreate() : 해당 id의 회원을 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
         });
-//        if (!member.getRole().equals(Role.COACH)) {
-//            log.error("reservationCreate() : 예약을 생성할 수 있는 권한이 없습니다.");
-//            throw new IllegalArgumentException("예약을 생성할 수 있는 권한이 없습니다.");
-//        }
+        if (!member.getRole().equals(Role.COACH)) {
+            log.error("reservationCreate() : 예약을 생성할 수 있는 권한이 없습니다.");
+            throw new IllegalArgumentException("예약을 생성할 수 있는 권한이 없습니다.");
+        }
         Box box = boxRepository.findByIdAndDelYn(member.getBox().getId(),"N").orElseThrow(()-> new EntityNotFoundException("해당하는 id의 박스가 존재하지 않습니다."));
 
         List<ReservationDetailResDto> list = new ArrayList<>();
