@@ -19,13 +19,19 @@
                             </v-btn>
                             
                         </v-col>
+
+                        
                     
                     </v-row>
                 </v-form>
             </v-col> 
+            <v-col>
+                <v-btn @click="showRegistrationModal('', '')">회원등록</v-btn>
+            </v-col>
 
 
-            <h1>회원관리 {{isCEO}}</h1>
+
+            <!-- <h1>회원관리 {{isCEO}}</h1> -->
         </v-row>
         <v-row>
             <v-col>
