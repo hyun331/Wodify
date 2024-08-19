@@ -21,9 +21,14 @@
             <v-form @submit.prevent="reservation">
                 <v-row>
                     <v-col cols="6" class="d-flex justify-center align-center">
-                        <v-text-field v-model="date" label="날짜 입력" type="date" class="mx-2"></v-text-field>
+                        <div class="date-picker-container">
+                            <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected"
+                                class="custom-date-picker">
+                                <template v-slot:header></template>
+                            </v-date-picker>
+                        </div>
                     </v-col>
-                    <v-col cols="6" class="justify-center align-center bordered">
+                    <v-col cols="6" class="justify-center align-center bordered wod">
                         <div class="flex-between padded">
                             <span>date</span>
                             <span>{{ wod.date }}</span>
@@ -86,6 +91,8 @@ export default {
     },
     data() {
         return {
+            selectedDate: new Date(),
+            formattedDate: "",
             menu: false,
             date: "",
             wod: "와드 내용",
@@ -103,12 +110,25 @@ export default {
                 this.fetchWod(newDate);
                 this.fetchTimeOptions(newDate);
             }
+        },
+        selectedDate(selectDate) {
+            if (selectDate) {
+                this.formattedDate = this.formatDate(selectDate);
+                this.fetchWod(this.formattedDate);
+                this.fetchTimeOptions(this.formattedDate);
+            }
         }
     },
     methods: {
-        async fetchWod() {
+        formatDate(date) {
+            const year = date.getFullYear();
+            const month = ('0' + (date.getMonth() + 1)).slice(-2);
+            const day = ('0' + date.getDate()).slice(-2);
+            return `${year}-${month}-${day}`;
+        },
+        async fetchWod(date) {
             try {
-                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find/` + this.date);
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find/${date}`);
                 console.log(response);
                 this.wod = response.data.result;
             } catch (error) {
@@ -128,8 +148,7 @@ export default {
 
         },
         async fetchTimeOptions() {
-            console.log(this.date);
-            const dateData = { date: this.date };
+            const dateData = { date: this.formattedDate };
             try {
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation/box/list/`, dateData);
                 console.log(response.data.result.content);
@@ -153,7 +172,7 @@ export default {
         },
         async reservation() {
 
-            if (!this.date || !this.time) {
+            if (!this.formattedDate || !this.time) {
                 this.dialogTitle = "입력사항을 모두 입력해주세요";
                 this.dialogText = "입력사항을 모두 입력해주세요";
                 this.alertModal = true;
@@ -214,7 +233,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .box {
     background-color: #797876;
 }
@@ -270,5 +289,20 @@ export default {
     border: 1px solid #ccc;
     /* 테두리 스타일 */ padding: 10px;
     /* 여백 추가 */
+}
+.wod-info-container {
+    margin: 10px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 40px;
+    background-color: #f8f8f8;
+}
+
+.custom-date-picker {
+    background-color: rgba(255, 255, 255, 0.5);
+    margin-top: 20px;
+}
+.wod {
+    margin-top: 20px;
 }
 </style>
