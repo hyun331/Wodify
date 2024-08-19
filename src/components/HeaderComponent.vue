@@ -15,7 +15,7 @@
                 <v-list-item :to="{ path: '/box/detail' }">
                     <v-list-item-title>내 박스-공통</v-list-item-title>
                 </v-list-item>
-                <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/' }">
+                <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/member/list/user' }">
                     <v-list-item-title>박스 회원 관리-코치,CEO</v-list-item-title>
                 </v-list-item>
             </v-list>

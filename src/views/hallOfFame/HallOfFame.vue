@@ -4,18 +4,17 @@
             <h1 class="do-hyeon-regular text-center">명예의 전당</h1>
           </div>
    
-        <v-row class="d-flex justify-content-between mt-5">
-            <v-col>
+        <v-row justify="center" class="mt-5">
+            <v-col cols="12" md="10">
                 <v-card>
-                    
                     <v-card-text>
                         <Bar :data="chartData" :options="chartOptions" />
                     </v-card-text>
                 </v-card>
             </v-col>
         </v-row>
-        <v-row justify="end">
-            <v-col class="d-flex justify-content-end">
+        <v-row justify="center">
+            <v-col class="d-flex justify-content-end" cols="12" md="10">
                 <v-btn @click="showWodModal">WOD</v-btn>
             </v-col>
         </v-row>
@@ -130,6 +129,7 @@ export default {
                     },
                 },
                 indexAxis: 'y',
+                barThickness: 15,
             },
         };
     },
@@ -157,7 +157,7 @@ export default {
   font-family: "Do Hyeon", sans-serif;
   font-weight: 400;
   font-style: normal;
-  font-size: 90px;
+  font-size: 80px;
 }
 
 </style>
