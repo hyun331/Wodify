@@ -7,14 +7,19 @@
                     <v-card>
                         <v-card-title>
                             <v-row>
-                                <v-col v-if="isMemberBaseUrl">
-                                    <v-img :src="require('@/assets/memberBaseImg.png')" alt="member Image" class="memberImg"
-                                         contain></v-img>
+                                <v-col v-if="isMemberBaseUrl" class="profile-image-container">
+                           
+                                        <v-img :src="require('@/assets/memberBaseImg.png')" alt="member Image"
+                                        class="memberImg" contain></v-img>
+                               
+                                    
+                                       
+                                    
                                 </v-col>
-                                <v-col v-else>
+                                <v-col v-else class="profile-image-container">
                                     <v-img :src="memberInfo.imagePath" class="memberImg"></v-img>
                                 </v-col>
-                                <v-col class="rubikMonoOne" style="font-size: 80px;">
+                                <v-col class="rubikMonoOne" cols="9" style="font-size: 80px;">
                                     {{ pageType }}
                                 </v-col>
                             </v-row>
@@ -24,7 +29,7 @@
 
                             <hr>
 
-                            <v-row  >
+                            <v-row>
                                 <v-col>
                                     <v-label class="rubikMonoOne" style="font-size: 25px;">NAME</v-label>
                                 </v-col>
@@ -98,7 +103,7 @@
                                     {{ memberInfo.boxName }}
 
                                 </v-col>
-                                <v-col cols="2" v-if="pageType ==='My Page'">
+                                <v-col cols="2" v-if="pageType === 'My Page' && userRole==='USER'">
                                     <v-btn v-if="!isOnHold" @click="showHoldingModal">정지</v-btn>
                                     <v-btn @click="showUnholdingModal" v-else>정지 해제</v-btn>
                                 </v-col>
@@ -149,7 +154,7 @@ export default {
     data() {
         return {
             holding: false,
-
+            unholding: false,
         }
     },
 
@@ -172,12 +177,26 @@ export default {
     /* 원하는 높이로 설정, 예: 400px */
 }
 
-.memberImg{
-    border-radius: 50%; 
-    width: 150px; 
-    height: 150px;
-    border: 3px solid #000;
+.memberImg {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+
+
 }
 
+.profile-image-container {
+    position: relative;
 
+    background-image: url('@/assets/profileBoarder.png');
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* 필요 시 추가적으로 오버플로우 숨김 */
+    padding: 10px;
+    margin: 20px;
+}
 </style>
