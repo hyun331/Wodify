@@ -3,7 +3,7 @@
     <div class="box right-align">
       <br>
       <span class="boxLocation">
-        CROSSFIT RICH NANGOK
+        {{ this.boxName }}
       </span>
       <br>
     </div>
@@ -13,17 +13,17 @@
         <h1 class="rubikMonoOne" style="margin-top: 10px;">RESERVATION</h1>
       </div>
 
-      <!-- Date Search Fields -->
-      <v-row>
+
+      <v-row justify="end">
         <v-col cols="4">
           <v-text-field v-model="startDate" label="Start Date" type="date" class="mx-2"></v-text-field>
         </v-col>
         <v-col cols="4">
           <v-text-field v-model="endDate" label="End Date" type="date" class="mx-2"></v-text-field>
         </v-col>
-        <v-col cols="4">
-          <v-btn @click="searchByDateRange">Search</v-btn>
-        </v-col>
+        <v-btn @click="searchByDateRange" icon style="margin-top: 16px; margin-right: 20px;">
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
       </v-row>
 
       <v-row>
@@ -34,22 +34,31 @@
               <v-table>
                 <thead>
                   <tr>
-                    <th style="font-weight: bold;">DATE</th>
-                    <th style="font-weight: bold;">TIME</th>
-                    <th style="font-weight: bold;">PEOPLE</th>
-                    <th style="font-weight: bold;">WOD</th>
-                    <th style="font-weight: bold;">Delete</th>
+                    <th style="font-weight: bold; text-align: center;">DATE</th>
+                    <th style="font-weight: bold; text-align: center;">TIME</th>
+                    <th style="font-weight: bold; text-align: center;">PEOPLE</th>
+                    <th style="font-weight: bold; text-align: center;">WOD</th>
+                    <th style="font-weight: bold; text-align: center;">Delete</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="r in filteredReservationList" :key="r.id" @click="viewDetail(r.reservationDetails)"
-                    style="cursor: pointer;">
-                    <td>{{ r.date }}</td>
-                    <td>{{ r.time.slice(0, 5) }}</td>
-  
-                    <td>{{ r.reservationPeople }} / {{ r.maxPeople }}</td>
-                    <td><v-btn :to="{ path: '/wod/find/' + r.date }">view</v-btn></td>
-                    <td><v-btn @click.stop="cancel(r.id)">delete</v-btn></td>
+                  <tr v-for="r in filteredReservationList" :key="r.id">
+                    <td style="text-align: center;" @click="viewDetail(r.reservationDetails)">
+                      {{ r.date }}
+                    </td>
+                    <td style="text-align: center;" @click="viewDetail(r.reservationDetails)">
+                      {{ r.time.slice(0, 5) }}
+                    </td>
+                    <td style="text-align: center;" @click="viewDetail(r.reservationDetails)">
+                      {{ r.reservationPeople }} / {{ r.maxPeople }}
+                    </td>
+                    <td style="text-align: center;">
+                      <v-btn :to="{ path: '/wod/select-date'}">view</v-btn>
+                    </td>
+                    <!-- Updated delete button event -->
+                    <td style="text-align: center;">
+                      <v-btn @click="confirmDelete(r.id)">delete</v-btn>
+                    </td>
                   </tr>
                 </tbody>
               </v-table>
@@ -64,6 +73,17 @@
       </v-row>
       <AlertModalComponent v-model="alertModal" @update:dialog="alertModal = $event" :dialogTitle="dialogTitle"
         :dialogText="dialogText" />
+
+        <v-dialog v-model="deleteModal" max-width="400px">
+          <v-card>
+            <v-card-title class="headline">{{ dialogTitle }}</v-card-title>
+            <v-card-text>정말로 예약을 삭제하시겠습니까?</v-card-text>
+            <v-card-actions>
+              <v-btn text @click="deleteModal = false">아니오</v-btn>
+              <v-btn class="hover-btn" text @click="cancel">예</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
     </v-container>
   </div>
 </template>
@@ -93,6 +113,9 @@ export default {
       alertModal: false,
       dialogTitle: "",
       dialogText: "",
+      boxName: "",
+      deleteModal: false,
+      reservationIdToDelete: null
     };
   },
   async created() {
@@ -113,6 +136,22 @@ export default {
       this.dialogText = errorMessage;
       this.alertModal = true;
       console.log(error);
+    }
+
+    try {
+      const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/box/name/`);
+      this.boxName = response.data.result;
+    } catch (error) {
+      let errorMessage = "";
+      if (error.response && error.response.data) {
+        // 서버에서 반환한 에러 메시지가 있는 경우
+        errorMessage += `: ${error.response.data.error_message}`;
+      } else if (error.message) {
+        errorMessage += `: ${error.message}`;
+      }
+      this.dialogTitle = "박스명 로드 실패";
+      this.dialogText = errorMessage;
+      this.alertModal = true;
     }
   },
   beforeUnmount() {
@@ -174,9 +213,14 @@ export default {
       this.selectedMemberList = memberList;
       this.memberListModal = true;
     },
-    async cancel(id) {
+    confirmDelete(id) {
+      this.memberListModal = false;
+      this.reservationIdToDelete = id; // Store the ID of the reservation to delete
+      this.deleteModal = true; // Show the delete confirmation modal
+    },
+    async cancel() {
       try {
-        await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/reservation/delete/` + id);
+        await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/reservation/delete/${this.reservationIdToDelete}`);
         window.location.reload();
       } catch (error) {
         let errorMessage = "";
@@ -196,18 +240,21 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .bold {
   font-weight: bold;
 }
+
 .box {
   background-color: #797876;
   text-align: right;
 }
+
 .boxLocation {
   color: white;
   font-weight: 1000;
   font-size: 70px;
   font-family: "Oswald", sans-serif;
 }
+
 </style>
