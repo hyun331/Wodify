@@ -60,23 +60,28 @@ public class BoxService {
 
 
     public BoxSaveReqDto boxCreate(BoxSaveReqDto dto) {
+        System.out.println("boxCreate");
         // 현재 로그인한 사용자 ID 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
 
+        System.out.println("memberId = " + memberId);
         // 대표 ID가 유일한지 확인
         Optional<Box> existingBoxByMember = boxRepository.findByMemberIdAndDelYn(Long.parseLong(memberId), "N").stream().findFirst();
         if (existingBoxByMember.isPresent()) {
+            System.out.println("existingBoxByMember.isPresent()");
             String errorMessage = "id가 " + memberId + "인 Member가 이미 다른 Box를 가지고 있습니다";
             log.error("boxCreate() : " + errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
 
         Member member = memberRepository.getReferenceById(Long.parseLong(memberId));
+        System.out.println("member = " + member.toString());
 
         //맴버에 박스 넣어주기
         Member newMember = memberRepository.findByEmailAndDelYn(member.getEmail(), "N")
                 .orElseThrow(() -> new EntityNotFoundException("Test Ceo Initial Data Loader Exception"));
+        System.out.println("newMember = " + newMember.toString());
 
         // MultipartFile에서 파일 저장 경로 얻기 및 AWS S3에 업로드
         MultipartFile logoFile = dto.getLogoPath();
@@ -85,30 +90,30 @@ public class BoxService {
             try {
                 byte[] bytes = logoFile.getBytes();
                 String fileName = UUID.randomUUID() + "_" + logoFile.getOriginalFilename();
-                Path path = Paths.get("C:/Users/rnjsc/Desktop/tmp/", fileName);
-
-                // Local PC에 임시 저장
-                Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-
                 // AWS S3에 업로드
                 PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(fileName)
                         .build();
-                PutObjectResponse putObjectResponse = s3Client.putObject(putObjectRequest, RequestBody.fromFile(path));
+                PutObjectResponse putObjectResponse = s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes));
                 s3Path = s3Client.utilities().getUrl(a -> a.bucket(bucket).key(fileName)).toExternalForm();
             } catch (IOException e) {
                 throw new RuntimeException("이미지 저장 실패", e);
             }
         }
 
+        System.out.println("before save");
         Box box = boxRepository.save(dto.toEntity(member));
+        System.out.println("box.getId() = " + box.getId());
         if (s3Path != null) {
+            System.out.println("s3Path != null");
             box.updateLogo(s3Path);
+            System.out.println("boxRepository.save(box)");
             boxRepository.save(box);
         }
 
         newMember.memberBoxUpdate(box);
+        System.out.println("memberRepository.save(box)");
         memberRepository.save(newMember);
 
         return BoxSaveReqDto.fromEntity(box);
