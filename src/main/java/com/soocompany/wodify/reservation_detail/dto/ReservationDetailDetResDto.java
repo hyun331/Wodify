@@ -15,8 +15,9 @@ import java.time.LocalTime;
 public class ReservationDetailDetResDto {
 
     private Long id;
-    private LocalDate date;
-    private LocalTime time;
+    private String memberName;
+    private String date;
+    private String time;
     private String coachName;
     private Long wodId;
     private Long recordId;

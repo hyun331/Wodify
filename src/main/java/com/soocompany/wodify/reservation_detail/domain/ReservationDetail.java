@@ -42,8 +42,9 @@ public class ReservationDetail extends BaseEntity {
 
         return ReservationDetailDetResDto.builder()
                 .id(this.id)
-                .date(reservation.getDate())
-                .time(reservation.getTime())
+                .memberName(this.member.getName())
+                .date(String.valueOf(reservation.getDate()))
+                .time(String.valueOf(reservation.getTime()))
                 .coachName(reservation.getCoach().getName())
                 .wodId(reservation.getWod().getId())
                 .recordId(Optional.ofNullable(record).map(Record::getId).orElse(null))
