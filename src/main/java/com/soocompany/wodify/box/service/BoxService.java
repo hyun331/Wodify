@@ -85,12 +85,17 @@ public class BoxService {
             try {
                 byte[] bytes = logoFile.getBytes();
                 String fileName = UUID.randomUUID() + "_" + logoFile.getOriginalFilename();
+                Path path = Paths.get("C:/Users/rnjsc/Desktop/tmp/", fileName);
+
+                // Local PC에 임시 저장
+                Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+
                 // AWS S3에 업로드
                 PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(fileName)
                         .build();
-                PutObjectResponse putObjectResponse = s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes));
+                PutObjectResponse putObjectResponse = s3Client.putObject(putObjectRequest, RequestBody.fromFile(path));
                 s3Path = s3Client.utilities().getUrl(a -> a.bucket(bucket).key(fileName)).toExternalForm();
             } catch (IOException e) {
                 throw new RuntimeException("이미지 저장 실패", e);
@@ -102,8 +107,10 @@ public class BoxService {
             box.updateLogo(s3Path);
             boxRepository.save(box);
         }
+
         newMember.memberBoxUpdate(box);
         memberRepository.save(newMember);
+
         return BoxSaveReqDto.fromEntity(box);
     }
 
