@@ -10,25 +10,25 @@
 
         <v-container>
             <br>
-            <v-row class="reservationHead">
-                <v-col cols="6" class="d-flex justify-center align-center">
+            <v-row class="reservationHead" justify="center">
+                <v-col cols="5" class="d-flex justify-center align-center">
                     DATE
                 </v-col>
-                <v-col cols="6" class="d-flex justify-center align-center">
+                <v-col cols="5" class="d-flex justify-center align-center">
                     WOD
                 </v-col>
             </v-row>
             <v-form @submit.prevent="reservation">
-                <v-row>
-                    <v-col cols="6" class="d-flex justify-center align-center">
+                <v-row justify="center">
+                    <v-col cols="5" class="d-flex justify-center align-center">
                         <div class="date-picker-container">
-                            <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected"
+                            <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected" style="width: 400px;"
                                 class="custom-date-picker">
                                 <template v-slot:header></template>
                             </v-date-picker>
                         </div>
                     </v-col>
-                    <v-col cols="6" class="justify-center align-center">
+                    <v-col cols="5" class="justify-center align-center">
                         <div v-if="wod && wod.wodDetResDtoList.length > 0" class="bordered wod">
                             <div class="flex-between padded">
                                 <span>date</span>
@@ -53,7 +53,7 @@
                             </v-table>
                         </div>
 
-                        <div v-else class="d-flex justify-center wod">
+                        <div v-else class="d-flex wod" style="margin-left: 185px;">
                             <v-btn :to="{ path: '/wod/select-date' }" class="freesentation">
                                 wod 생성
                             </v-btn>
@@ -61,23 +61,34 @@
                     </v-col>
                 </v-row>
 
-                <v-row v-for="(entry, index) in entries" :key="index">
-                    <v-col cols="6">
-                        <v-text-field label="Time" type="time" v-model="entry.time" placeholder="시간을 입력해주세요" required>
-                        </v-text-field>
-                    </v-col>
+                <v-row v-for="(entry, index) in entries" :key="index" justify="center">
                     <v-col cols="5">
-                        <v-text-field label="People" v-model="entry.people" placeholder="인원을 입력해주세요" required>
+                        <v-text-field label="Time" type="time" v-model="entry.time" 
+                        placeholder="시간을 입력해주세요"
+                        class="time-field"
+                        style="margin-left:40px;
+                        margin-right:40px;"
+                        required>
                         </v-text-field>
                     </v-col>
-                    <v-col cols="1">
-                        <v-btn @click="removeEntry(index)" icon>
-                            -
+                    <v-col cols="3">
+                        <v-text-field label="People" v-model="entry.people" 
+                        placeholder="인원을 입력해주세요" 
+                        class="people-field"
+                        
+                        required>
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="2" class="d-flex align-center" style="margin-bottom: 16px;">
+                        <v-btn @click="removeEntry(index)" icon style="margin-right: 5px;">
+                            <span style="font-size: 30px;">-</span>
+                        </v-btn>
+                        <v-btn @click="addEntry" icon>
+                            <span style="font-size: 30px;">+</span>
                         </v-btn>
                     </v-col>
                 </v-row>
-                <v-row class="d-flex justify-center align-center">
-                    <RoundedButtonComponent text="Add Time Slot" buttonType="button" @click="addEntry" class="mx-2" />
+                <v-row class="d-flex" justify="center">
                     <RoundedButtonComponent text="Book Create" buttonType="submit" class="mx-2" />
                 </v-row>
 
@@ -242,6 +253,34 @@ export default {
     font-size: 20px;
 }
 
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    /* Aligns items at the two ends of the line */
+}
+
+.padded {
+    padding: 0 10px;
+    /* Adds padding to the left and right sides */
+}
+
+.flex-between span:first-child {
+    text-align: left;
+    margin-right: 10px;
+    /* Adds space between the label and the value */
+}
+
+.flex-between span:last-child {
+    text-align: right;
+    margin-left: 10px;
+    /* Adds space between the value and the label */
+}
+
+.bordered {
+    border: 1px solid #ccc;
+    /* 테두리 스타일 */ padding: 10px;
+    /* 여백 추가 */
+}
 .wod-info-container {
     margin: 10px;
     text-align: center;
@@ -258,4 +297,5 @@ export default {
 .wod {
     margin-top: 20px;
 }
+
 </style>
