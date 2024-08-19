@@ -16,4 +16,5 @@ public class BoxDetailResDto {
     private String operatingHours;
     private String fee;
     private String address;
+    private String intro;
 }

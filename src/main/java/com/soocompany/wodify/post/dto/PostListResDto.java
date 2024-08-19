@@ -1,5 +1,6 @@
 package com.soocompany.wodify.post.dto;
 
+import com.soocompany.wodify.post.domain.DateTimeFormatterUtil;
 import com.soocompany.wodify.post.domain.Post;
 import com.soocompany.wodify.post.domain.Type;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -22,7 +22,7 @@ public class PostListResDto {
     private String title;
     private Long likeCount;
     private String name;
-    private LocalDateTime createdTime;
+    private String createdTime;
     private int commentCount;
 
     static public PostListResDto fromEntity(Post post) {
@@ -31,10 +31,9 @@ public class PostListResDto {
                 .type(post.getType())
                 .title(post.getTitle())
                 .likeCount(post.getLikeCount())
-                .name(post.getMember().getName())
-                .createdTime(post.getCreatedTime())
+                .name(post.getMemberName())
+                .createdTime(DateTimeFormatterUtil.dateOnly(post.getCreatedTime()))
                 .commentCount(post.getComments().size())
                 .build();
     }
-
 }

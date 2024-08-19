@@ -20,7 +20,7 @@ public class WaitingService {
 
     private final ZSetOperations<String, String> zSetOperations;
     @Autowired
-    public WaitingService(@Qualifier("zsetTemplate") RedisTemplate<String, String> redisTemplate) {
+    public WaitingService(@Qualifier("ZsetTemplate") RedisTemplate<String, String> redisTemplate) {
         this.zSetOperations = redisTemplate.opsForZSet();
     }
 
