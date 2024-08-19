@@ -56,7 +56,8 @@
                                 <tr v-for="u in userList " :key="u.id">
                                     <!-- <td><v-img :src="p.imagePath" style="height: 100px; width:auto;"></v-img></td> -->
                                     <!-- <td>{{u.id}}</td> -->
-                                    <td>{{u.name}}</td>
+                                    <td><v-btn :to="{ path: `/user/detail/${u.id}` }" class="hover-text" style=" box-shadow: none;"
+                                        >{{u.name}}</v-btn></td>
                                     <td>{{u.email}}</td>
                                     <td>{{u.state}}</td>
                                     <td><v-btn @click="showRegistrationModal(u.email, u.endDate)">연장</v-btn></td>
@@ -193,3 +194,15 @@ export default{
 }
 
 </script>
+
+<style>
+
+
+.hover-text:hover {
+    background-color: rgb(238, 232, 116);
+    content: 'sss';
+}
+
+
+
+</style>
