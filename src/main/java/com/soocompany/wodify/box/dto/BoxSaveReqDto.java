@@ -19,7 +19,7 @@ public class BoxSaveReqDto {
     private String fee;
     private String intro;
     private String address;
-    private Long representativeId;
+//    private Long representativeId;
 
 
 
@@ -45,7 +45,7 @@ public class BoxSaveReqDto {
                 .fee(box.getFee())
                 .intro(box.getIntro())
                 .address(box.getAddress())
-                .representativeId(box.getMember().getId())
+//                .representativeId(box.getMember().getId())
                 .build();
     }
 }
