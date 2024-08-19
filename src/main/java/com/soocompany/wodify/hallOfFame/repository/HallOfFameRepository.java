@@ -11,5 +11,7 @@ import java.util.List;
 public interface HallOfFameRepository extends JpaRepository<HallOfFame, Long> {
     void deleteByBox(Box box);
 
-    List<HallOfFame> findByBoxOrderByRank(Box box);
+//    List<HallOfFame> findByBoxOrderByRank(Box box);
+
+    List<HallOfFame> findByBox(Box box);
 }

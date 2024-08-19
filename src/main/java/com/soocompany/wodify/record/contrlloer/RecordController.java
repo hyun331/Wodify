@@ -37,11 +37,12 @@ public class RecordController {
     }
 
     @GetMapping("/record/list")
-    public ResponseEntity<?> memberList(Pageable pageable){
-        Page<RecordDetResDto> dtos = recordService.recordList(pageable);
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "운동기록리스트가 조회되었습니다.", dtos);
-        return new ResponseEntity<>(commonResDto,HttpStatus.OK);
+    public ResponseEntity<?> memberList(@RequestParam Long memberId, Pageable pageable) {
+        Page<RecordDetResDto> dtos = recordService.recordListByMemberId(memberId, pageable);
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "운동 기록 리스트가 조회되었습니다.", dtos);
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
+
 
     @PreAuthorize("hasRole('USER')")
     @PatchMapping("/record/update/{id}")

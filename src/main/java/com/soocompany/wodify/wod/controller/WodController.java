@@ -1,6 +1,7 @@
 package com.soocompany.wodify.wod.controller;
 import com.soocompany.wodify.common.dto.CommonResDto;
 import com.soocompany.wodify.wod.domain.Wod;
+import com.soocompany.wodify.wod.dto.WodDetResDto;
 import com.soocompany.wodify.wod.dto.WodResDto;
 import com.soocompany.wodify.wod.dto.WodSaveReqDto;
 import com.soocompany.wodify.wod.service.WodService;
@@ -44,5 +45,21 @@ public class WodController {
         HttpStatus code = HttpStatus.OK;
         Wod wod = wodService.wodDelete(date);
         return new ResponseEntity<>(new CommonResDto(code, msg, wod.getId()), code);
+    }
+
+    @GetMapping("/random/{id}")
+    public ResponseEntity<?> randomWodDet(@PathVariable Long id) {
+        String msg = "Count 반환에 성공했습니다.";
+        HttpStatus code = HttpStatus.OK;
+        WodDetResDto wodDetResDto = wodService.randomWodDet(id);
+        return new ResponseEntity<>(new CommonResDto(code, msg, wodDetResDto), code);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<?> wodDetCount() {
+        String msg = "Count 반환에 성공했습니다.";
+        HttpStatus code = HttpStatus.OK;
+        Long count = wodService.wodDetCount();
+        return new ResponseEntity<>(new CommonResDto(code, msg, count), code);
     }
 }

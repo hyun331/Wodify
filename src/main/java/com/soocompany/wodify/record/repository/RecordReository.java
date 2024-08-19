@@ -13,4 +13,5 @@ public interface RecordReository extends JpaRepository<Record, Long> {
     Optional<Record> findByReservationDetailIdAndDelYn(Long id, String delYn);
     Optional<Record> findByIdAndDelYn(Long id, String delYn);
     Page<Record> findByDelYn(String delYn, Pageable pageable);
+    Page<Record> findByMemberId(Long memberId, Pageable pageable);
 }

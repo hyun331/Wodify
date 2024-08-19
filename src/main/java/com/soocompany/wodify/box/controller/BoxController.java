@@ -1,8 +1,5 @@
 package com.soocompany.wodify.box.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.soocompany.wodify.box.domain.Box;
 import com.soocompany.wodify.box.dto.*;
 import com.soocompany.wodify.box.service.BoxService;
 import com.soocompany.wodify.common.dto.CommonResDto;
@@ -16,9 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/box")
@@ -60,12 +54,12 @@ public class BoxController {
     @PatchMapping("/update")
     @PreAuthorize("hasRole('CEO')")
     public ResponseEntity<CommonResDto> boxUpdate(
-            @RequestPart("name") String name,
+            @RequestPart(value = "name", required = false) String name,
             @RequestPart(value = "logo", required = false) MultipartFile logo,
-            @RequestPart("operatingHours") String operatingHours,
-            @RequestPart("fee") String fee,
-            @RequestPart("intro") String intro,
-            @RequestPart("address") String address) {
+            @RequestPart(value = "operatingHours", required = false) String operatingHours,
+            @RequestPart(value = "fee", required = false) String fee,
+            @RequestPart(value = "intro", required = false) String intro,
+            @RequestPart(value = "address", required = false) String address) {
 
         BoxUpdateReqDto boxUpdateReqDto = BoxUpdateReqDto.builder()
                 .name(name)
@@ -121,10 +115,24 @@ public class BoxController {
         }
     }
 
+
     @GetMapping("/name")
     public ResponseEntity<CommonResDto> boxName() {
         String boxName = boxService.boxName();
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box 이름이 성공적으로 조회되었습니다", boxName);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
+
+    @GetMapping("/mybox")
+    public ResponseEntity<CommonResDto> myBox() {
+        try {
+            BoxDetailResDto boxDetail = boxService.myBox();
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "로그인한 사용자의 Box 정보", boxDetail);
+            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+        } catch (Exception e) {
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.INTERNAL_SERVER_ERROR, "Box 정보 조회 중 오류 발생: " + e.getMessage(), null);
+            return new ResponseEntity<>(commonResDto, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
