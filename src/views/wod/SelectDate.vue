@@ -13,6 +13,12 @@
           <WodSave v-show="!wod" :date="formattedDate" :key="formattedDate" @wod-saved="onWodSaved" />
         </v-col>
       </v-row>
+      <v-row>
+      <v-col cols="12" md="8" class="content-col">
+        <WodFind v-show="wod" :wod="wod" :key="wod" @wod-deleted="onWodDeleted" />
+        <WodSave v-show="!wod" :date="formattedDate" :key="formattedDate" @wod-saved="onWodSaved" />
+      </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -91,9 +97,11 @@ export default {
   background-position: center;
   background-repeat: no-repeat;
   width: 100%;
-  min-height: 100vh; /* 변경: 100vh에서 min-height: 100vh로 수정 */
+  min-height: 100vh;
+  /* 변경: 100vh에서 min-height: 100vh로 수정 */
   position: relative;
-  overflow: auto; /* 변경: overflow: hidden에서 overflow: auto로 수정 */
+  overflow: auto;
+  /* 변경: overflow: hidden에서 overflow: auto로 수정 */
 }
 
 .content-container {

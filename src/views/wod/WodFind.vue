@@ -66,6 +66,7 @@
 
 <script>
 import axios from 'axios';
+
 export default {
   props: {
     wod: {
@@ -124,3 +125,4 @@ export default {
   position: relative;
 }
 </style>
+
