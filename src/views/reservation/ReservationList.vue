@@ -46,6 +46,7 @@
                     style="cursor: pointer;">
                     <td>{{ r.date }}</td>
                     <td>{{ r.time.slice(0, 5) }}</td>
+  
                     <td>{{ r.reservationPeople }} / {{ r.maxPeople }}</td>
                     <td><v-btn :to="{ path: '/wod/find/' + r.date }">view</v-btn></td>
                     <td><v-btn @click.stop="cancel(r.id)">delete</v-btn></td>

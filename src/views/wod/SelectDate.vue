@@ -91,9 +91,11 @@ export default {
   background-position: center;
   background-repeat: no-repeat;
   width: 100%;
-  min-height: 100vh; /* 변경: 100vh에서 min-height: 100vh로 수정 */
+  min-height: 100vh;
+  /* 변경: 100vh에서 min-height: 100vh로 수정 */
   position: relative;
-  overflow: auto; /* 변경: overflow: hidden에서 overflow: auto로 수정 */
+  overflow: auto;
+  /* 변경: overflow: hidden에서 overflow: auto로 수정 */
 }
 
 .content-container {
