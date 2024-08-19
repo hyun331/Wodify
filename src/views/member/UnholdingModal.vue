@@ -14,7 +14,7 @@
     </v-dialog>
 </template>
 
-<script>
+<script >
 import RoundedButtonComponent from '@/components/RoundedButtonComponent.vue';
 import axios from 'axios';
 export default {
