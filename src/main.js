@@ -50,5 +50,4 @@ axios.interceptors.response.use(
 
 app.use(router);
 app.use(vuetify);
-app.use(BootstrapVue3)
 app.mount('#app');
