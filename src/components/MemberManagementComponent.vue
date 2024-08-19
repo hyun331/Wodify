@@ -1,6 +1,8 @@
 <template>
     <div class="background">
     <v-container>
+        <h1 class="rubikMonoOne" style="margin-top: 10px;">MEMBERS</h1>
+
         <v-row class="d-flex justify-content-between mt-5">
             <v-col>
                 <v-form @submit.prevent="searchMember">
@@ -13,13 +15,11 @@
                             </v-text-field>
                         </v-col>
 
-                        <v-col cols="auto" class="noto-sans">
-                            <v-btn type="submit" icon style="margin-top: 16px; margin-right: 20px;">
+                        <v-col cols="auto" class="noto-sans" style="padding-left: 0px;">
+                            <v-btn type="submit" icon style="margin-top:5px;">
                                 <v-icon>mdi-magnify</v-icon>
                               </v-btn>
-                            <!-- <v-btn type="submit">
-                                회원 검색
-                            </v-btn> -->
+                            
                             
                         </v-col>
 
@@ -28,7 +28,7 @@
                     </v-row>
                 </v-form>
             </v-col> 
-            <v-col class="noto-sans">
+            <v-col class=" noto-sans d-flex justify-content-end" style="margin-right: 10px;">
                 <v-btn @click="showRegistrationModal('', '')" >회원등록</v-btn>
             </v-col>
 
