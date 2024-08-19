@@ -11,8 +11,8 @@
                     </span>
                 </v-row>
                 <v-row class="d-flex justify-center align-center" style="margin-top: 25px;">
-                    <RoundedButtonComponent @click="hold" text="Yeees" class="mx-2"/>
-                    <RoundedButtonComponent @click="closeModal" text="Nooooo" class="mx-2"/>
+                    <RoundedButtonComponent @click="hold" text="예" class="mx-2"/>
+                    <RoundedButtonComponent @click="closeModal" text="아니오" class="mx-2"/>
                 </v-row>
             </v-card-text>
         </v-card>
