@@ -7,7 +7,6 @@
               v-model="selectedDate" 
               @update:model-value="onDateSelected">
             </v-date-picker>
-          </div>
         </v-col>
         <v-col cols="12" md="8" class="content-col">
           <WodFind v-show="wod" :wod="wod" :key="wod" @wod-deleted="onWodDeleted" />
