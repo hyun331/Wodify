@@ -45,7 +45,6 @@ public class HallOfFameScheduler {
     @Transactional
     public void updateHallOfFame(){
         for(Box box : boxRepository.findByDelYn("N")){
-            System.out.println(box.getName()+" box!");
             //각 박스의 멤버 리스트
             List<Member> memberList = memberRepository.findByBoxAndRoleAndDelYn(box, Role.USER, "N");
             LocalDate yesterday = LocalDate.now().minusDays(1);
