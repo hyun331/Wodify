@@ -12,7 +12,7 @@
                 <v-list-item :to="{ path: '/box/list' }">
                     <v-list-item-title>박스조회-공통</v-list-item-title>
                 </v-list-item>
-                <v-list-item :to="{ path: '/box/detail' }">
+                <v-list-item :to="{ path: '/box/mybox' }">
                     <v-list-item-title>내 박스-공통</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/' }">
