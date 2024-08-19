@@ -76,11 +76,22 @@ public class RedisConfig {
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         return redisTemplate;
     }
-
-
-
-
-
+    @Bean
+    public RedisConnectionFactory redisZsetFactory(){
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
+        configuration.setHostName(host);
+        configuration.setPort(port);
+        configuration.setDatabase(4);
+        return new LettuceConnectionFactory(configuration);
+    }
+    @Bean(name = "ZsetTemplate")
+    public RedisTemplate<String, String> redisZsetTemplate(RedisConnectionFactory redisConnectionFactory){
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        return redisTemplate;
+    }
 
     @Bean
     @Qualifier("5")
