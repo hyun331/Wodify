@@ -1,7 +1,7 @@
 package com.soocompany.wodify.record.contrlloer;
 
 import com.soocompany.wodify.common.dto.CommonResDto;
-import com.soocompany.wodify.record.dto.RecordDetResDto;
+import com.soocompany.wodify.record.dto.RecordResDto;
 import com.soocompany.wodify.record.dto.RecordSaveReqDto;
 import com.soocompany.wodify.record.dto.RecordUpdateReqDto;
 import com.soocompany.wodify.record.service.RecordService;
@@ -38,11 +38,10 @@ public class RecordController {
 
     @GetMapping("/record/list")
     public ResponseEntity<?> memberList(@RequestParam Long memberId, Pageable pageable) {
-        Page<RecordDetResDto> dtos = recordService.recordListByMemberId(memberId, pageable);
+        Page<RecordResDto> dtos = recordService.recordListByMemberId(memberId, pageable);
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "운동 기록 리스트가 조회되었습니다.", dtos);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
-
 
     @PreAuthorize("hasRole('USER')")
     @PatchMapping("/record/update/{id}")

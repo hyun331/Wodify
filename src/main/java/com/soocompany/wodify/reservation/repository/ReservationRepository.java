@@ -16,4 +16,6 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     List<Reservation> findAllByBoxAndDateAndDelYn(Box box, LocalDate date, String delYn);
     Optional<Reservation> findByIdAndDelYn(Long id,String delYn);
     Page<Reservation> findByBoxAndDateBetweenAndDelYn(Box box, LocalDate startDate, LocalDate endDate,String delYn,Pageable pageable);
+
+    List<Reservation> findAllByDateAndDelYn(LocalDate date, String delYn);
 }
