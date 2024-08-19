@@ -94,16 +94,16 @@
                         </v-col>
                     </v-row>
 
-                    
+
                     <!-- 차트 -->
-                    <v-row class="d-flex justify-content-center mt-5" justify="center">
+                    <v-row class="d-flex justify-content-center mt-5" justify="center" v-if="userRole === 'USER'">
                         <v-col cols="12">
                             <v-label>Time by reservation</v-label>
-                          <div class="chart-container">
-                            <exercise-time-chart :records="records" />
-                          </div>
+                            <div class="chart-container">
+                                <exercise-time-chart :records="records" />
+                            </div>
                         </v-col>
-                      </v-row>
+                    </v-row>
 
 
                 </v-col>
@@ -134,7 +134,9 @@ export default {
             isOnHold: false,
             holding: false,
             unholding: false,
-            records: []
+            records: [],
+            userRole: null,
+            memberId: null, // 추가: 로그인한 사용자의 ID
         }
     },
     async created() {
@@ -143,6 +145,7 @@ export default {
             console.log(response.data.result);
 
             this.memberInfo = response.data.result;
+            this.memberId = this.memberInfo.id; // 추가: 로그인한 사용자의 ID 저장
             if (this.memberInfo.imagePath === '/assets/memberBaseImg.png') {
                 this.isMemberBaseUrl = true;
             }
@@ -158,12 +161,21 @@ export default {
             console.log(e);
         }
         try {
-            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/record/list`);
+            const token = localStorage.getItem('token');
+            if (token) {
+                this.isLogin = true;
+                this.userRole = localStorage.getItem("role");
+            }
+            // 운동 기록 데이터를 가져오는 API 호출 (로그인한 사용자의 ID로 필터링)
+            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/record/list`, {
+                params: {
+                    memberId: this.memberId // memberId를 요청에 추가
+                }
+            });
             this.records = response.data.result.content;
         } catch (e) {
             console.log(e);
         }
-
     },
     methods: {
         showHoldingModal() {
@@ -178,7 +190,9 @@ export default {
 
 <style scoped>
 .chart-container {
-  width: 100%; /* 차트의 너비를 100%로 설정 */
-  height: 400px; /* 원하는 높이로 설정, 예: 400px */
+    width: 100%;
+    /* 차트의 너비를 100%로 설정 */
+    height: 400px;
+    /* 원하는 높이로 설정, 예: 400px */
 }
 </style>

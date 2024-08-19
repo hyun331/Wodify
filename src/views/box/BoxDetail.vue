@@ -28,7 +28,7 @@
                                             <!-- 문자열 처리 -->
                                             <template v-if="item.key !== 'LOGO'">
                                                 <div>
-                                                    {{ item.value }} 
+                                                    {{ item.value }}
                                                 </div>
                                             </template>
                                         </td>
@@ -36,7 +36,7 @@
                                 </tbody>
                             </v-table>
                         </v-card-text>
-                        <v-card-actions>
+                        <v-card-actions v-if="userRole === 'CEO'">
                             <v-spacer></v-spacer>
                             <v-btn small class="hover-btn mx-auto" @click="updateBox">UPDATE</v-btn>
                             <v-btn small class="hover-btn mx-auto" @click="showDeleteDialog">DELETE</v-btn>
@@ -45,9 +45,7 @@
                 </v-col>
             </v-row>
         </v-container>
-        <OrderListComponent 
-            :isAdmin="false"
-        />
+        <OrderListComponent :isAdmin="false" />
 
         <!-- 삭제 확인 다이얼로그 -->
         <v-dialog v-model="deleteDialog" max-width="500px">
@@ -90,6 +88,7 @@ export default {
             boxDetailList: [],
             deleteDialog: false,
             successDialog: false,
+            userRole: null,
         }
     },
     async created() {
@@ -121,6 +120,11 @@ export default {
         },
         async confirmDelete() {
             try {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    this.isLogin = true;
+                    this.userRole = localStorage.getItem("role");
+                }
                 await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/box/delete`);
                 this.closeDeleteDialog();
                 this.successDialog = true;
@@ -156,10 +160,10 @@ export default {
     background-color: white;
     color: black;
     transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  .hover-btn:hover {
+}
+
+.hover-btn:hover {
     background-color: black;
     color: white;
-  }
+}
 </style>
