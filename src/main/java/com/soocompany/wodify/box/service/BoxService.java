@@ -211,11 +211,14 @@ public class BoxService {
                 predicates.add(criteriaBuilder.like(root.get("address"), "%" + searchDto.getSearchAddress() + "%"));
             }
 
+            predicates.add(criteriaBuilder.equal(root.get("delYn"), "N"));
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
         Page<Box> boxPage = boxRepository.findAll(specification, pageable);
         return boxPage.map(box -> BoxListResDto.builder()
+                .id(box.getId())
                 .logoPath(box.getLogoPath())
                 .name(box.getName())
                 .address(box.getAddress())
@@ -234,6 +237,7 @@ public class BoxService {
                 });
 
         return BoxDetailResDto.builder()
+                .id(box.getId())
                 .name(box.getName())
                 .logo(box.getLogoPath())
                 .operatingHours(box.getOperatingHours())

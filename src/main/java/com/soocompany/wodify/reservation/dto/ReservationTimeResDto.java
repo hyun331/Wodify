@@ -1,4 +1,4 @@
-package com.soocompany.wodify.hallOfFame.dto;
+package com.soocompany.wodify.reservation.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,14 +8,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalTime;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HallOfFameResDto {
+@Builder
+public class ReservationTimeResDto {
     private Long id;
-    private int rank;
-    private String name;
-    private String email;
-    private LocalTime exerciseTime;
-
+    private LocalTime time;
 }
