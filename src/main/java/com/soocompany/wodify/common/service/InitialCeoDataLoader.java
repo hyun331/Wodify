@@ -45,7 +45,7 @@ public class InitialCeoDataLoader implements CommandLineRunner {
             Member newMember = memberRepository.findByEmailAndDelYn("hongildong@naver.com", "N").orElseThrow(()->new EntityNotFoundException("Test Ceo Initial Data Loader Exception"));
 
             Box box = Box.builder().name("홍길동의 크로스핏")
-                    .logoPath("http://s3 어쩌구 위치")
+                    .logoPath("https://jiho-file.s3.ap-southeast-2.amazonaws.com/9d9d58b9-4687-4422-b302-629d2fc87b7e_%ED%81%AC%EB%A1%9C%EC%8A%A4%ED%95%8F4.png")
                     .fee("1개월 10만원")
                     .intro("대충 홍길동 크로스핏에 대한 설명")
                     .operatingHours("09:00-23:00")

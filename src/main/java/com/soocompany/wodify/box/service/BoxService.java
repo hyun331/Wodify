@@ -14,11 +14,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectAclRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
@@ -163,13 +161,14 @@ public class BoxService {
             box.updateLogo(s3Path);
         }
 
-        // 로고 업데이트를 제외한 다른 필드만 업데이트
-        box.updateDetails(dto.getName(),
-                box.getLogoPath(),
-                dto.getOperatingHours(),
-                dto.getFee(),
-                dto.getIntro(),
-                dto.getAddress()
+        // null 값 처리: null인 필드는 기존 값을 유지
+        box.updateDetails(
+                dto.getName() != null ? dto.getName() : box.getName(),
+                box.getLogoPath(),  // 로고는 따로 처리하므로 여기서는 변경하지 않음
+                dto.getOperatingHours() != null ? dto.getOperatingHours() : box.getOperatingHours(),
+                dto.getFee() != null ? dto.getFee() : box.getFee(),
+                dto.getIntro() != null ? dto.getIntro() : box.getIntro(),
+                dto.getAddress() != null ? dto.getAddress() : box.getAddress()
         );
 
         Box updatedBox = boxRepository.save(box);
@@ -243,6 +242,39 @@ public class BoxService {
                 .operatingHours(box.getOperatingHours())
                 .fee(box.getFee())
                 .address(box.getAddress())
+                .intro(box.getIntro())
+                .build();
+    }
+
+    public BoxDetailResDto myBox() {
+        // 현재 로그인한 사용자 ID 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = authentication.getName();
+
+        // 로그인한 사용자의 Member 객체를 가져오기
+        Member member = memberRepository.findByIdAndDelYn(Long.parseLong(memberId), "N")
+                .orElseThrow(() -> {
+                    String errorMessage = "해당 사용자를 찾을 수 없습니다.";
+                    log.error("getBoxDetailForCurrentUser() : " + errorMessage);
+                    throw new EntityNotFoundException(errorMessage);
+                });
+
+        // 사용자의 box_id와 일치하는 Box를 찾기
+        Box box = boxRepository.findByIdAndDelYn(member.getBox().getId(), "N")
+                .orElseThrow(() -> {
+                    String errorMessage = "해당 Box를 찾을 수 없습니다.";
+                    log.error("getBoxDetailForCurrentUser() : " + errorMessage);
+                    throw new EntityNotFoundException(errorMessage);
+                });
+
+        return BoxDetailResDto.builder()
+                .id(box.getId())
+                .name(box.getName())
+                .logo(box.getLogoPath())
+                .operatingHours(box.getOperatingHours())
+                .fee(box.getFee())
+                .address(box.getAddress())
+                .intro(box.getIntro())
                 .build();
     }
 }
