@@ -72,7 +72,7 @@ public class ReservationDetailService {
         LocalDate registrationDate = registrationInfo.getRegistrationDate();
         LocalDate endDate = registrationInfo.getEndDate();
         LocalDate reservationDate = reservation.getDate();
-        if (!registrationDate.isBefore(reservationDate)||!endDate.isAfter(reservationDate)) {
+        if (registrationDate.isAfter(reservationDate)||!endDate.isAfter(reservationDate)) {
             log.error("reservationCreate() : 박스 등록기간이 아닌 기간은 예약이 불가합니다.");
             throw new IllegalArgumentException("박스 등록기간이 아닌 기간은 예약이 불가합니다.");
         }
