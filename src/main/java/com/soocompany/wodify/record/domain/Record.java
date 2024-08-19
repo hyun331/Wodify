@@ -1,6 +1,7 @@
 package com.soocompany.wodify.record.domain;
 
 import com.soocompany.wodify.common.domain.BaseEntity;
+import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.record.dto.RecordDetResDto;
 import com.soocompany.wodify.record.dto.RecordSaveReqDto;
 import com.soocompany.wodify.record.dto.RecordUpdateReqDto;
@@ -32,6 +33,10 @@ public class Record extends BaseEntity {
     @OneToOne // 하나의 예약내역에 하나의 운동기록
     @JoinColumn(name = "reservation_detail_id")
     private ReservationDetail reservationDetail; // FK 예약내역ID
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
 
     public void existedRecordUpdateEntity(RecordSaveReqDto dto, LocalTime exerciseTime){
