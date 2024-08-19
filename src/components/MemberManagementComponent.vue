@@ -13,7 +13,7 @@
                             </v-text-field>
                         </v-col>
 
-                        <v-col cols="auto">
+                        <v-col cols="auto" class="noto-sans">
                             <v-btn type="submit">
                                 회원 검색
                             </v-btn>
@@ -25,45 +25,41 @@
                     </v-row>
                 </v-form>
             </v-col> 
-            <v-col>
-                <v-btn @click="showRegistrationModal('', '')">회원등록</v-btn>
+            <v-col class="noto-sans">
+                <v-btn @click="showRegistrationModal('', '')" >회원등록</v-btn>
             </v-col>
 
 
 
-            <!-- <h1>회원관리 {{isCEO}}</h1> -->
         </v-row>
         <v-row>
             <v-col>
                 <v-card>
                     <v-card-title class="text-h6 text-center" style="font-family: ONE-Mobile-POP;">
                     </v-card-title>
-                    <v-card-text>
-                        <v-table>
+                    <v-card-text >
+                        <v-table >
                             <thead>
-                                <tr>
-                                    <!-- <th>ID</th> -->
-                                    <th>NAME</th>
-                                    <th>EMAIL</th>
-                                    <th>등록정보</th>
-                                    <th>연장</th>
-                                    <th>등록일</th>
-                                    <th>종료일</th>
-                                    <th v-if="role === 'CEO'">탈퇴</th>
+                                <tr class="noto-sans">
+                                    <th style="text-align:center;">NAME</th>
+                                    <th style="text-align:center;">EMAIL</th>
+                                    <th style="text-align:center;">등록정보</th>
+                                    <th style="text-align:center;">연장</th>
+                                    <th style="text-align:center;">등록일</th>
+                                    <th style="text-align:center;">종료일</th>
+                                    <th style="text-align:center;" v-if="role === 'CEO'">탈퇴</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr v-for="u in userList " :key="u.id">
-                                    <!-- <td><v-img :src="p.imagePath" style="height: 100px; width:auto;"></v-img></td> -->
-                                    <!-- <td>{{u.id}}</td> -->
-                                    <td><v-btn :to="{ path: `/user/detail/${u.id}` }" class="hover-text" style=" box-shadow: none;"
-                                        >{{u.name}}</v-btn></td>
+                            <tbody  >
+                                <tr v-for="u in userList " :key="u.id" style="text-align:center;">
+            
+                                    <td><v-btn :to="{ path: `/user/detail/${u.id}` }" class="hover-text" style=" box-shadow: none;">{{u.name}}</v-btn></td>
                                     <td>{{u.email}}</td>
                                     <td>{{u.state}}</td>
-                                    <td><v-btn @click="showRegistrationModal(u.email, u.endDate)">연장</v-btn></td>
+                                    <td><v-btn @click="showRegistrationModal(u.email, u.endDate)" class="noto-sans">연장</v-btn></td>
                                     <td>{{u.registrationDate}}</td>
                                     <td>{{u.endDate}}</td>
-                                    <td v-if="role === 'CEO'"><v-btn @click="deleteUser(u.email)"> 탈퇴</v-btn></td>
+                                    <td v-if="role === 'CEO'"><v-btn @click="deleteUser(u.email)" class="noto-sans deleteUserBtn"> 탈퇴</v-btn></td>
                                 </tr>
                             </tbody>
 
@@ -195,12 +191,16 @@ export default{
 
 </script>
 
-<style>
+<style scoped>
 
 
 .hover-text:hover {
     background-color: rgb(238, 232, 116);
-    content: 'sss';
+}
+
+.deleteUserBtn:hover {
+    background-color: rgb(254, 0, 0);
+    color: aliceblue;
 }
 
 
