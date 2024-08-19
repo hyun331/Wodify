@@ -1,28 +1,66 @@
 <template>
   <v-container style="min-width: 345px; min-height: 600px;">
-    <v-row>
-      <v-col cols="12">
-        <v-row class="rubikMonoOne" style="font-size: 50px; margin-left: 3px">
-          <v-col class="auto-width" style="padding: 0; margin-right: 15px;">
-            Wod
-          </v-col>
-        </v-row>
-        <v-text-field label="Date" v-model="localWod.date" readonly outlined class="custom-field"></v-text-field>
-        <v-text-field label="Box Name" v-model="localWod.boxName" readonly outlined class="custom-field"></v-text-field>
-        <v-text-field label="Member Name" v-model="localWod.memberName" readonly outlined class="custom-field"></v-text-field>
-        <v-text-field label="Info" v-model="localWod.info" readonly outlined class="custom-field"></v-text-field>
-        <v-text-field label="Time Cap" v-model="localWod.timeCap" readonly outlined class="custom-field"></v-text-field>
-        <v-text-field label="Rounds" v-model="localWod.rounds" readonly outlined class="custom-field"></v-text-field>
-        <v-text-field label="Created Time" v-model="localWod.createdTime" readonly outlined class="custom-field"></v-text-field>
-        <div v-for="(wodDet, index) in localWod.wodDetResDtoList" :key="wodDet.id">
-          <v-text-field :label="`Exercise ${index + 1} Name`" v-model="wodDet.name" readonly outlined class="custom-field"></v-text-field>
-          <v-text-field :label="`Exercise ${index + 1} Contents`" v-model="wodDet.contents" readonly outlined class="custom-field"></v-text-field>
-        </div>
-        <div style="display: flex; justify-content: flex-end;">
-          <v-btn color="black" @click="deleteWod">삭제</v-btn>
-        </div>
+    <v-row class="rubikMonoOne" style="font-size: 50px; margin-left: 3px">
+      <v-col class="auto-width" style="padding: 0; margin-right: 15px;">
+        Wod
+      </v-col>
+      <v-col class="auto-width" style="padding: 0;">
+        find
       </v-col>
     </v-row>
+
+    <v-row style="margin:1px">
+      <v-text-field 
+      class="custom-text-box" 
+      style="margin-right:2px" 
+      v-model="localWod.date" 
+      label="Date" 
+      readonly></v-text-field>
+      <v-text-field 
+      class="custom-text-box" 
+      style="margin-right:2px" 
+      v-model="localWod.timeCap" 
+      label="Time Cap" 
+      readonly></v-text-field>
+      <v-text-field 
+      class="custom-text-box" 
+      v-model="localWod.rounds" 
+      label="Rounds" 
+      readonly
+      outlined></v-text-field>
+    </v-row>
+    <v-row style="margin:1px">
+      <v-textarea 
+      class="custom-text-box" 
+      v-model="localWod.info" 
+      label="Info" 
+      readonly 
+      auto-grow
+      :rows="2"
+      outlined></v-textarea>
+    </v-row>
+    <div v-for="(wodDet, index) in localWod.wodDetResDtoList" :key="wodDet.id" class="exercise-group" outlined>
+      <v-text-field 
+      class="exercise-box" 
+      style="border-radius: 4px 4px 0 0;" 
+      :label="`Exercise ${index + 1} Name`"
+      v-model="wodDet.name" 
+      readonly 
+      outlined></v-text-field>
+      <v-text-field 
+      class="exercise-box" 
+      style="border-radius: 0 0 4px 4px;" 
+      v-model="wodDet.contents" 
+      :label="`Exercise ${index + 1} Contents`"
+      readonly 
+      outlined></v-text-field>
+    </div>
+    <!-- <v-text-field label="Box Name" v-model="localWod.boxName" readonly outlined class="custom-field"></v-text-field> -->
+    <!-- <v-text-field label="Member Name" v-model="localWod.memberName" readonly outlined class="custom-field"></v-text-field> -->
+    <!-- <v-text-field label="Created Time" v-model="localWod.createdTime" readonly outlined class="custom-field"></v-text-field> -->
+    <div style="display: flex; justify-content: flex-end;">
+      <v-btn color="black" @click="deleteWod">삭제</v-btn>
+    </div>
   </v-container>
 </template>
 
@@ -56,7 +94,33 @@ export default {
 </script>
 
 <style scoped>
+.auto-width {
+  flex: 0 1 auto;
+  width: auto;
+  display: inline-block;
+}
+
 .custom-field {
   background-color: rgba(255, 255, 255, 0.5);
+}
+
+.custom-text-box {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  margin-bottom: 2px;
+}
+
+.custom-text-box {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  margin-bottom: 2px;
+}
+
+.exercise-group {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  margin: 2px;
+  margin-bottom: 4px;
+  position: relative;
 }
 </style>

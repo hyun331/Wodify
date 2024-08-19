@@ -1,24 +1,40 @@
 <template>
     <v-container>
-        <v-row class="d-flex justify-content-between mt-5">
-            <v-col>
+        <div style="line-height: 1;">
+            <h1 class="do-hyeon-regular text-center">명예의 전당</h1>
+          </div>
+   
+        <v-row justify="center" class="mt-5">
+            <v-col cols="12" md="10">
                 <v-card>
-                    <v-card-title class="text-h6 text-center" style="font-family: ONE-Mobile-POP;">
-                        명예의 전당 - 운동 시간 차트
-                    </v-card-title>
                     <v-card-text>
-                        <!-- Render the chart only when chartData is fully ready -->
                         <Bar :data="chartData" :options="chartOptions" />
                     </v-card-text>
                 </v-card>
             </v-col>
         </v-row>
+        <v-row justify="center">
+            <v-col class="d-flex justify-content-end" cols="12" md="10">
+                <v-btn @click="showWodModal">WOD</v-btn>
+            </v-col>
+        </v-row>
+        <WodModal 
+         v-if="wodId"
+        v-model="wodModal" 
+        :wodId="this.wodId"
+        @update:dialog="wodModal = $event"
+        >
+
+        </WodModal>
     </v-container>
+
+    
 </template>
 
 <script>
 import axios from 'axios';
 import { Bar } from 'vue-chartjs';
+import WodModal from './WodModal.vue';
 import {
     Chart as ChartJS,
     Title,
@@ -34,7 +50,7 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,
 
 export default {
     components: {
-        Bar,
+        Bar, WodModal
     },
     computed: {
         chartData() {
@@ -43,12 +59,23 @@ export default {
                 datasets: [
                     {
                         label: 'Exercise Time',
-                        backgroundColor: '#42A5F5',
+                        backgroundColor: this.hallOfFameResDtoList.map(item => {
+                            if (item.rank === 1) {
+                                return '#FFBF00';
+                            } else if (item.rank === 2) {
+                                return '#A3A3A3';
+                            } else if (item.rank === 3) {
+                                return '#CD7F32';
+                            } else {
+                                return '#94D82D'; 
+                            }
+                        }),
                         data: this.hallOfFameResDtoList.map(item => {
                             // Convert LocalTime (HH:mm:ss) to minutes
                             const [hours, minutes, seconds] = item.exerciseTime.split(':').map(Number);
                             return hours * 60 + minutes + seconds / 60;
                         }),
+                        
                     },
                 ],
             };
@@ -56,6 +83,7 @@ export default {
     },
     data() {
         return {
+            wodModal: false,
             hallOfFameResDtoList: [],
             wodId: null,
             chartOptions: {
@@ -64,12 +92,11 @@ export default {
                     x: {
                         type: 'linear',
                         min: 0,
-                        max: 120, // Maximum of 2 hours in minutes
+                        max: 30, 
                         ticks: {
                             callback: function (value) {
-                                const hours = Math.floor(value / 60);
                                 const minutes = value % 60;
-                                return `${hours}:${minutes < 10 ? '0' : ''}${minutes} hours`;
+                                return `${minutes < 10 ? '0' : ''}${minutes} min`;
                             },
                         },
                         title: {
@@ -89,8 +116,20 @@ export default {
                         display: true,
                         text: 'Exercise Time Leaderboard',
                     },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const totalMinutes = context.raw;
+                                const hours = Math.floor(totalMinutes / 60);
+                                const minutes = Math.floor(totalMinutes % 60);
+                                const seconds = Math.floor((totalMinutes * 60) % 60);
+                                return `${context.dataset.label}: ${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                            },
+                        },
+                    },
                 },
-                indexAxis: 'y', // This makes the chart horizontal
+                indexAxis: 'y',
+                barThickness: 15,
             },
         };
     },
@@ -104,9 +143,21 @@ export default {
             console.log(e);
         }
     },
+    methods:{
+        showWodModal(){
+            this.wodModal = true;
+        }
+    }
 };
 </script>
 
-<style scoped>
-/* Add any custom styles if needed */
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap');
+.do-hyeon-regular {
+  font-family: "Do Hyeon", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 80px;
+}
+
 </style>
