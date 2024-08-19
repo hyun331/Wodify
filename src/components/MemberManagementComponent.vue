@@ -49,18 +49,21 @@
                                     <th>연장</th>
                                     <th>등록일</th>
                                     <th>종료일</th>
+                                    <th v-if="role === 'CEO'">탈퇴</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="u in userList " :key="u.id">
                                     <!-- <td><v-img :src="p.imagePath" style="height: 100px; width:auto;"></v-img></td> -->
                                     <!-- <td>{{u.id}}</td> -->
-                                    <td>{{u.name}}</td>
+                                    <td><v-btn :to="{ path: `/user/detail/${u.id}` }" class="hover-text" style=" box-shadow: none;"
+                                        >{{u.name}}</v-btn></td>
                                     <td>{{u.email}}</td>
                                     <td>{{u.state}}</td>
                                     <td><v-btn @click="showRegistrationModal(u.email, u.endDate)">연장</v-btn></td>
                                     <td>{{u.registrationDate}}</td>
                                     <td>{{u.endDate}}</td>
+                                    <td v-if="role === 'CEO'"><v-btn @click="deleteUser(u.email)"> 탈퇴</v-btn></td>
                                 </tr>
                             </tbody>
 
@@ -76,8 +79,16 @@
         :modalNextStartDate="modalNextStartDate"
         @update:dialog="registrationModal = $event"
         >
-
         </RegistrationCreateModal>
+
+        <UserDeleteFromBoxModal
+        v-model="userDeleteFromBoxModal"
+        :email="deleteUserEmail"
+        @update:dialog="userDeleteFromBoxModal = $event"
+        >
+
+
+        </UserDeleteFromBoxModal>
 
     </v-container>
 </div>
@@ -86,35 +97,33 @@
 <script>
 import axios from 'axios';
 import RegistrationCreateModal from '@/views/registrationInfo/RegistrationCreateModal.vue';
+import UserDeleteFromBoxModal from '@/views/member/UserDeleteFromBoxModal.vue';
 export default{
-    //isAmin이라는 변수를 넘겨받을 수 있다.
     props:['isCEO'],
     components:{
         RegistrationCreateModal,
+        UserDeleteFromBoxModal,
     },
     data(){
         return{
-
-
             userList:[],
             pageSize: 5,
             currentPage:0,
             isLastPage: false,
             isLoading: false,
             registrationModal: false,
+            userDeleteFromBoxModal : false,
             modalUserEmail : "",
             modalNextStartDate: "",
 
+            deleteUserEmail : "",
             searchName:"",
+            role : localStorage.getItem('role'),
 
             
         }
     }, 
     created(){
-        // if(this.isCEO){
-        //     this.loadCoach();
-
-        // }
         this.loadUser();
         window.addEventListener('scroll', this.scrollPagination);
     },
@@ -127,13 +136,10 @@ export default{
             this.userList = [];
             this.currentPage = 0;
             this.isLastPage = false;
-            // this.isLoading = false;
 
             this.loadUser();
         },
-        // deleteProduct(productId){
-        //     alert(productId);
-        // },
+        
         async loadUser(){
             try{
                 if(this.isLoading || this.isLastPage){
@@ -151,25 +157,11 @@ export default{
                     params.searchName = this.searchName;
                 }
 
-                //params : {size:5, page=0, category:"fruits"}형태 또는{size:5, page=0, name:"apple"}
-                // if(this.searchType === 'name'){
-                //     params.searchName = this.searchValue;
-                // }else if(this.searchType === 'category'){
-                //     params.category = this.searchValue;
-                // }
-                //localhost:8080/product/list?category=fruits&size=5&pag0
-
-
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member/list/user`, {params});
                 const additionalData = response.data.result.content;
                 console.log(additionalData);
             
                 this.isLastPage = response.data.isLastPage;
-                // if(additionalData.length==0){
-                //     this.isLastPage = true;
-                //     return;
-                // }
-                //두 배열을 합치는 문법
                 this.userList =[...this.userList, ...additionalData];
                 this.currentPage++;
                 this.isLoading = false;
@@ -189,7 +181,12 @@ export default{
             this.registrationModal=true;
             this.modalUserEmail = userEmail;
             this.modalNextStartDate = userEndDate;
-        }
+        },
+        deleteUser(email){
+            this.deleteUserEmail = email;
+            this.userDeleteFromBoxModal = true;
+
+        },
 
     }
     
@@ -197,3 +194,15 @@ export default{
 }
 
 </script>
+
+<style>
+
+
+.hover-text:hover {
+    background-color: rgb(238, 232, 116);
+    content: 'sss';
+}
+
+
+
+</style>
