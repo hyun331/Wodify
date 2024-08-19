@@ -13,23 +13,20 @@
               </v-card-title>
               <v-card-text>
                 <v-form @submit.prevent="boxUpdate">
-                  <v-text-field label="BOX NAME" v-model="name" placeholder="박스 이름을 입력해주세요." prepend-icon="mdi-home"
-                    required>
+                  <v-text-field label="BOX NAME" v-model="name" placeholder="박스 이름을 입력해주세요." prepend-icon="mdi-home">
                   </v-text-field>
 
-                  <v-text-field label="BOX ADDRESS" v-model="address" placeholder="박스의 주소를 입력해주세요."
-                    prepend-icon="mdi-map-marker" required>
+                  <v-text-field label="BOX ADDRESS" v-model="address" placeholder="박스의 주소를 입력해주세요." prepend-icon="mdi-map-marker">
                   </v-text-field>
 
-                  <v-file-input label="BOX LOGO" accept="image/*" @change="fileUpdate" required>
+                  <v-file-input label="BOX LOGO" accept="image/*" @change="fileUpdate">
                   </v-file-input>
 
                   <v-textarea label="TIME" v-model="operatingHours" placeholder="박스 이용시간을 입력해주세요." rows="2"
                     prepend-icon="mdi-clock-outline">
                   </v-textarea>
 
-                  <v-textarea label="PRICE" v-model="fee" placeholder="₩ 가격을 입력해주세요." rows="2"
-                    prepend-icon="mdi-currency-krw">
+                  <v-textarea label="PRICE" v-model="fee" placeholder="₩ 가격을 입력해주세요." rows="2" prepend-icon="mdi-currency-krw">
                   </v-textarea>
 
                   <v-textarea label="INTRODUCTION" v-model="intro" placeholder="박스를 소개하는 문구를 적어주세요." rows="4"
@@ -82,31 +79,33 @@ export default {
   },
   methods: {
     fileUpdate(event) {
-      this.logoPath = event.target.files[0]
+      this.logoPath = event.target.files[0];
     },
     async boxUpdate() {
       try {
         let registerData = new FormData();
-        registerData.append("name", this.name);
-        registerData.append("address", this.address);
-        registerData.append("operatingHours", this.operatingHours);
-        registerData.append("fee", this.fee);
-        registerData.append("intro", this.intro);
-        registerData.append("logoPath", this.logoPath);
+
+        // 필드가 비어 있어도 빈 문자열로 데이터를 전송
+        registerData.append("name", this.name || "");
+        registerData.append("address", this.address || "");
+        registerData.append("operatingHours", this.operatingHours || "");
+        registerData.append("fee", this.fee || "");
+        registerData.append("intro", this.intro || "");
+        if (this.logoPath) {
+          registerData.append("logoPath", this.logoPath);
+        }
 
         await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/box/update`, registerData);
         this.$router.push('/box/success');
       } catch (e) {
         this.dialogTitle = 'Error';
-        this.dialogText = '박스수정에 실패했습니다.';
+        this.dialogText = '박스 수정에 실패했습니다.';
         this.dialog = true;
       }
     },
   },
 };
-
 </script>
-
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap');
