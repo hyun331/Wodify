@@ -89,8 +89,6 @@ public class WodService {
             log.error("wodDelete() : 해당 이메일의 멤버를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 이메일의 멤버를 찾을 수 없습니다.");
         });
-        System.out.println("member.getBox().getId() = " + member.getBox().getId());
-        System.out.println("member.getName() = " + member.getName());
         Box box = boxRepository.findByIdAndDelYn(member.getBox().getId(), "N").orElseThrow(() -> {
             log.error("wodDelete() : 해당 ID의 박스를 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 ID의 박스를 찾을 수 없습니다.");
