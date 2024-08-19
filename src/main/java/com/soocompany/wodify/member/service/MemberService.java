@@ -123,6 +123,14 @@ public class MemberService {
         return member.detFromEntity();
     }
 
+    public MemberDetResDto memberDetailById(Long id) {
+        Member member = memberRepository.findByIdAndDelYn(id, "N").orElseThrow(()->{
+            log.error("memberDetailById() : id에 맞는 회원이 존재하지 않습니다.");
+            throw new EntityNotFoundException("id에 맞는 회원이 존재하지 않습니다.");
+        });
+        return member.detFromEntity();
+    }
+
 
     public MemberDetResDto memberUpdate(MemberUpdateDto memberUpdateDto) {
         String memberId = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -265,4 +273,6 @@ public class MemberService {
 
         return "성공적으로 회원을 탈퇴시켰습니다.";
     }
+
+
 }
