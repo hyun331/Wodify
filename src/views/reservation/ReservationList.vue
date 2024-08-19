@@ -46,8 +46,9 @@
                     style="cursor: pointer;">
                     <td>{{ r.date }}</td>
                     <td>{{ r.time.slice(0, 5) }}</td>
-                    <td>{{ r.maxPeople }}</td>
-                    <td><v-btn :to="{ path: '/wod/select-date/' }">view</v-btn></td>
+  
+                    <td>{{ r.reservationPeople }} / {{ r.maxPeople }}</td>
+                    <td><v-btn :to="{ path: '/wod/find/' + r.date }">view</v-btn></td>
                     <td><v-btn @click.stop="cancel(r.id)">delete</v-btn></td>
                   </tr>
                 </tbody>
@@ -61,7 +62,8 @@
           </v-card>
         </v-col>
       </v-row>
-
+      <AlertModalComponent v-model="alertModal" @update:dialog="alertModal = $event" :dialogTitle="dialogTitle"
+        :dialogText="dialogText" />
     </v-container>
   </div>
 </template>
@@ -69,10 +71,12 @@
 <script>
 import axios from 'axios';
 import ReservationMemberListModal from './ReservationMemberListModal.vue';
+import AlertModalComponent from '@/components/AlertModalComponent.vue';
 
 export default {
   components: {
-    ReservationMemberListModal
+    ReservationMemberListModal,
+    AlertModalComponent
   },
   data() {
     return {
@@ -86,6 +90,9 @@ export default {
       currentPage: 0,
       isLastPage: false,
       isLoading: false,
+      alertModal: false,
+      dialogTitle: "",
+      dialogText: "",
     };
   },
   async created() {
@@ -95,6 +102,16 @@ export default {
 
       console.log(this.filteredReservationList);
     } catch (error) {
+      let errorMessage = "";
+      if (error.response && error.response.data) {
+        // 서버에서 반환한 에러 메시지가 있는 경우
+        errorMessage += `: ${error.response.data.error_message}`;
+      } else if (error.message) {
+        errorMessage += `: ${error.message}`;
+      }
+      this.dialogTitle = "예약 로드 실패";
+      this.dialogText = errorMessage;
+      this.alertModal = true;
       console.log(error);
     }
   },
@@ -123,8 +140,18 @@ export default {
         console.log(response.data);
         this.isLoading = false;
 
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        let errorMessage = "";
+        if (error.response && error.response.data) {
+          // 서버에서 반환한 에러 메시지가 있는 경우
+          errorMessage += `: ${error.response.data.error_message}`;
+        } else if (error.message) {
+          errorMessage += `: ${error.message}`;
+        }
+        this.dialogTitle = "예약 로드 실패";
+        this.dialogText = errorMessage;
+        this.alertModal = true;
+        console.log(error);
       }
     },
     scrollPagination() {
@@ -147,14 +174,21 @@ export default {
       this.selectedMemberList = memberList;
       this.memberListModal = true;
     },
-    wod() {
-      alert("wod");
-    },
     async cancel(id) {
       try {
         await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/reservation/delete/` + id);
         window.location.reload();
       } catch (error) {
+        let errorMessage = "";
+        if (error.response && error.response.data) {
+          // 서버에서 반환한 에러 메시지가 있는 경우
+          errorMessage += `: ${error.response.data.error_message}`;
+        } else if (error.message) {
+          errorMessage += `: ${error.message}`;
+        }
+        this.dialogTitle = "예약 취소 실패";
+        this.dialogText = errorMessage;
+        this.alertModal = true;
         console.log(error);
       }
     }
