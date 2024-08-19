@@ -5,6 +5,7 @@ import UserRegister from "@/views/member/UserRegister.vue";
 import CoachRegister from "@/views/member/CoachRegister.vue";
 import MemberManagementComponent from "@/components/MemberManagementComponent.vue";
 import MyPage from "@/views/member/MyPage.vue";
+import UserDetail from "@/views/member/UserDetail.vue";
 
 export const  memberRouter = [
     {
@@ -45,6 +46,11 @@ export const  memberRouter = [
         path:"/member/detail",
         name: "MyPage",
         component: MyPage
+    },
+    {
+        path:"/user/detail/:id",
+        name: "UserDetail",
+        component: UserDetail
     }
 
 

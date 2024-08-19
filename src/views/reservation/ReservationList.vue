@@ -199,4 +199,14 @@ export default {
 .bold {
   font-weight: bold;
 }
+.box {
+  background-color: #797876;
+  text-align: right;
+}
+.boxLocation {
+  color: white;
+  font-weight: 1000;
+  font-size: 70px;
+  font-family: "Oswald", sans-serif;
+}
 </style>
