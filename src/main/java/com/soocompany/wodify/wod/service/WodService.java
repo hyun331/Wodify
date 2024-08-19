@@ -8,6 +8,7 @@ import com.soocompany.wodify.reservation.repository.ReservationRepository;
 import com.soocompany.wodify.wod.domain.Wod;
 import com.soocompany.wodify.wod.domain.WodDetail;
 import com.soocompany.wodify.wod.dto.*;
+import com.soocompany.wodify.wod.repository.WodDetailRepository;
 import com.soocompany.wodify.wod.repository.WodRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WodService {
     private final WodRepository wodRepository;
+    private final WodDetailRepository wodDetailRepository;
     private final MemberRepository memberRepository;
     private final BoxRepository boxRepository;
     private final ReservationRepository reservationRepository;
@@ -104,5 +106,17 @@ public class WodService {
             throw new EntityNotFoundException("해당 와드에 대한 예약이 있습니다.");
         }
         return wod.wodDelete();
+    }
+
+    public WodDetResDto randomWodDet(Long id) {
+        WodDetail wodDetail = wodDetailRepository.findById(id).orElseThrow(() -> {
+            log.error("randomWodDet() : 데이터가 없습니다.");
+            return new EntityNotFoundException("데이터가 없습니다.");
+        });
+        return WodDetResDto.fromEntity(wodDetail);
+    }
+
+    public long wodDetCount() {
+        return wodDetailRepository.count();
     }
 }

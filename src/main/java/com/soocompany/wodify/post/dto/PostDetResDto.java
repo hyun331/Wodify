@@ -1,5 +1,6 @@
 package com.soocompany.wodify.post.dto;
 
+import com.soocompany.wodify.post.domain.DateTimeFormatterUtil;
 import com.soocompany.wodify.post.domain.Post;
 import com.soocompany.wodify.post.domain.Type;
 import lombok.AllArgsConstructor;
@@ -26,8 +27,8 @@ public class PostDetResDto {
     private Long likeCount;
     private Long memberId;
     private String name;
-    private LocalDateTime createdTime;
-    private LocalDateTime updatedTime;
+    private String createdTime;
+    private String updatedTime;
     List<CommentResDto> comments;
 
     static public PostDetResDto fromEntity(Post post) {
@@ -39,8 +40,8 @@ public class PostDetResDto {
                 .likeCount(post.getLikeCount())
                 .memberId(post.getMember().getId())
                 .name(post.getMember().getName())
-                .createdTime(post.getCreatedTime())
-                .updatedTime(post.getUpdatedTime())
+                .createdTime(DateTimeFormatterUtil.dateTime(post.getCreatedTime()))
+                .updatedTime(DateTimeFormatterUtil.dateTime(post.getUpdatedTime()))
                 .comments(post.getComments().stream()
                         .filter(comment -> comment.getParent() == null)
                         .map(CommentResDto::fromEntity)

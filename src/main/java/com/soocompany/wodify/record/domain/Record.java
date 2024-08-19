@@ -1,6 +1,7 @@
 package com.soocompany.wodify.record.domain;
 
 import com.soocompany.wodify.common.domain.BaseEntity;
+import com.soocompany.wodify.post.dto.PostRecordResDto;
 import com.soocompany.wodify.record.dto.RecordDetResDto;
 import com.soocompany.wodify.record.dto.RecordSaveReqDto;
 import com.soocompany.wodify.record.dto.RecordUpdateReqDto;
@@ -18,6 +19,17 @@ import java.time.LocalTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@SqlResultSetMapping(
+        name = "PostRecordMapping",
+        classes = @ConstructorResult(
+                targetClass = PostRecordResDto.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Long.class),
+                        @ColumnResult(name = "field1", type = String.class),
+                        @ColumnResult(name = "field2", type = String.class)
+                }
+        )
+)
 public class Record extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

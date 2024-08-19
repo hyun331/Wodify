@@ -25,6 +25,8 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    private String memberName;
+
     @Enumerated(EnumType.STRING)
     private Type type;
 
