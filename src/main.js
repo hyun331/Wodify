@@ -3,6 +3,10 @@ import App from './App.vue'
 import router from '@/router/index.js'
 import vuetify from './plugins/vuetify';
 import axios from 'axios';
+import BootstrapVue3 from 'bootstrap-vue-3'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
+import './assets/styles/global.css';
 
 
 const app = createApp(App);
@@ -42,7 +46,6 @@ axios.interceptors.response.use(
 
     }
 )
-
 
 
 app.use(router);

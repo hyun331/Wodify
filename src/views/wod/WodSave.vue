@@ -25,12 +25,12 @@ export default {
         return {
             count: 0,
             wodSaveReqDto: {
-                date: this.date,
-                timeCap: '00:30:00',
-                rounds: '3',
-                info: 'WOD 설명 텍스트입니다.',
-                wodDetSaveReqDtoList: []
-            }
+                date: this.date || "", // props로 받은 date를 사용
+                timeCap: null,
+                rounds: null,
+                info: '',
+                wodDetSaveReqDtoList: [],
+            },
         };
     },
     methods: {
@@ -42,8 +42,8 @@ export default {
             try {
                 const response = await axios.post('http://localhost:8090/wod/save', this.wodSaveReqDto);
                 if (response.status === 201) {
-                    alert('WOD가 성공적으로 등록되었습니다.');
-                    window.location.href = `/wod/find/${this.wodSaveReqDto.date}`;  // 성공적으로 등록되면 해당 날짜의 WOD 페이지로 리디렉션
+                    alert("WOD가 성공적으로 등록되었습니다.");
+                    this.$emit('wod-saved', this.date);
                 } else {
                     alert('WOD 등록에 실패했습니다.');
                 }

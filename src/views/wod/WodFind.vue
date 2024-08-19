@@ -42,17 +42,21 @@
     components: {
       WodSave,
     },
-    data() {
-      return {
-        wod: null,
-        error: false,
-        errorMessage: '',
-      };
-    },
-    computed: {
-      formattedDate() {
-        // date 값을 형식화된 문자열로 변환하여 사용
-        return this.formatDate(new Date(this.date));
+  },
+  data() {
+    return {
+      localWod: { ...this.wod }, // props로 받은 wod 데이터를 로컬 데이터로 복사
+    };
+  },
+  methods: {
+    async deleteWod() {
+      try {
+        await axios.patch(`http://localhost:8090/wod/delete/${this.localWod.date}`);
+        console.log('Delete successful');
+        this.$emit('wod-deleted', this.wod.date);
+      } catch (error) {
+        console.error('Error deleting WOD data:', error);
+        this.errorMessage = 'WOD 데이터를 삭제하는 중 오류가 발생했습니다.';
       }
     },
     watch: {

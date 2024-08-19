@@ -1,23 +1,21 @@
 <template>
     <v-app-bar absolute color="#000000">
-        <v-btn :to="{path:'/'}" color="black">
-            <img height="40"
-            :src="require('@/assets/wod.png')"
-            alt="HomeLogo"/>
+        <v-btn :to="{ path: '/' }" color="black">
+            <img height="40" :src="require('@/assets/wod.png')" alt="HomeLogo" />
         </v-btn>
         <v-spacer></v-spacer>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-            <v-btn color="white" v-bind="props" class="rubikMonoOne">BOX-공통</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne">BOX-공통</v-btn>
             </template>
             <v-list>
-                <v-list-item :to="{path:'/box/list'}">
-                    <v-list-item-title >박스조회-공통</v-list-item-title>
+                <v-list-item :to="{ path: '/box/list' }">
+                    <v-list-item-title>박스조회-공통</v-list-item-title>
                 </v-list-item>
-                <v-list-item :to="{path:'/box/detail'}">
+                <v-list-item :to="{ path: '/box/detail' }">
                     <v-list-item-title>내 박스-공통</v-list-item-title>
                 </v-list-item>
-                <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{path:'/'}">
+                <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/member/list/user' }">
                     <v-list-item-title>박스 회원 관리-코치,CEO</v-list-item-title>
                 </v-list-item>
             </v-list>
@@ -34,45 +32,45 @@
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-            <v-btn color="white" v-bind="props" class="rubikMonoOne">RESERVATION-공통</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne">RESERVATION-공통</v-btn>
             </template>
             <v-list>
-                <v-list-item v-if="userRole === 'USER'" :to="{path:'/reservation-detail/create'}">
+                <v-list-item v-if="userRole === 'USER'" :to="{ path: '/reservation-detail/create' }">
                     <v-list-item-title>예약하기-멤버</v-list-item-title>
                 </v-list-item>
-                <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'"  :to="{path:'/reservation/create'}">
+                <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/reservation/create' }">
                     <v-list-item-title>예약생성-코치,CEO</v-list-item-title>
                 </v-list-item>
-                <v-list-item v-if="userRole === 'USER'" :to="{path:'/reservation-detail/list'}">
+                <v-list-item v-if="userRole === 'USER'" :to="{ path: '/reservation-detail/list' }">
                     <v-list-item-title>예약조회-멤버</v-list-item-title>
                 </v-list-item>
-                <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{path:'/reservation/list'}">
+                <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/reservation/list' }">
                     <v-list-item-title>예약조회-코치,CEO</v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-            <v-btn color="white" v-bind="props" class="rubikMonoOne">COMMUNITY-공통</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne">COMMUNITY</v-btn>
             </template>
             <v-list>
-                <v-list-item :to="{path:'/post/list'}">
+                <v-list-item :to="{ path: '/post/list' }">
                     <v-list-item-title>게시판</v-list-item-title>
                 </v-list-item>
                 <!-- <v-list-item :to="{path:'/'}"> -->
-                    <!-- <v-list-item-title>공지사항-공통</v-list-item-title> -->
+                <!-- <v-list-item-title>공지사항-공통</v-list-item-title> -->
                 <!-- </v-list-item> -->
-                <v-list-item :to="{path:'/hallOfFame'}">
+                <v-list-item :to="{ path: '/hallOfFame' }">
                     <v-list-item-title>명예의 전당</v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-            <v-btn color="white" v-bind="props" class="rubikMonoOne">MY PAGE-공통</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne">MY PAGE-공통</v-btn>
             </template>
             <v-list>
-                <v-list-item :to="{path:'/member/detail'}">
+                <v-list-item :to="{ path: '/member/detail' }">
                     <v-list-item-title>내 정보-공통</v-list-item-title>
                 </v-list-item>
                 <!-- <v-list-item :to="{path:'/'}">
@@ -80,6 +78,31 @@
                 </v-list-item> -->
             </v-list>
         </v-menu>
+        <v-menu open-on-hover>
+            <template v-slot:activator="{ props }">
+                <v-btn color="white" v-bind="props" class="rubikMonoOne">ALERT</v-btn>
+                <span class="notification-icon">
+                    <i class="fa fa-bell"></i>
+                    <span v-if="liveAlert > 0" class="notification-count">{{ liveAlert }}</span>
+                </span>
+            </template>
+            <v-list>
+                <!-- Check if there are notifications -->
+                <v-list-item v-if="notifications.length === 0">
+                    <v-list-item-title>No notifications</v-list-item-title>
+                </v-list-item>
+
+                <!-- Loop through notifications -->
+                <v-list-item v-for="(notification, index) in notifications" :key="index" @click="handleNotificationClick(index)">
+                    <v-list-item-content>
+                        <v-list-item-title>{{ notification.message }}</v-list-item-title>
+                        <!-- Optional: Display the date or any other info -->
+                        <v-list-item-subtitle>{{ notification.date }}</v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
+        </v-menu>
+
         <v-btn @click="kakaoLogin" v-if="!isLogin">LOGIN</v-btn>
         <v-btn @click="kakaoLogout" v-if="isLogin">LOGOUT</v-btn>
     </v-app-bar>
@@ -90,32 +113,108 @@
 // import axios from 'axios';
 import { KAKAO_LOGIN_URL } from '@/router/KakaoLoginUrl';
 import { KAKAO_LOGOUT_URL } from '@/router/KakaoLogoutUrl';
-export default{
-    data(){
-        return{
+import { EventSourcePolyfill } from 'event-source-polyfill';
+export default {
+    data() {
+        return {
             userRole: null,
             isLogin: false,
+            liveAlert: 0,
+            notifications: [], // 받은 알림 저장
+            showNotifications: true, // 토글 드랍다운
         }
     },
-    created(){
+    created() {
         const token = localStorage.getItem('token');
-        if(token){
+        if (token) {
             this.isLogin = true;
             this.userRole = localStorage.getItem("role");
         }
+        const savedNotifications = localStorage.getItem('notifications');
+        if (savedNotifications) {
+            this.notifications = JSON.parse(savedNotifications);
+            this.liveAlert = this.notifications.length; // Update alert count
+        }
+        if (this.isLogin) {
+            let sse = new EventSourcePolyfill(`${process.env.VUE_APP_API_BASE_URL}/subscribe`, { headers: { Authorization: `Bearer ${token}` } });
+            sse.addEventListener('connect', (event) => { console.log(event) });
+            sse.addEventListener('reservation', (event) => {
+                this.liveAlert++;
+
+                let data = JSON.parse(event.data);
+
+                // 변환된 객체를 사용하여 필요한 데이터를 출력
+                console.log(data); // 전체 객체 출력
+                console.log(data.date); // 예: 특정 필드 출력
+
+                const newNotification = {
+                    memberName: data.memberName,
+                    date: data.date,
+                    message: this.userRole === 'USER'
+                        ? `대기 중이던 ${data.date}일자 수업에 예약이 확정되었습니다.`
+                        : `회원 ${data.memberName}님이 ${data.date}에 예약을 완료했습니다.`
+                };
+                this.notifications.push(newNotification);
+                localStorage.setItem('notifications', JSON.stringify(this.notifications));
+
+            });
+            sse.onerror = (error) => {
+                console.log(error);
+                sse.close();
+            }
+        }
     },
-    methods:{
-        kakaoLogin(){
-            window.location.href=KAKAO_LOGIN_URL;
+    methods: {
+        kakaoLogin() {
+            window.location.href = KAKAO_LOGIN_URL;
         },
-        kakaoLogout(){
+        kakaoLogout() {
             localStorage.removeItem('token');
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('role');
-            window.location.href=KAKAO_LOGOUT_URL;
-        }
+            window.location.href = KAKAO_LOGOUT_URL;
+        },
+        toggleNotificationDropdown() {
+            console.log("toggle");
+            this.showNotifications = !this.showNotifications;
+            console.log(this.showNotifications);
+        },
+        handleNotificationClick(index) {
+            if(this.userRole === 'USER') {
+                this.$router.push('/reservation-detail/list');
+            }else {
+                this.$router.push('/reservation/list');
+            }
+            // Redirect to /reservation/list
+
+            // Remove the clicked notification
+            this.notifications.splice(index, 1);
+
+            // Update localStorage
+            localStorage.setItem('notifications', JSON.stringify(this.notifications));
+
+            // Update liveAlert count
+            this.liveAlert = this.notifications.length;
+        },
 
     }
 
 }
 </script>
+<style scoped>
+.notification-icon {
+    position: relative;
+    cursor: pointer;
+}
+
+.notification-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+}
+</style>
