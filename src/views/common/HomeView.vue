@@ -13,12 +13,12 @@
         </div>
 
         <div class="container-title">
-        <h2>RECOMMAD BOXES</h2>
-        
-            
+            <h2>RECOMMAD BOXES</h2>
+
+
         </div>
         <div class="card-container">
-           
+
 
             <div class="card" v-for="course in courses" :key="course.id">
                 <img :src="course.image" alt="Course Image">
@@ -27,9 +27,14 @@
             </div>
         </div>
     </div>
+    <div>
+        <FooterComponent />
+    </div>
+
 </template>
 
 <script>
+import FooterComponent from '@/components/FooterComponent.vue';
 export default {
     data() {
         return {
@@ -75,6 +80,9 @@ export default {
                 },
             ]
         };
+    },
+    components: {
+        FooterComponent
     },
     computed: {
         sliderStyle() {
@@ -194,12 +202,16 @@ export default {
 .card img {
     max-width: 100%;
 }
+
 .container-title {
     text-align: center;
     margin: 40px;
 }
+
 .card:hover {
-    transform: scale(1.05); /* 크기 5% 증가 */
-    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
-  }
+    transform: scale(1.05);
+    /* 크기 5% 증가 */
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+    /* 그림자 추가 */
+}
 </style>
