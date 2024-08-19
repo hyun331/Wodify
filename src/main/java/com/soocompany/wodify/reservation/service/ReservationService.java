@@ -163,10 +163,6 @@ public class ReservationService {
             return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
         });
         Reservation reservation = reservationRepository.findByIdAndDelYn(id, "N").orElseThrow(() -> new EntityNotFoundException("해당 id의 예약이 없습니다."));
-        if (!reservation.getCoach().equals(member)) {
-            log.error("reservationDelete() : 예약 변경에 대한 권한이 없습니다.");
-            throw new IllegalArgumentException("예약 변경에 대한 권한이 없습니다.");
-        }
         reservation.updateDelYn();
         reservationRepository.save(reservation);
     }
