@@ -17,14 +17,22 @@
                         required>
                     </v-text-field>
 
-                    <v-text-field label="종료일" v-model="newEndDate"  readonly=""
-
+                    <v-text-field v-model="newEndDate"  readonly=""
                         required>
                         {{ getEndDate }}
                     </v-text-field>
+                    <v-row>
+                        <v-col>
+                            <v-btn color="primary" type="submit" block>등록/연장</v-btn>
+                        </v-col>
+                        <v-col>                    
+                            <v-btn color="secondary" @click="closeModal" block>X</v-btn>
 
-                    <v-btn color="primary" type="submit" block>등록/연장</v-btn>
-                    <v-btn color="secondary" @click="closeModal" block>X</v-btn>
+
+                        </v-col>
+                    </v-row>
+
+                    
 
                 </v-form>
             </v-card-text>
@@ -64,7 +72,7 @@ export default {
                 const endDate = new Date(startDate.setMonth(startDate.getMonth() + parseInt(this.registrationMonth)));
                 return endDate.toISOString().substr(0, 10); // Format as YYYY-MM-DD
             }else{
-                return "개월 수를 입력해주세요";
+                return "종료일 - 개월 수를 입력해주세요";
             }
         }
 
@@ -98,6 +106,8 @@ export default {
         },
         closeModal() {
 
+            this.registrationDate = "";
+            this.registrationMonth = "";
             this.$emit('update:dialog', false)
         }
     },

@@ -23,14 +23,10 @@ export default{
                 const token = response.data.result.token;
                 const refreshToken = response.data.result.refreshToken;
                 const role = jwtDecode(token).role;
-                const memberId = jwtDecode(token).sub; // JWT의 subject로 설정된 memberId 추출
-
 
                 localStorage.setItem('token', token);
                 localStorage.setItem('refreshToken', refreshToken);
                 localStorage.setItem('role', role);
-                localStorage.setItem('memberId', memberId); // memberId를 저장
-
                 window.location.href="/";
             }catch(e){
                 // alert(e.response.data.result);

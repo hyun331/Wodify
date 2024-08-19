@@ -27,9 +27,9 @@ export const postRouter = [
         component: PostUpdate,
         props: true,
     },
-    {
-        path: '/post/test',
-        name: 'PostTest',
-        component: PostTest,
-    },
+	{
+		path: '/post/test',
+		name: 'PostTest',
+		component: PostTest,
+	}
 ];

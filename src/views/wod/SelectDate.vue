@@ -1,15 +1,11 @@
 <template>
-  <div class="background-image">
-    <v-container class="content-container">
-      <v-row class="fixed-layout">
-        <v-col cols="12" md="4" class="date-picker-col">
-          <div class="date-picker-container">
-            <v-date-picker
-              v-model="selectedDate"
-              @update:model-value="onDateSelected"
-              class="custom-date-picker"
-            >
-              <template v-slot:header></template>
+    <div>
+      <v-container>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-date-picker 
+              v-model="selectedDate" 
+              @update:model-value="onDateSelected">
             </v-date-picker>
           </div>
         </v-col>

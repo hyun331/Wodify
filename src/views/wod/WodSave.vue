@@ -114,10 +114,10 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 
 export default {
-    props: ["date"], // 라우트에서 전달받은 date를 props로 받음
+    props: ['date'],  // date를 props로 받아서 사용
     data() {
         return {
             count: 0,
@@ -192,25 +192,19 @@ export default {
         },
         async submitForm() {
             try {
-                const response = await axios.post(
-                    "http://localhost:8090/wod/save",
-                    this.wodSaveReqDto
-                );
+                const response = await axios.post('http://localhost:8090/wod/save', this.wodSaveReqDto);
                 if (response.status === 201) {
                     alert("WOD가 성공적으로 등록되었습니다.");
                     this.$emit('wod-saved', this.date);
                 } else {
-                    alert("WOD 등록에 실패했습니다.");
+                    alert('WOD 등록에 실패했습니다.');
                 }
             } catch (error) {
-                console.error(
-                    "Error submitting WOD form:",
-                    error.response ? error.response.data : error.message
-                );
-                alert("WOD 등록 중 오류가 발생했습니다.");
+                console.error('Error submitting WOD form:', error.response ? error.response.data : error.message);
+                alert('WOD 등록 중 오류가 발생했습니다.');
             }
-        },
-    },
+        }
+    }
 };
 </script>
 
