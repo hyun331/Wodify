@@ -42,7 +42,7 @@
     components: {
       WodSave,
     },
-  },
+  
   data() {
     return {
       localWod: { ...this.wod }, // props로 받은 wod 데이터를 로컬 데이터로 복사
@@ -94,6 +94,7 @@
         return `${year}-${month}-${day}`;
       },
     },
-  };
+  },
+}
   </script>
   

@@ -41,7 +41,7 @@ export default {
     chartOptions() {
       return {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         plugins: {
           legend: {
             display: false
@@ -63,7 +63,7 @@ export default {
           x: {
             title: {
               display: true,
-              text: 'My Reservation',
+              text: 'record',
               color: '#3C3D3D',
               font: {
                 family: 'Rubik Mono One',
@@ -95,10 +95,25 @@ export default {
                 size: 12
               },
               callback: (value) => {
-                // 초 단위에서 HH:00:00 형식으로 변환
-                const hours = Math.floor(value / 3600);
-                return `${String(hours).padStart(2, '0')}:00:00`;
-              }
+                // 0, 10, 20, ..., 60 분 단위로 표시
+                if (value === 0) {
+                  return '0m';
+                } else if (value === 600) {
+                  return '10m';
+                } else if (value === 1200) {
+                  return '20m';
+                } else if (value === 1800) {
+                  return '30m';
+                } else if (value === 2400) {
+                  return '40m';
+                } else if (value === 3000) {
+                  return '50m';
+                } else if (value === 3600) {
+                  return '1h';
+                }
+                return '';
+              },
+              stepSize: 600 // 10분 간격
             }
           }
         }
@@ -121,3 +136,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.chart-container {
+  width: 100%;
+  height: 1000px; /* 높이를 줄임 */
+}
+</style>

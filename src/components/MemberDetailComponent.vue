@@ -114,7 +114,7 @@
                     <!-- 차트 -->
                     <v-row class="d-flex justify-content-center mt-5" justify="center">
                         <v-col cols="12">
-                            <v-label>Time by reservation</v-label>
+                            <v-label class="d-flex justify-content-center mt-5">Exercise Records</v-label>
                             <div class="chart-container">
                                 <exercise-time-chart :records="records" />
                             </div>

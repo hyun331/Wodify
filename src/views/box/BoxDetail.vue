@@ -82,7 +82,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap');
 
 .title {
