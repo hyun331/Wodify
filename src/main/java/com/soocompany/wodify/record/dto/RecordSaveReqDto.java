@@ -1,5 +1,6 @@
 package com.soocompany.wodify.record.dto;
 
+import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.record.domain.Record;
 import com.soocompany.wodify.reservation_detail.domain.ReservationDetail;
 import lombok.AllArgsConstructor;
@@ -23,14 +24,17 @@ public class RecordSaveReqDto { // 앞단에서 받아와 저장하는 값이에
 
     private Long reservationDetailId; // 이거 앞단에서 받겠징
 
+    private Long memberId;
+
     private List<RecordSaveReqDetDto> recordSaveReqDetDtoList;
 
 
-    public Record toEntity(ReservationDetail reservationDetail, LocalTime exerciseTime){
+    public Record toEntity(ReservationDetail reservationDetail, LocalTime exerciseTime, Member member){
         return Record.builder()
                 .snf(this.snf).exerciseTime(exerciseTime)
                 .comments(this.comments)
                 .reservationDetail(reservationDetail)
+                .member(member)
                 .recordDetails(new ArrayList<>()).build();
 
     }

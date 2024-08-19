@@ -1,6 +1,7 @@
 package com.soocompany.wodify.record.domain;
 
 import com.soocompany.wodify.common.domain.BaseEntity;
+import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.record.dto.RecordResDto;
 import com.soocompany.wodify.record.dto.RecordSaveReqDto;
 import com.soocompany.wodify.record.dto.RecordUpdateReqDetDto;
@@ -36,6 +37,10 @@ public class Record extends BaseEntity {
     @JoinColumn(name = "reservation_detail_id")
     private ReservationDetail reservationDetail; // FK 예약내역ID
 
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @OneToMany(mappedBy = "record", cascade = CascadeType.PERSIST)
     private List<RecordDetail> recordDetails;
 
@@ -49,6 +54,7 @@ public class Record extends BaseEntity {
 
     public RecordResDto detFromEntity(){
         return RecordResDto.builder()
+                .id(this.id)
                 .snf(this.snf).exerciseTime(this.exerciseTime)
                 .comments(this.comments)
                 .recordResDetDtoList(new ArrayList<>())
