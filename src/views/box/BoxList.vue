@@ -18,7 +18,7 @@
                                     </v-text-field>
                                 </v-col>
                                 <v-col cols="auto">
-                                    <v-btn type="submit">Search</v-btn>
+                                    <v-btn type="submit" class="search-button">🔍</v-btn>
                                 </v-col>
                             </v-row>
                         </v-form>
@@ -129,5 +129,11 @@ export default {
 .container {
     background-color: #D9D9D9;
     min-height: 100vh;
+}
+
+.search-button {
+    margin-top: 12px; /* 버튼의 위쪽 여백을 16px로 설정하여 아래로 이동 */
+    border-radius: 100px; /* 버튼 모서리를 둥글게 설정 (값 조정 가능) */
+    padding: 8px 16px; /* 버튼의 패딩 조정 */
 }
 </style>

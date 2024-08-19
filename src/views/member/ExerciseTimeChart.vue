@@ -97,7 +97,7 @@ export default {
               callback: (value) => {
                 // 초 단위에서 HH:00:00 형식으로 변환
                 const hours = Math.floor(value / 3600);
-                return `${String(hours).padStart(2, '0')}:00:00`;
+                return `${String(hours).padStart(2, '0')}H`;
               }
             }
           }
