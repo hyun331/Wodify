@@ -177,7 +177,7 @@
   .background-wrapper {
     background: linear-gradient(135deg, #1c1c1c, #3a3a3a); /* 그라데이션 배경 */
     padding: 20px;
-    min-height: 100vh; /* 화면 전체 높이 */
+    height: 100vh; /* 화면 전체 높이 */
   }
   
   /* 컨테이너 배경색 */

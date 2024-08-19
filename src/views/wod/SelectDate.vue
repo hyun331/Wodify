@@ -15,12 +15,7 @@
         </v-col>
         <v-col cols="12" md="8" class="content-col">
           <WodFind v-show="wod" :wod="wod" :key="wod" @wod-deleted="onWodDeleted" />
-          <WodSave
-            v-show="!wod"
-            :date="formattedDate"
-            :key="formattedDate"
-            @wod-saved="onWodSaved"
-          />
+          <WodSave v-show="!wod" :date="formattedDate" :key="formattedDate" @wod-saved="onWodSaved" />
         </v-col>
       </v-row>
     </v-container>
