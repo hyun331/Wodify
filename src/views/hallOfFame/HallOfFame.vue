@@ -9,7 +9,6 @@
                 <v-card>
                     
                     <v-card-text>
-                        <!-- Render the chart only when chartData is fully ready -->
                         <Bar :data="chartData" :options="chartOptions" />
                     </v-card-text>
                 </v-card>
@@ -62,7 +61,6 @@ export default {
                     {
                         label: 'Exercise Time',
                         backgroundColor: this.hallOfFameResDtoList.map(item => {
-                            // Set colors based on rank
                             if (item.rank === 1) {
                                 return '#FFBF00';
                             } else if (item.rank === 2) {
@@ -70,7 +68,7 @@ export default {
                             } else if (item.rank === 3) {
                                 return '#CD7F32';
                             } else {
-                                return '#94D82D'; // Default color for other ranks
+                                return '#94D82D'; 
                             }
                         }),
                         data: this.hallOfFameResDtoList.map(item => {
@@ -95,12 +93,11 @@ export default {
                     x: {
                         type: 'linear',
                         min: 0,
-                        max: 120, // Maximum of 2 hours in minutes
+                        max: 30, 
                         ticks: {
                             callback: function (value) {
-                                const hours = Math.floor(value / 60);
                                 const minutes = value % 60;
-                                return `${hours}:${minutes < 10 ? '0' : ''}${minutes} hours`;
+                                return `${minutes < 10 ? '0' : ''}${minutes} min`;
                             },
                         },
                         title: {
@@ -132,7 +129,7 @@ export default {
                         },
                     },
                 },
-                indexAxis: 'y', // This makes the chart horizontal
+                indexAxis: 'y',
             },
         };
     },
