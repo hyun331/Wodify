@@ -41,6 +41,7 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+
     @Bean
     public RedisConnectionFactory redisPostFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
@@ -59,6 +60,7 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+
     //refresh token
     @Bean
     public RedisConnectionFactory redisConnectionFactory(){
@@ -76,7 +78,10 @@ public class RedisConfig {
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         return redisTemplate;
     }
-    @Bean
+
+
+
+    @Bean(name="redisZsetFactory")
     public RedisConnectionFactory redisZsetFactory(){
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
         configuration.setHostName(host);
@@ -84,30 +89,37 @@ public class RedisConfig {
         configuration.setDatabase(4);
         return new LettuceConnectionFactory(configuration);
     }
-    @Bean(name = "ZsetTemplate")
-    public RedisTemplate<String, String> redisZsetTemplate(RedisConnectionFactory redisConnectionFactory){
+    @Bean(name = "zsetTemplate")
+    public RedisTemplate<String, String> redisZsetTemplate(@Qualifier("redisZsetFactory")RedisConnectionFactory redisZsetFactory){
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setConnectionFactory(redisZsetFactory);
         return redisTemplate;
     }
 
+    @Bean(name = "zsetRedisMessageListenerContainer")
+    public RedisMessageListenerContainer zsetMessageListenerContainer(@Qualifier("redisZsetFactory")RedisConnectionFactory redisZsetFactory){
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(redisZsetFactory);
+        return container;
+    }
 
-    @Bean
-    @Qualifier("6")
+
+
+
+    @Bean(name="reservationFactory")
     public RedisConnectionFactory sseFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
         configuration.setHostName(host);
         configuration.setPort(port);
-        configuration.setDatabase(5);
+        configuration.setDatabase(4);
         return new LettuceConnectionFactory(configuration);
 
     }
 
-    @Bean
-    @Qualifier("6")
-    public RedisTemplate<String, Object> sseRedisTemplate(@Qualifier("6") RedisConnectionFactory sseFactory){
+    @Bean(name = "reservationRedisTemplate")
+    public RedisTemplate<String, Object> sseRedisTemplate(@Qualifier("reservationFactory") RedisConnectionFactory sseFactory){
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
@@ -118,13 +130,55 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-    @Bean
-    @Qualifier("6")
-    public RedisMessageListenerContainer redisMessageListenerContainer(@Qualifier("6")RedisConnectionFactory sseFactory){
+    @Bean(name = "reservationRedisMessageListenerContainer")
+    public RedisMessageListenerContainer redisReservationMessageListenerContainer(@Qualifier("reservationFactory")RedisConnectionFactory sseFactory){
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(sseFactory);
         return container;
     }
+
+
+
+
+
+    @Bean(name="reservationDetailFactory")
+    public RedisConnectionFactory reservationFactory() {
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
+        configuration.setHostName(host);
+        configuration.setPort(port);
+        configuration.setDatabase(6);
+        return new LettuceConnectionFactory(configuration);
+
+    }
+
+    @Bean(name = "reservationDetailRedisTemplate")
+    public RedisTemplate<String, Object> reservationRedisTemplate(@Qualifier("reservationDetailFactory") RedisConnectionFactory reservationFactory){
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        serializer.setObjectMapper(objectMapper);
+        redisTemplate.setValueSerializer(serializer);
+        redisTemplate.setConnectionFactory(reservationFactory);
+        return redisTemplate;
+    }
+
+    @Bean(name = "reservationDetailRedisMessageListenerContainer")
+    public RedisMessageListenerContainer redisReservationDetailMessageListenerContainer(@Qualifier("reservationDetailFactory") RedisConnectionFactory reservationFactory){
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(reservationFactory);
+        return container;
+    }
+
+
+
+//    @Bean
+//    public RedisMessageListenerContainer redisMessageListenerContainer(@Qualifier("redisZsetFactory")RedisConnectionFactory redisZsetFactory, @Qualifier("reservationFactory") RedisConnectionFactory reservationFactory){
+//        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+//        container.setConnectionFactory(redisZsetFactory);
+//        container.setConnectionFactory(reservationFactory);
+//        return container;
+//    }
 
 
 }

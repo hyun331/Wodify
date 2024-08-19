@@ -2,7 +2,9 @@ package com.soocompany.wodify.reservation_detail.service;
 
 import com.soocompany.wodify.reservation.domain.Reservation;
 import com.soocompany.wodify.reservation.repository.ReservationRepository;
+import com.soocompany.wodify.reservation_detail.controller.SseController;
 import com.soocompany.wodify.reservation_detail.domain.ReservationDetail;
+import com.soocompany.wodify.reservation_detail.dto.ReservationDetailDetResDto;
 import com.soocompany.wodify.reservation_detail.repository.ReservationDetailRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -23,11 +25,12 @@ public class ReservationScheduler {
 //    rdList : 예약 내역에서 오늘 날짜의 예약들을 통해 예약 내역들을 고른다.
 //    위의 내역들의 시간에 따라 알림을 날린다.
 
-
+    private final SseController sseController;
     private final ReservationRepository reservationRepository;
     private final ReservationDetailRepository reservationDetailRepository;
 
-    public ReservationScheduler(ReservationRepository reservationRepository, ReservationDetailRepository reservationDetailRepository) {
+    public ReservationScheduler(SseController sseController, ReservationRepository reservationRepository, ReservationDetailRepository reservationDetailRepository) {
+        this.sseController = sseController;
         this.reservationRepository = reservationRepository;
         this.reservationDetailRepository = reservationDetailRepository;
     }
@@ -40,9 +43,10 @@ public class ReservationScheduler {
         for(Reservation reservation : reservationList){
             List<ReservationDetail> reservationDetails = reservationDetailRepository.findByReservationAndDelYn(reservation, "N");
             for(ReservationDetail reservationDetail : reservationDetails){
-                LocalTime time = LocalTime.now();
-                if(reservationDetail.getReservation().getTime().minusHours(1) == LocalTime.now()){
-//                  여기서 알림 날려요.
+                if(reservationDetail.getReservation().getTime().minusHours(1).equals(LocalTime.now())){
+                    ReservationDetailDetResDto dto = reservationDetail.detFromEntity();
+                    String memberId = String.valueOf(reservationDetail.getMember().getId());
+                    sseController.publishReservationMessage(dto,memberId);
                 }
             }
         }

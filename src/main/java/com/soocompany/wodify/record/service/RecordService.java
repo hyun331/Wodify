@@ -118,10 +118,10 @@ public class RecordService {
         return recordResDto;
     }
 
-    public Page<RecordDetResDto> recordList(Pageable pageable){
-        Page<Record> records = recordReository.findByDelYn("N", pageable);
-        return records.map(Record::detFromEntity);
-    } // 예외처리, 누구 기준으로 보는 리스트인가. 운동기록은 예약내역을 통해 보기때문에 리스트업할 일이 없다.
+//    public Page<RecordDetResDto> recordList(Pageable pageable){
+//        Page<Record> records = recordReository.findByDelYn("N", pageable);
+//        return records.map(Record::detFromEntity);
+//    } // 예외처리, 누구 기준으로 보는 리스트인가. 운동기록은 예약내역을 통해 보기때문에 리스트업할 일이 없다.
 
 
     @Transactional
