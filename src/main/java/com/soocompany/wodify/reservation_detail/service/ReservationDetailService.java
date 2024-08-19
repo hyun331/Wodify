@@ -48,7 +48,7 @@ public class ReservationDetailService {
     private final ReservationManagementService reservationManagementService;
     private final ReservationManageEventHandler reservationManageEventHandler;
     private final WaitingService waitingService;
-      private final SseController sseController;
+    private final SseController sseController;
 
     public ReservationDetailDetResDto reservationCreate(ReservationDetCreateReqDto dto, Long memberId) {
         Reservation reservation = reservationRepository.findByIdAndDelYn(dto.getReservationId(), "N").orElseThrow(() -> new EntityNotFoundException("해당 id의 예약이 존재하지 않습니다."));
