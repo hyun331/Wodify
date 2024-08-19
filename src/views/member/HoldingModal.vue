@@ -8,7 +8,7 @@
                 <v-row class="d-flex justify-center">
                     <span class="text-center">
                         정지는 3회로 제한되며, 정지는 수정이나 철회가 불가능합니다.<br>
-                        Stopping is limited to 3 times, and stopping is not possible.</span>
+                    </span>
                 </v-row>
                 <v-row class="d-flex justify-center align-center" style="margin-top: 25px;">
                     <RoundedButtonComponent @click="hold" text="Yeees" class="mx-2"/>
