@@ -47,6 +47,12 @@ public class WodController {
         return new ResponseEntity<>(new CommonResDto(code, msg, wod.getId()), code);
     }
 
+    @GetMapping("/search/{id}")
+    public ResponseEntity<?> wodSearchById(@PathVariable String id){
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "id에 따른 wod 정보", wodService.wodSearchById(Long.parseLong(id))), HttpStatus.OK);
+
+    }
+
     @GetMapping("/random/{id}")
     public ResponseEntity<?> randomWodDet(@PathVariable Long id) {
         String msg = "Count 반환에 성공했습니다.";

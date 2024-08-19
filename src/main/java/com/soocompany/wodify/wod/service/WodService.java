@@ -108,6 +108,18 @@ public class WodService {
         return wod.wodDelete();
     }
 
+    public WodResDto wodSearchById(Long id) {
+        Wod wod = wodRepository.findById(id).orElseThrow(()->{
+            log.error("wodSearchById() : 해당 와드에가 존재하지 않습니다.");
+            throw new EntityNotFoundException("해당 와드에가 존재하지 않습니다.");
+        });
+        WodResDto wodResDto = WodResDto.fromEntity(wod);
+        for (WodDetail wodDetail : wod.getWodDetails()) {
+            wodResDto.getWodDetResDtoList().add(WodDetResDto.fromEntity(wodDetail));
+        }
+        return wodResDto;
+    }
+
     public WodDetResDto randomWodDet(Long id) {
         WodDetail wodDetail = wodDetailRepository.findById(id).orElseThrow(() -> {
             log.error("randomWodDet() : 데이터가 없습니다.");
