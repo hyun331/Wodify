@@ -8,17 +8,23 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.7.3",
     "bootstrap": "^5.3.3",
     "bootstrap-vue-3": "^0.5.1",
     "chart.js": "^4.4.3",
     "chartjs-plugin-datalabels": "^2.2.0",
     "core-js": "^3.8.3",
+    "date-fns": "^3.6.0",
     "event-source-polyfill": "^1.0.31",
+    "interactjs": "^1.10.27",
     "jwt-decode": "^4.0.0",
+    "quill-blot-formatter": "^1.0.5",
     "vue": "^3.2.13",
     "vue-chartjs": "^5.3.1",
     "vue-router": "^4.4.2",
+    "vue3-quill": "^0.3.1",
     "vuetify": "^3.6.14"
   },
   "devDependencies": {
