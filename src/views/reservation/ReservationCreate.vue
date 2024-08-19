@@ -19,14 +19,18 @@
                 </v-col>
             </v-row>
             <v-form @submit.prevent="reservation">
+                <v-row cols="6" class="d-flex justify-center align-center">
+                    <div class="date-picker-container">
+                        <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected"
+                            class="custom-date-picker">
+                            <template v-slot:header></template>
+                        </v-date-picker>
+                    </div>
+                </v-row>
+
                 <v-row>
                     <v-col cols="6" class="d-flex justify-center align-center">
-                        <v-text-field
-                            v-model="date"
-                            label="날짜 입력"
-                            type="date"
-                            class="mx-2"
-                        ></v-text-field>
+                        <v-text-field v-model="date" label="날짜 입력" type="date" class="mx-2"></v-text-field>
                     </v-col>
                     <v-col cols="6" class="justify-center align-center">
                         <div v-if="wod && wod.wodDetResDtoList.length > 0" class="bordered">
@@ -52,7 +56,7 @@
                                 </tbody>
                             </v-table>
                         </div>
-                    
+
                         <div v-else class="d-flex justify-center">
                             <v-btn :to="{ path: '/wod/select-date' }">
                                 wod 생성
@@ -60,7 +64,7 @@
                         </div>
                     </v-col>
                 </v-row>
-                
+
                 <v-row v-for="(entry, index) in entries" :key="index">
                     <v-col cols="6">
                         <v-text-field label="Time" type="time" v-model="entry.time" placeholder="시간을 입력해주세요" required>
@@ -82,26 +86,35 @@
                 </v-row>
 
             </v-form>
+
+            <AlertModalComponent v-model="alertModal" @update:dialog="alertModal = $event" :dialogTitle="dialogTitle"
+                :dialogText="dialogText" />
         </v-container>
     </div>
 </template>
 
 <script>
 import RoundedButtonComponent from '@/components/RoundedButtonComponent.vue';
+import AlertModalComponent from '@/components/AlertModalComponent.vue';
 import axios from 'axios';
 
 export default {
     components: {
-        RoundedButtonComponent
+        RoundedButtonComponent,
+        AlertModalComponent
     },
     data() {
         return {
+            selectedDate: new Date(),
             date: "",
             wod: "",
             error: false,
             entries: [
                 { time: "", people: "" }
             ],
+            alertModal: false,
+            dialogTitle: "",
+            dialogText: "",
         };
     },
     watch: {
@@ -109,12 +122,24 @@ export default {
             if (newDate) {
                 this.fetchWod(newDate);
             }
+        },
+        selectedDate(selectDate) {
+            if (selectDate) {
+                let formattedDate = this.formatDate(selectDate);
+                this.fetchWod(formattedDate);
+            }
         }
     },
     methods: {
-        async fetchWod() {
+        formatDate(date) {
+            const year = date.getFullYear();
+            const month = ('0' + (date.getMonth() + 1)).slice(-2);
+            const day = ('0' + date.getDate()).slice(-2);
+            return `${year}-${month}-${day}`;
+        },
+        async fetchWod(date) {
             try {
-                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find/`+this.date);
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find/${date}`);
                 this.wod = response.data.result;
                 if (!this.wod) {
                     throw new Error("No data found");
@@ -135,7 +160,14 @@ export default {
         removeEntry(index) {
             this.entries.splice(index, 1);
         },
-        reservation() {
+        async reservation() {
+            if (!this.date) {
+                this.dialogTitle = "입력사항을 모두 입력해주세요";
+                this.dialogText = "입력사항을 모두 입력해주세요";
+                this.alertModal = true;
+                return;
+            }
+
             const reservationData = this.entries.map(entry => ({
                 date: this.date,
                 wodId: this.wod.id,
@@ -144,20 +176,29 @@ export default {
             }));
 
             alert(JSON.stringify(reservationData, null, 2));
-            axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation/create`, reservationData)
-            .then(response => {
-                console.log(response);
-                alert("예약이 완료되었습니다!");
-                this.$router.push("/reservation/list");
-            }).catch(error => {
-                alert("예약 실패, 등록 폼을 정확히 입력해주세요!", error);
-            });
+            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation/create`, reservationData)
+                .then(response => {
+                    console.log(response);
+                    alert("예약이 완료되었습니다!");
+                    this.$router.push("/reservation/list");
+                }).catch(error => {
+                    let errorMessage = "";
+                    if (error.response && error.response.data) {
+                        // 서버에서 반환한 에러 메시지가 있는 경우
+                        errorMessage += `: ${error.response.data.error_message}`;
+                    } else if (error.message) {
+                        errorMessage += `: ${error.message}`;
+                    }
+                    this.dialogTitle = "예약 실패";
+                    this.dialogText = errorMessage;
+                    this.alertModal = true;
+                });
         }
     }
 }
 </script>
 
-<style>
+<style scoped>
 .box {
     background-color: #797876;
 }
@@ -184,5 +225,18 @@ export default {
 .reservationHead {
     font-weight: bold;
     font-size: 20px;
+}
+
+.wod-info-container {
+    margin: 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 40px;
+}
+
+.custom-date-picker {
+    background-color: rgba(255, 255, 255, 0.5);
+    margin-top: 20px;
 }
 </style>
