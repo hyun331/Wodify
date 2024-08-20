@@ -23,10 +23,12 @@ export default{
                 const token = response.data.result.token;
                 const refreshToken = response.data.result.refreshToken;
                 const role = jwtDecode(token).role;
+                const memberId = jwtDecode(token).sub;
 
                 localStorage.setItem('token', token);
                 localStorage.setItem('refreshToken', refreshToken);
                 localStorage.setItem('role', role);
+                localStorage.setItem('memberId', memberId);
                 window.location.href="/";
             }catch(e){
                 // alert(e.response.data.result);

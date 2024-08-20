@@ -1,49 +1,30 @@
 <template>
   <div class="page-container">
-    <div class="box right-align">
-      <br>
-      <span class="boxLocation">
-        {{ this.boxName }}
-      </span>
-      <br>
+    <div class="box right-align"> <br>
+      <span class="boxLocation"> {{ this.boxName }} </span> <br>
     </div>
-    <v-container class="container mt-5" fluid>
-      <!-- 테이블을 중앙에 정렬 -->
+    <v-container class="container" fluid>
+      <!-- 테이블 중앙 정렬 -->
       <v-row justify="center">
         <v-col cols="12">
-          <!-- 테이블을 v-card로 감싸기 -->
+          <!-- 테이블 v-card -->
           <v-card class="custom-card">
             <!-- 검색 영역 -->
-            <v-row class="search-bar" align="center" justify="space-between" no-gutters>
-              <v-col cols="2" class="pr-1">
-                <!-- 검색 기준 선택 -->
-                <v-select
-                  v-model="searchType"
-                  :items="searchOptions"
-                  item-title="text"
-                  item-value="value"
-                  label="Type"
-                  dense
-                  outlined
-                  hide-details
-                  class="search-select"
-                ></v-select>
+            <v-row class="search-bar">
+              <!-- 검색 기준 선택 -->
+              <v-col cols="2" class="search-type-col">
+                <v-select v-model="searchType" :items="searchOptions" item-title="text" item-value="value" label="Type"
+                  dense outlined hide-details class="search-select"></v-select>
               </v-col>
-              <v-col cols="8" class="pl-1 pr-2">
-                <!-- 검색 입력 필드 -->
-                <v-text-field
-                  v-model="searchText"
-                  label="검색"
-                  outlined
-                  dense
-                  hide-details
-                  class="search-text-field"
-                ></v-text-field>
+              <!-- 검색 입력 필드 -->
+              <v-col cols="8" class="search-text-col">
+                <v-text-field v-model="searchText" label="검색" outlined dense hide-details
+                  class="search-text-field"></v-text-field>
               </v-col>
-              <v-col cols="2" class="d-flex align-center justify-end">
-                <!-- 검색 버튼과 글쓰기 버튼 -->
-                <v-btn color="black" dark @click="searchPosts">검색</v-btn>
-                <v-btn color="black" dark class="ml-3" @click="goToCreatePost">글쓰기</v-btn>
+              <!-- 검색 버튼과 글쓰기 버튼 -->
+              <v-col cols="2" class="search-btn-col">
+                <button class="search-btn" @click="searchPosts">검색</button>
+                <button class="newPost-btn" @click="goToCreatePost">글쓰기</button>
               </v-col>
             </v-row>
 
@@ -92,15 +73,7 @@
       <div ref="scrollObserver" style="height: 100px;"></div>
 
       <!-- 화면 오른쪽 하단의 맨위로 버튼 -->
-      <v-btn
-        color="black"
-        dark
-        class="scroll-top-btn"
-        v-show="showScrollTopButton"
-        @click="scrollToTop"
-      >
-        맨위로
-      </v-btn>
+      <v-btn color="black" dark class="scroll-top-btn" v-show="showScrollTopButton" @click="scrollToTop"> 맨위로 </v-btn>
     </v-container>
   </div>
 </template>
@@ -138,10 +111,10 @@ export default {
   data() {
     return {
       searchType: '',
-            searchOptions: [
-                { text: "제목", value: "title" },
-                { text: "글쓴이", value: "memberName" }
-            ],
+      searchOptions: [
+        { text: "제목", value: "title" },
+        { text: "글쓴이", value: "memberName" }
+      ],
       currentPage: 1,
       itemsPerPage: 10,
       searchText: "", // 검색어
@@ -238,54 +211,83 @@ export default {
 </script>
 
 <style scoped>
-.page-container {
-  background-color: #D9D9D9;
-  min-height: 100vh;
-  padding: 20px;
-}
-
 .box {
   background-color: #797876;
 }
-
 .right-align {
   text-align: right;
 }
-
 .boxLocation {
   color: white;
   font-weight: 1000;
   font-size: 70px;
   font-family: "Oswald", sans-serif;
 }
-
-.container {
-  background-color: transparent;
-  padding: 0px;
-  max-width: 1200px;
-  margin-top: 0px;
-  border-radius: 8px;
-}
-
 .custom-card {
   background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding-left: 20px;
-  padding-right: 20px;
-  width: 800px;
+  width: 1200px;
   margin: auto;
+}
+.search-bar {
+  border-radius: 8px;
+  background-color: transparent;
+  margin-bottom: -8px;
+}
+.search-type-col {
+  padding-right: 0px;
+}
+.search-text-col {
+  min-width: 800px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.search-btn-col {
+  height: 68px;
+  padding-left: -40px;
+  margin-left: -11px;
+  margin-right: -20px;
+  padding-right: -20px;
+  background-color:#D9D9D9;
+  border-radius: 4px;
+}
+.search-select {
+  height: 30px;
+  min-width: 150px;
+  /* v-select의 최소 너비 조절 */
+  font-size: 10px;
+}
+.search-text-field {
+  height: 0px;
+  /* 높이 조절 */
+}
+.search-btn {
+  background-color: black;
+  color: white;
+  border-radius: 4px;
+  margin-left: -10px;
+  height: 56px;
+  width: 95px;
+}
+.newPost-btn {
+  background-color: black;
+  color: white;
+  border-radius: 4px;
+  margin-left: 1px;
+  margin-right: -10px;
+  height: 56px;
+  width: 104px;
 }
 
 .table-wrapper {
   width: 100%;
-  margin-top: 22px;
+  margin-top: 8px;
 }
 
 .fixed-table {
-  width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
+  border-radius: 4px;
 }
 
 .fixed-cell {
@@ -295,56 +297,33 @@ export default {
 }
 
 .no-col {
-  width: 50px;
+  width: 70px;
 }
 
 .title-col {
-  width: 400px;
+  width: 600px;
 }
 
 .author-col {
-  width: 100px;
+  width: 150px;
 }
 
 .likes-col {
-  width: 45px;
-}
-
-.date-col {
   width: 100px;
 }
 
+.date-col {
+  width: 180px;
+}
+
 .comments-col {
-  width: 45px;
+  width: 100px;
 }
 
 .scroll-top-btn {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  z-index: 100;
+  z-index: 10;
 }
-
-.search-bar {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  background-color: #ffffff;
-  border-radius: 8px;
-}
-
-.search-select,
-.search-text-field {
-  height: 30px; /* 높이 조절 */
-  font-size: 10px; /* 텍스트 크기 조절 */
-  padding: 0px 8px; /* 내부 패딩 조절 */
-}
-
-.search-select {
-  min-width: 130px; /* v-select의 최소 너비 조절 */
-}
-
-.search-text-field {
-  width: 440px; /* v-text-field를 가능한 길게 확장 */
-}
-
 </style>
