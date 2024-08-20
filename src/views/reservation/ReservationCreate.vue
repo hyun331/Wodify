@@ -19,7 +19,7 @@
                 </v-col>
             </v-row>
             <v-form @submit.prevent="reservation">
-                <v-row justify="center">
+                <v-row class="d-flex justify-center">
                     <v-col cols="5" class="d-flex justify-center align-center">
                         <div class="date-picker-container">
                             <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected"
@@ -300,5 +300,6 @@ export default {
 
 .wod {
     margin-top: 20px;
+    border-radius: 5px;
 }
 </style>
