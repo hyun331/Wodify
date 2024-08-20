@@ -4,15 +4,20 @@
             <v-card-title class="text-h5 text-center">회원 등록</v-card-title>
             <v-card-text>
                 <v-form @submit.prevent="registrationCreate">
-                    <v-text-field label="email" v-model="email" type="email" prepend-icon="" required>
-                    
+                    <span v-if="emailError" class="errorSpan">이메일을 입력하세요</span>
+                    <v-text-field label="email" v-model="email" type="email" prepend-icon="" 
+                    :placeholder="emailPlaceholder"
+                    required>
                     </v-text-field>
+                    
+           
 
                     <v-text-field label="등록일" v-model="registrationDate" type="date"
                         required>
                         
                     </v-text-field>
 
+                    <span v-if="registError" class="errorSpan">이전 등록기간과 중복되는 날이 존재합니다</span>
                     <v-text-field label="등록 기간" v-model="registrationMonth" 
                         required>
                     </v-text-field>
@@ -22,11 +27,19 @@
                         {{ getEndDate }}
                     </v-text-field>
                     <v-row>
+                        
                         <v-col>
-                            <v-btn color="primary" type="submit" block>등록/연장</v-btn>
+                            <RoundedButtonComponent
+                            text="등록/연장"
+                            :buttonType='submit'
+                            > </RoundedButtonComponent>
                         </v-col>
-                        <v-col>                    
-                            <v-btn color="secondary" @click="closeModal" block>X</v-btn>
+                        <v-col>    
+                            <RoundedButtonComponent
+                            text="닫기"
+                            :buttonType="'button'" 
+                            @click="closeModal"
+                            > </RoundedButtonComponent>                
 
 
                         </v-col>
@@ -42,13 +55,20 @@
 
 <script>
 import axios from 'axios';
+import RoundedButtonComponent from '@/components/RoundedButtonComponent.vue';
 export default {
+    components:{
+        RoundedButtonComponent
+    },
     props: {
-        modalUserEmail: String,   // Receives user email
-        modalNextStartDate: String // Receives the end date
+        modalUserEmail: String,  
+        modalNextStartDate: String ,
+        registrationError: Boolean
     },
     data() {
         return {
+            emailError: this.registrationError,
+            registError: this.registrationError,
             email: this.modalUserEmail||"",
             registrationDate: this.modalNextStartDate||"",
             registrationMonth: "",
@@ -65,6 +85,7 @@ export default {
             this.registrationDate = value;
         }
     },
+    
     computed:{
         getEndDate(){
             if (this.registrationDate && this.registrationMonth > 0) {
@@ -91,20 +112,23 @@ export default {
                 console.log(response.data.result);
                 this.closeModal();
                 window.location.href="/member/list/user";
-                // this.$router.push("/member/list/user");
                 
-            
-
 
             }catch(e){
                 console.log(e);
+                if(e.response.data.status_code === 404){
+                    this.emailError = true;
+                }
+                else{
+                    this.registError = true;
+                }
         
-                alert(e.response?.data?.error_message||"입력값을 확인해주세요");
             }
-            
 
         },
         closeModal() {
+            this.emailError = false;
+            this.registError = false;
 
             this.registrationDate = "";
             this.registrationMonth = "";
@@ -116,3 +140,11 @@ export default {
 }
 
 </script>
+
+<style scoped>
+.errorSpan{
+    font-size: 11px;
+    color: red;
+    border: 1px;
+}
+</style>

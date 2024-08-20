@@ -1,6 +1,8 @@
 <template>
     <div class="background">
     <v-container>
+        <h1 class="rubikMonoOne" style="margin-top: 10px;">MEMBERS</h1>
+
         <v-row class="d-flex justify-content-between mt-5">
             <v-col>
                 <v-form @submit.prevent="searchMember">
@@ -13,10 +15,11 @@
                             </v-text-field>
                         </v-col>
 
-                        <v-col cols="auto" class="noto-sans">
-                            <v-btn type="submit">
-                                회원 검색
-                            </v-btn>
+                        <v-col cols="auto" class="noto-sans" style="padding-left: 0px;">
+                            <v-btn type="submit" icon style="margin-top:5px;">
+                                <v-icon>mdi-magnify</v-icon>
+                              </v-btn>
+                            
                             
                         </v-col>
 
@@ -25,7 +28,7 @@
                     </v-row>
                 </v-form>
             </v-col> 
-            <v-col class="noto-sans">
+            <v-col class=" noto-sans d-flex justify-content-end" style="margin-right: 10px;">
                 <v-btn @click="showRegistrationModal('', '')" >회원등록</v-btn>
             </v-col>
 
@@ -73,6 +76,7 @@
         v-model="registrationModal" 
         :modalUserEmail="modalUserEmail"
         :modalNextStartDate="modalNextStartDate"
+        :registrationError="false"
         @update:dialog="registrationModal = $event"
         >
         </RegistrationCreateModal>
@@ -86,6 +90,9 @@
 
         </UserDeleteFromBoxModal>
 
+        <AlertModalComponent v-model="alertModal" @update:dialog="alertModal = $event" :dialogTitle="dialogTitle"
+        :dialogText="dialogText" />
+
     </v-container>
 </div>
 </template>
@@ -94,14 +101,22 @@
 import axios from 'axios';
 import RegistrationCreateModal from '@/views/registrationInfo/RegistrationCreateModal.vue';
 import UserDeleteFromBoxModal from '@/views/member/UserDeleteFromBoxModal.vue';
+import AlertModalComponent from './AlertModalComponent.vue';
 export default{
     props:['isCEO'],
     components:{
         RegistrationCreateModal,
         UserDeleteFromBoxModal,
+        AlertModalComponent,
     },
     data(){
         return{
+
+
+            dialogTitle:'',
+            dialogText:'',
+            alertModal: false,
+
             userList:[],
             pageSize: 5,
             currentPage:0,
@@ -109,6 +124,8 @@ export default{
             isLoading: false,
             registrationModal: false,
             userDeleteFromBoxModal : false,
+            registrationError : false, 
+
             modalUserEmail : "",
             modalNextStartDate: "",
 
@@ -163,6 +180,9 @@ export default{
                 this.isLoading = false;
                 console.log(response.data);
             }catch(e){
+                this.dialogTitle = '박스에 가입해주세요';
+                this.dialogText = '박스에 가입하지 않은 코치는 회원 목록을 이용하지 못합니다'
+                this.alertModal = true;
                 console.log(e);
             }
             
@@ -174,9 +194,10 @@ export default{
             }
         },
         showRegistrationModal(userEmail, userEndDate){
-            this.registrationModal=true;
+
             this.modalUserEmail = userEmail;
             this.modalNextStartDate = userEndDate;
+            this.registrationModal=true;
         },
         deleteUser(email){
             this.deleteUserEmail = email;

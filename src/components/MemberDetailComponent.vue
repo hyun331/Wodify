@@ -108,6 +108,12 @@
                                     <v-btn @click="showUnholdingModal" v-else>정지 해제</v-btn>
                                 </v-col>
 
+                                <v-col cols="2" v-if="pageType === 'My Page' && userRole==='COACH'">
+                                    <v-btn v-if="memberInfo.boxName == null" @click="showBoxCoachRegisterModal">박스 등록</v-btn>
+
+                                    <v-btn v-else @click="showBoxCoachRegisterModal">박스 변경</v-btn>
+                                </v-col>
+
                             </v-row>
                             <br>
                         </v-card-text>
@@ -133,6 +139,9 @@
             </HoldingModal>
             <UnholdingModal v-model="unholding" @update:dialog="unholding = $event">
             </UnholdingModal>
+
+            <BoxCoachRegister v-model="boxCoachRegister" @update:dialog="boxCoachRegister = $event">
+            </BoxCoachRegister>
         </v-container>
     </div>
 </template>
@@ -141,6 +150,7 @@
 import HoldingModal from '@/views/member/HoldingModal.vue';
 import UnholdingModal from '@/views/member/UnholdingModal.vue';
 import ExerciseTimeChart from '@/views/member/ExerciseTimeChart.vue';
+import BoxCoachRegister from '@/views/box/BoxCoachRegister.vue';
 // import axios from 'axios';
 
 
@@ -149,12 +159,14 @@ export default {
     components: {
         HoldingModal,
         UnholdingModal,
-        ExerciseTimeChart
+        ExerciseTimeChart,
+        BoxCoachRegister,
     },
     data() {
         return {
             holding: false,
             unholding: false,
+            boxCoachRegister: false,
         }
     },
 
@@ -164,6 +176,9 @@ export default {
         },
         showUnholdingModal() {
             this.unholding = true;
+        },
+        showBoxCoachRegisterModal(){
+            this.boxCoachRegister = true;
         }
     }
 }
