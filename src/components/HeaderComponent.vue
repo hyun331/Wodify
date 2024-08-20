@@ -96,7 +96,8 @@
                 </v-list-item>
 
                 <!-- Loop through notifications -->
-                <v-list-item v-for="(notification, index) in notifications" :key="index" @click="handleNotificationClick(index)">
+                <v-list-item v-for="(notification, index) in notifications" :key="index"
+                    @click="handleNotificationClick(index)">
                     <v-list-item-content>
                         <v-list-item-title>{{ notification.message }}</v-list-item-title>
                         <!-- Optional: Display the date or any other info -->
@@ -137,58 +138,49 @@ export default {
             this.notifications = JSON.parse(savedNotifications);
             this.liveAlert = this.notifications.length; // Update alert count
         }
-        if (this.isLogin) {
-            let sse = new EventSourcePolyfill(`${process.env.VUE_APP_API_BASE_URL}/subscribe`, { headers: { Authorization: `Bearer ${token}` } });
-            sse.addEventListener('connect', (event) => { console.log(event) });
-            sse.addEventListener('reservation', (event) => {
-                this.liveAlert++;
+        this.connectToEventSource(token)
 
-                let data = JSON.parse(event.data);
-
-                // 변환된 객체를 사용하여 필요한 데이터를 출력
-                console.log(data); // 전체 객체 출력
-                console.log(data.date); // 예: 특정 필드 출력
-
-                const newNotification = {
-                    memberName: data.memberName,
-                    date: data.date,
-                    message: this.userRole === 'USER'
-                        ? `대기 중이던 ${data.date}일자 수업에 예약이 확정되었습니다.`
-                        : `회원 ${data.memberName}님이 ${data.date}에 예약을 완료했습니다.`
-                };
-                this.notifications.push(newNotification);
-                localStorage.setItem('notifications', JSON.stringify(this.notifications));
-
-            });
-            // sse.addEventListener('reservationDetail', (event) => {
-            //     this.liveAlert++;
-
-            //     let data = JSON.parse(event.data);
-
-            //     console.log("왜 안되닝")
-            //     console.log(data); // 전체 객체 출력
-            //     console.log(data.date);
-
-            //     const newNotification = {
-            //         memberName: data.memberName,
-            //         date: data.date,
-            //         message: this.userRole === 'USER'
-            //             ? `${data.memberName}님 운동 1시간 전입니다.`
-            //             : ``
-            //     };
-            //     this.notifications.push(newNotification);
-            //     localStorage.setItem('notifications', JSON.stringify(this.notifications));
-
-            // });
-
-            sse.onerror = (error) => {
-                console.log("이거내")
-                console.log(error);
-                sse.close();
-            }
-        }
     },
     methods: {
+        connectToEventSource(token) {
+            if (this.isLogin) {
+                let sse = new EventSourcePolyfill(`${process.env.VUE_APP_API_BASE_URL}/subscribe`, { headers: { Authorization: `Bearer ${token}` } });
+                sse.addEventListener('connect', (event) => { console.log(event) });
+                sse.addEventListener('reservation', (event) => {
+                    this.liveAlert++;
+
+                    let data = JSON.parse(event.data);
+
+                    // 변환된 객체를 사용하여 필요한 데이터를 출력
+                    console.log(data); // 전체 객체 출력
+                    console.log(data.date); // 예: 특정 필드 출력
+
+                    const newNotification = {
+                        memberName: data.memberName,
+                        date: data.date,
+                        message: this.userRole === 'USER'
+                            ? `대기 중이던 ${data.date}일자 수업에 예약이 확정되었습니다.`
+                            : `회원 ${data.memberName}님이 ${data.date}에 예약을 완료했습니다.`
+                    };
+                    this.notifications.push(newNotification);
+                    localStorage.setItem('notifications', JSON.stringify(this.notifications));
+
+                });
+                sse.onerror = (error) => {
+                    console.error('Error event:', error);
+
+                    if (error.error && error.error.message.includes('Reconnecting')) {
+                        sse.close();
+
+                        // 0.05초의 딜레이 후 재연결 시도
+                        setTimeout(() => {
+                            console.log('Attempting to reconnect...');
+                            this.connectToEventSource(token); // Recursively call the function to reconnect
+                        }, 50);
+                    }
+                };
+            }
+        },
         kakaoLogin() {
             window.location.href = KAKAO_LOGIN_URL;
         },
@@ -204,9 +196,9 @@ export default {
             console.log(this.showNotifications);
         },
         handleNotificationClick(index) {
-            if(this.userRole === 'USER') {
+            if (this.userRole === 'USER') {
                 this.$router.push('/reservation-detail/list');
-            }else {
+            } else {
                 this.$router.push('/reservation/list');
             }
             // Redirect to /reservation/list
