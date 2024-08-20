@@ -92,7 +92,7 @@ public class InitialCeoDataLoader implements CommandLineRunner {
                     .name("김수연")
                     .email("eraltndus@gmail.com")
                     .phone("010-1324-8908")
-                    .role(Role.CEO)
+                    .role(Role.COACH)
                     .address("보라매로 87")
                     .deadLift(BigDecimal.valueOf(80.5))
                     .squat(BigDecimal.valueOf(60.5))
