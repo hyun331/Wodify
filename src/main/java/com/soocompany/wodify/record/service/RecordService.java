@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -61,6 +62,22 @@ public class RecordService {
         );
 
 
+//        time after 지금, 이전 다 false !-> true  // 지금보다 미래 시간 true -> false
+        if(reservationDetail.getReservation().getDate().isBefore(LocalDate.now())) {
+            System.out.println("예약 시간 이후 운동 기록입니다!");
+        }else if(reservationDetail.getReservation().getDate().isEqual(LocalDate.now())){
+            if (!reservationDetail.getReservation().getTime().isAfter(LocalTime.now())) {
+                System.out.println("예약 시간 이후 운동 기록입니다!");
+            }else{
+                log.error("recordCreate() : IllegalArgumentException");
+                throw new IllegalArgumentException("예약 시간 이후 운동을 기록해주세요.");
+            }
+        }else {
+            log.error("recordCreate() : IllegalArgumentException");
+            throw new IllegalArgumentException("예약 시간 이후 운동을 기록해주세요.");
+        }
+
+
         /* 예약내역에 대한 운동기록의 delYN이 Y일때 */
         if(recordReository.findByReservationDetailIdAndDelYn(dto.getReservationDetailId(), "Y").isPresent()){
             log.info("recordCreate() : 이미 한번이상 생성되었다가 삭제된 운동기록입니다. 새로 생성하는 것이 아니라 있는 기록을 수정합니다.");
@@ -68,6 +85,8 @@ public class RecordService {
                 log.error("recordCreate() : EntityNotFoundException:record");
                 return new EntityNotFoundException("운동기록이 없습니다.");
             });
+
+
 
 //            if(dto.getExerciseTime() == null){
 //                log.error("recordCreate() : IllegalArgumentException");
