@@ -160,26 +160,26 @@ export default {
                 localStorage.setItem('notifications', JSON.stringify(this.notifications));
 
             });
-            sse.addEventListener('reservationDetail', (event) => {
-                this.liveAlert++;
+            // sse.addEventListener('reservationDetail', (event) => {
+            //     this.liveAlert++;
 
-                let data = JSON.parse(event.data);
+            //     let data = JSON.parse(event.data);
 
-                console.log("왜 안되닝")
-                console.log(data); // 전체 객체 출력
-                console.log(data.date);
+            //     console.log("왜 안되닝")
+            //     console.log(data); // 전체 객체 출력
+            //     console.log(data.date);
 
-                const newNotification = {
-                    memberName: data.memberName,
-                    date: data.date,
-                    message: this.userRole === 'USER'
-                        ? `${data.memberName}님 운동 1시간 전입니다.`
-                        : ``
-                };
-                this.notifications.push(newNotification);
-                localStorage.setItem('notifications', JSON.stringify(this.notifications));
+            //     const newNotification = {
+            //         memberName: data.memberName,
+            //         date: data.date,
+            //         message: this.userRole === 'USER'
+            //             ? `${data.memberName}님 운동 1시간 전입니다.`
+            //             : ``
+            //     };
+            //     this.notifications.push(newNotification);
+            //     localStorage.setItem('notifications', JSON.stringify(this.notifications));
 
-            });
+            // });
 
             sse.onerror = (error) => {
                 console.log("이거내")
