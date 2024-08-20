@@ -1,5 +1,5 @@
 <template>
-    <div>
+    
         <v-container>
 
             <v-row class="d-flex mt-5" justify="center">
@@ -149,7 +149,7 @@
             <BoxCoachRegister v-model="boxCoachRegister" @update:dialog="boxCoachRegister = $event">
             </BoxCoachRegister>
         </v-container>
-    </div>
+  
 </template>
 
 <script>
@@ -191,9 +191,6 @@ export default {
 </script>
 
 <style scoped>
-
-
-
 .memberImg {
     border-radius: 50%;
     width: 100%;
