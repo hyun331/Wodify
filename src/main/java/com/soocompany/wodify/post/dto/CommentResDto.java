@@ -1,6 +1,7 @@
 package com.soocompany.wodify.post.dto;
 
 import com.soocompany.wodify.post.domain.Comment;
+import com.soocompany.wodify.post.domain.DateTimeFormatterUtil;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class CommentResDto{
     private String name;
     private String comment;
     private List<CommentResDto> replies;
-    private LocalDateTime createdTime;
+    private String createdTime;
     private LocalDateTime updatedTime;
     private String delYn;
 
@@ -32,7 +33,7 @@ public class CommentResDto{
                         .map(CommentResDto::fromEntity)
                         .collect(Collectors.toList())
                 )
-                .createdTime(comment.getCreatedTime())
+                .createdTime(DateTimeFormatterUtil.dateTime(comment.getCreatedTime()))
                 .updatedTime(comment.getUpdatedTime())
                 .delYn(comment.getDelYn())
                 .build();
