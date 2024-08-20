@@ -117,10 +117,10 @@
 
 
                     <!-- 차트 -->
-                    <v-row class="d-flex justify-content-center mt-5" justify="center">
-                        <v-col cols="12">
-                            <v-label class="d-flex justify-content-center mt-5">Exercise Records</v-label>
-                            <div class="chart-container">
+                    <v-row justify="center" class="mt-5">
+                        <v-col cols="12" md="10">
+                            <v-label class="d-flex justify-content-center mt-5">운동 기록</v-label>
+                            <div class="chart-container" :style="{ height: chartHeight, width: chartWidth }">
                                 <exercise-time-chart :records="records" />
                             </div>
                         </v-col>
@@ -155,6 +155,8 @@ export default {
         return {
             holding: false,
             unholding: false,
+            chartHeight: '300px', // 여기서 차트의 높이를 설정합니다
+            chartWidth: '130%' // 여기서 차트의 너비를 설정합니다
         }
     },
 
@@ -172,9 +174,7 @@ export default {
 <style scoped>
 .chart-container {
     width: 100%;
-    /* 차트의 너비를 100%로 설정 */
-    height: 400px;
-    /* 원하는 높이로 설정, 예: 400px */
+    height: 100px; /* 여기서 높이를 늘려줍니다 */
 }
 
 .memberImg {

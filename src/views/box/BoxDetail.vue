@@ -107,7 +107,7 @@ export default {
     word-wrap: break-word; /* 긴 단어가 줄바꿈되도록 설정 */
     white-space: normal; /* 줄바꿈을 허용하도록 설정 */
     position: relative;
-    
+    left: 100px; 
 }
 
 .container {
