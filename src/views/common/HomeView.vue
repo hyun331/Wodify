@@ -1,7 +1,10 @@
 <template>
-    <div>
+    <div class="background">
         <!-- <img src="@/assets/wodify.png" class="header-image" /> -->
         <div class="slider">
+            <div class="logo-overlay">
+                <img src="@/assets/wodify.png" alt="Logo" class="logo-image" />
+            </div>
             <div class="slider-wrapper">
                 <div class="slider-container" :style="sliderStyle">
                     <img v-for="(image, index) in images" :key="index" :src="image" alt="Banner Image"
@@ -25,12 +28,8 @@
                 </div>
             </div>
         </div>
-
-    </div>
-    <div>
         <FooterComponent />
     </div>
-
 </template>
 
 <script>
@@ -114,14 +113,41 @@ export default {
 </script>
 
 <style scoped>
+.background {
+    min-height: 100vh;
+    background-color: white;
+}
+
 .slider {
+    position: relative;
+    width: 100vw; /* 전체 너비를 페이지 전체로 확장 */
+    height: 900px;
+    overflow: hidden;
+    margin: 0; /* 여백 제거 */
+    border: none; /* 테두리 제거 */
+    border-radius: 0; /* 모서리 둥글림 제거 */
+    /*     
     position: relative;
     width: 85vw;
     height: 900px;
     overflow: hidden;
     margin: 0 auto;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 4px; */
+}
+
+.logo-overlay {
+    position: absolute;
+    top: 20px; /* 상단에서 20px 아래 */
+    left: 30%;
+    transform: translateX(-50%);
+    z-index: 15;
+}
+
+.logo-image {
+    width: 700px; /* 로고 크기 */
+    height: auto;
+    /* 원하는 경우 추가 스타일 적용 */
 }
 
 .slider-wrapper {
