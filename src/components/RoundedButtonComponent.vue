@@ -9,7 +9,7 @@ export default {
     props: ['text', 'buttonType']
 }
 </script>
-<style>
+<style scoped>
 .rounded-button {
     background-color: #000000; /* 버튼 배경색 */
     border: none;

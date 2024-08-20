@@ -2,7 +2,7 @@
     <div class="container">
         <v-container>
             <div>
-                <h1 class="title">BOXES</h1>
+                <h1 class="rubikMonoOne">BOXES</h1>
                 <br><br>
                 <v-row>
                     <v-col>
@@ -18,7 +18,9 @@
                                     </v-text-field>
                                 </v-col>
                                 <v-col cols="auto">
-                                    <v-btn type="submit">Search</v-btn>
+                                    <v-btn type="submit" class="search-button" icon style="margin-top: 5px; margin-right: 20px;">
+                                        <v-icon>mdi-magnify</v-icon>
+                                    </v-btn>
                                 </v-col>
                             </v-row>
                         </v-form>
@@ -70,7 +72,7 @@ export default {
     data() {
         return {
             currentPage: 1,
-            itemsPerPage: 1,
+            itemsPerPage: 10,
             boxes: [],
             totalPages: 1,
             searchType: 'name',
@@ -119,15 +121,20 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap');
 
-.title {
-    font-family: 'Rubik Mono One', sans-serif;
-}
 
 .container {
     background-color: #D9D9D9;
     min-height: 100vh;
 }
+
+.search-button {
+    margin-top: 10px; /* 버튼의 위쪽 여백을 16px로 설정하여 아래로 이동 */
+    border-radius: 100px; /* 버튼 모서리를 둥글게 설정 (값 조정 가능) */
+    padding: 8px 16px; /* 버튼의 패딩 조정 */
+}
+
+
 </style>

@@ -1,13 +1,9 @@
 <template>
   <v-container style="min-width: 345px; min-height: 600px;">
-    <v-row class="rubikMonoOne" style="font-size: 50px; margin-left: 3px">
-      <v-col class="auto-width" style="padding: 0; margin-right: 15px;">
-        Wod
-      </v-col>
-      <v-col class="auto-width" style="padding: 0;">
-        find
-      </v-col>
-    </v-row>
+    <!-- <v-row class="rubikMonoOne" style="font-size: 50px; margin-left: 3px">
+      <v-col class="auto-width" style="padding: 0; margin-right: 15px;"> Wod </v-col>
+      <v-col class="auto-width" style="padding: 0;"> find </v-col>
+    </v-row> -->
 
     <v-row style="margin:1px">
       <v-text-field 
@@ -92,32 +88,28 @@ export default {
   },
 };
 </script>
-
 <style scoped>
+/*
 .auto-width {
   flex: 0 1 auto;
   width: auto;
   display: inline-block;
 }
-
 .custom-field {
   background-color: rgba(255, 255, 255, 0.5);
 }
-
+*/
 .custom-text-box {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.7);
   border-radius: 4px;
-  margin-bottom: 2px;
-}
-
-.custom-text-box {
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 4px;
+  margin-top: 3px;
+  margin-right: 1px;
+  margin-left: 1px;
   margin-bottom: 2px;
 }
 
 .exercise-group {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.7);
   border-radius: 4px;
   margin: 2px;
   margin-bottom: 4px;

@@ -3,7 +3,7 @@
     <v-app class="app-background">
       <v-container fluid>
         <div>
-          <h1 class="title">BOX CREATE</h1>
+          <h1 class="rubikMonoOne">BOX CREATE</h1>
         </div><br><br>
         <v-row justify="center">
           <v-col cols="12" sm="4" md="6">
@@ -128,9 +128,6 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap');
 
-.title {
-  font-family: 'Rubik Mono One', sans-serif;
-}
 
 .app-background {
   background-color: #D9D9D9;

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    
         <v-container>
 
             <v-row class="d-flex mt-5" justify="center">
@@ -123,10 +123,10 @@
 
 
                     <!-- 차트 -->
-                    <v-row class="d-flex justify-content-center mt-5" justify="center">
-                        <v-col cols="12">
-                            <v-label>Time by reservation</v-label>
-                            <div class="chart-container">
+                    <v-row justify="center" class="mt-5">
+                        <v-col cols="12" md="10">
+                            <v-label class="d-flex justify-content-center mt-5">운동 기록</v-label>
+                            <div class="chart-container" :style="{ height: chartHeight, width: chartWidth }">
                                 <exercise-time-chart :records="records" />
                             </div>
                         </v-col>
@@ -143,7 +143,7 @@
             <BoxCoachRegister v-model="boxCoachRegister" @update:dialog="boxCoachRegister = $event">
             </BoxCoachRegister>
         </v-container>
-    </div>
+  
 </template>
 
 <script>
@@ -187,9 +187,7 @@ export default {
 <style scoped>
 .chart-container {
     width: 100%;
-    /* 차트의 너비를 100%로 설정 */
-    height: 400px;
-    /* 원하는 높이로 설정, 예: 400px */
+   
 }
 
 .memberImg {
