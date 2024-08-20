@@ -142,6 +142,7 @@ public class InitialCeoDataLoader implements CommandLineRunner {
 
         if(memberService.isMemberExist("gildong7@naver.com", "N")==null){
             MemberSaveReqDto member = MemberSaveReqDto.builder()
+
                     .name("정지혜")
                     .email("gildong7@naver.com")
                     .phone("010-2343-2343")
