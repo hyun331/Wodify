@@ -191,6 +191,8 @@ export default {
 </script>
 
 <style scoped>
+
+
 .memberImg {
     border-radius: 50%;
     width: 100%;

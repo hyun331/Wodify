@@ -8,7 +8,7 @@
                         <img :src="boxDetail.logo" alt="Box Logo" class="rounded-logo" />
                     </v-col>
                     <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
-                    <h1 class="rubikMonoOne">{{ boxDetail.name }}</h1>
+                    <h1 class="black-han-sans-regular">{{ boxDetail.name }}</h1>
                     <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
                 </v-row>
                 <!-- 나머지 정보를 표시하는 카드 -->
@@ -189,7 +189,7 @@ export default {
     font-size: 30px;
     height: 100%;
     position: relative;
-    left: 100px;
+    left: 60px;
 }
 
 .text {
@@ -312,4 +312,11 @@ export default {
     background-color: #797876;
     text-align: right;
 }
+
+.black-han-sans-regular {
+    font-family: "Black Han Sans", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 130px;
+  }
 </style>
