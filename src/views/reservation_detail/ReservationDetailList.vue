@@ -1,7 +1,5 @@
 <template>
-  <div class="page-container">
-
-
+  <div>
     <v-container>
       <div style="line-height: 1;">
         <h1 class="rubikMonoOne">MY</h1>
