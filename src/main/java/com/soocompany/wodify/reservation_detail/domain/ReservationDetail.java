@@ -49,6 +49,7 @@ public class ReservationDetail extends BaseEntity {
                 .wodId(reservation.getWod().getId())
                 .recordId(this.record != null && "N".equals(this.record.getDelYn()) ? this.record.getId() : null)
                 .recordSnF(this.record != null && "N".equals(this.record.getDelYn()) ? this.record.getSnf() : null)
+                .createdTime(String.valueOf(this.getCreatedTime()))
                 .build();
     }
 
