@@ -1,5 +1,5 @@
 <template>
-  <v-list-item style="margin-bottom: -5px;">
+  <v-list-item style="margin-bottom: -5px;padding-right: -30px; margin-left: -10px;margin-top: -10px;">
     <v-list-item-content>
       <v-row align="center">
         <v-col cols="auto">
@@ -7,39 +7,69 @@
         </v-col>
         <v-col style="width: 100px;"></v-col>
         <v-col cols="auto" style="text-align: right;">
-          <v-btn v-if="!isEditing" @click="startReplying" class="action-button" style="min-width: 30px; max-width: 30px; padding: 5px;">
+          <v-btn v-if="!isEditing" @click="startReplying" class="action-button"
+            style="min-width: 30px; max-width: 30px; padding: 5px;">
             <v-icon small>mdi-message-reply</v-icon>
           </v-btn>
-          <v-btn v-if="!isEditing" @click="startEditing" class="action-button" style="min-width: 30px; max-width: 30px; padding: 5px;">
+          <v-btn v-if="!isEditing" @click="startEditing" class="action-button"
+            style="min-width: 30px; max-width: 30px; padding: 5px;">
             <v-icon small>mdi-pencil</v-icon>
           </v-btn>
-          <v-btn v-if="!isEditing" @click="deleteComment" class="action-button" style="min-width: 30px; max-width: 30px; padding: 5px;">
+          <v-btn v-if="!isEditing" @click="showDeleteConfirmationModal" class="action-button"
+            style="min-width: 30px; max-width: 30px; padding: 5px;">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
-          <v-btn v-if="isEditing" @click="saveEdit" class="action-button" style="min-width: 30px; max-width: 30px; padding: 5px;">
-            <v-icon>mdi-check-circle</v-icon> 
+          <v-btn v-if="isEditing" @click="saveEdit" class="action-button"
+            style="min-width: 30px; max-width: 30px; padding: 5px;">
+            <v-icon>mdi-check-circle</v-icon>
           </v-btn>
-          <v-btn v-if="isEditing" @click="cancelEdit" class="action-button" style="min-width: 30px; max-width: 30px; padding: 5px;">
+          <v-btn v-if="isEditing" @click="cancelEdit" class="action-button"
+            style="min-width: 30px; max-width: 30px; padding: 5px;">
             <v-icon>mdi-close-circle</v-icon>
           </v-btn>
         </v-col>
       </v-row>
+
+      <!-- 삭제 확인 모달 -->
+      <v-dialog v-model="showDeleteModal" persistent max-width="400px">
+        <v-card>
+          <v-card-text>정말로 댓글을 삭제하시겠습니까?</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn class="action-button" text @click="confirmDelete">확인</v-btn>
+            <v-btn class="action-button" text @click="closeDeleteModal">취소</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- 댓글 수정 및 등록 결과 모달 -->
+      <v-dialog v-model="showResultModal" persistent max-width="400px">
+        <v-card>
+          <v-card-text>{{ resultMessage }}</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="closeResultModal">확인</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
       <!-- 댓글 내용 -->
       <div v-if="!isEditing">{{ commentCopy.comment }}</div>
       <v-text-field v-else v-model="editedComment" dense hide-details></v-text-field>
 
       <!-- 답글 작성 필드 -->
-      <v-row v-if="isReplying" class="mt-2">
+      <v-row v-if="isReplying">
         <v-col cols="10">
-          <v-text-field class="field-style" v-model="replyComment" label="답글을 작성하세요..." hide-details
+          <v-text-field class="field-style" v-model="replyComment" label="Write a reply..." hide-details
             dense></v-text-field>
         </v-col>
         <v-col cols="2" class="d-flex justify-end">
-          <v-btn small @click="submitReply" color="primary"
-            class="action-button"><v-icon>mdi-check-circle</v-icon></v-btn>
-          <v-btn small @click="cancelReply" color="secondary"
-            class="action-button"><v-icon>mdi-close-circle</v-icon></v-btn>
+          <v-btn small @click="submitReply" class="action-button"
+            style="min-width: 30px; max-width: 30px; padding: 5px;">
+            <v-icon>mdi-check-circle</v-icon></v-btn>
+          <v-btn small @click="cancelReply" class="action-button"
+            style="min-width: 30px; max-width: 30px; padding: 5px;">
+            <v-icon>mdi-close-circle</v-icon></v-btn>
         </v-col>
       </v-row>
 
@@ -64,6 +94,9 @@ export default {
       editedComment: this.comment.comment,
       replyComment: '', // 답글 내용을 담는 변수
       commentCopy: { ...this.comment },
+      showDeleteModal: false, // 삭제 확인 모달 제어 변수
+      showResultModal: false, // 작업 결과 모달 제어 변수
+      resultMessage: "", // 모달에 표시될 메시지
     };
   },
   methods: {
@@ -82,12 +115,15 @@ export default {
         if (response.status === 200) {
           this.isEditing = false;
           this.commentCopy.comment = this.editedComment;
+          this.resultMessage = response.data.status_message;
         } else {
-          alert("댓글 수정에 실패했습니다.");
+          this.resultMessage = response.data.error_message;
         }
       } catch (error) {
         console.error("Error updating comment:", error.response ? error.response.data : error.message);
-        alert("댓글 수정 중 오류가 발생했습니다.");
+        this.resultMessage = "댓글 수정 중 오류가 발생했습니다.";
+      } finally {
+        this.showResultModal = true; // 결과 모달 열기
       }
     },
     startReplying() {
@@ -99,7 +135,8 @@ export default {
     },
     async submitReply() {
       if (!this.replyComment.trim()) {
-        alert("답글을 입력하세요.");
+        this.resultMessage = "답글을 입력하세요.";
+        this.showResultModal = true; // 결과 모달 열기
         return;
       }
 
@@ -110,32 +147,42 @@ export default {
         });
 
         if (response.status === 201) {
-          alert("답글이 등록되었습니다.");
+          this.resultMessage = response.data.status_message;
           this.commentCopy.replies.push(response.data.result); // 새 답글을 댓글 목록에 추가
           this.isReplying = false;
           this.replyComment = '';
         } else {
-          alert("답글 등록에 실패했습니다.");
+          this.resultMessage = response.data.error_message;
         }
       } catch (error) {
         console.error("Error submitting reply:", error.response ? error.response.data : error.message);
-        alert("답글 등록 중 오류가 발생했습니다.");
+        this.resultMessage = "답글 등록 중 오류가 발생했습니다.";
       }
     },
+    confirmDelete() {
+      this.closeDeleteModal(); // 모달 닫기
+      this.deleteComment(); // 실제 삭제 로직 호출
+    },
+    showDeleteConfirmationModal() {
+      this.showDeleteModal = true; // 삭제 확인 모달 열기
+    },
+    closeDeleteModal() {
+      this.showDeleteModal = false; // 삭제 확인 모달 닫기
+    },
     async deleteComment() {
-      if (confirm("이 댓글을 삭제하시겠습니까?")) {
-        try {
-          const response = await axios.patch(`http://localhost:8090/post/comment/delete/${this.comment.id}`);
-          if (response.status === 200) {
-            alert("댓글이 삭제되었습니다.");
-            this.$emit('comment-deleted', this.comment.id);
-          } else {
-            alert("댓글 삭제에 실패했습니다.");
-          }
-        } catch (error) {
-          console.error("Error deleting comment:", error.response ? error.response.data : error.message);
-          alert("댓글 삭제 중 오류가 발생했습니다.");
+      try {
+        const response = await axios.patch(`http://localhost:8090/post/comment/delete/${this.comment.id}`);
+        if (response.status === 200) {
+          this.resultMessage = response.data.status_message;
+          this.$emit('comment-deleted', this.comment.id);
+        } else {
+          this.resultMessage = response.data.error_message;
         }
+      } catch (error) {
+        console.error("Error deleting comment:", error.response ? error.response.data : error.message);
+        this.resultMessage = "댓글 삭제 중 오류가 발생했습니다.";
+      } finally {
+        this.showResultModal = true; // 결과 모달 열기
       }
     },
     onReplyDeleted(replyId) {
@@ -146,8 +193,11 @@ export default {
       if (!this.commentCopy.replies.find(reply => reply.id === newReply.id)) {
         this.commentCopy.replies.push(newReply);
       }
-    }
-  }
+    },
+    closeResultModal() {
+      this.showResultModal = false; // 작업 결과 모달 닫기
+    },
+  },
 }
 </script>
 
@@ -166,6 +216,7 @@ export default {
   padding: 0;
   /* 버튼 내부의 패딩을 제거 */
   margin: 0;
+  margin-left: 1px;
   /* 필요 시 마진을 제거 */
   line-height: 20px;
   /* 텍스트가 중앙에 위치하도록 설정 */

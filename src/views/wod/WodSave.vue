@@ -76,7 +76,7 @@
             <v-card>
                 <v-card-text>데이터가 없습니다.</v-card-text>
                 <v-card-actions>
-                    <v-btn color="primary" text @click="closeNoDataModal">확인</v-btn>
+                    <v-btn class="action-button" text @click="closeNoDataModal">확인</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -90,8 +90,8 @@
                 </v-card-text>
                 <v-spacer></v-spacer>
                 <v-card-actions>
-                    <v-btn color="green" text @click="addWodData">추가</v-btn>
-                    <v-btn color="grey" text @click="closeDataModal">취소</v-btn>
+                    <v-btn class="action-button" text @click="addWodData">추가</v-btn>
+                    <v-btn class="action-button" text @click="closeDataModal">취소</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -102,8 +102,8 @@
                 <v-card-text style="margin-bottom: -20px;">등록하시겠습니까?</v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="green" text @click="submitForm">확인</v-btn>
-                    <v-btn color="grey" text @click="closeSubmitModal">취소</v-btn>
+                    <v-btn class="action-button" text @click="submitForm">확인</v-btn>
+                    <v-btn class="action-button" text @click="closeSubmitModal">취소</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -114,7 +114,7 @@
                 <v-card-text style="margin-bottom: -20px;">{{ statusMessage }}</v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="confirmResultModal">확인</v-btn>
+                    <v-btn class="action-button" text @click="confirmResultModal">확인</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
