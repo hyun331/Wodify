@@ -1,6 +1,16 @@
 <template>
   <div>
-    <Line :data="chartData" :options="chartOptions" />
+    <v-container>
+      <v-row justify="center" class="mt-5">
+        <v-col cols="12" md="10">
+          <v-card>
+            <v-card-text>
+              <Line :data="chartData" :options="chartOptions" />
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -63,7 +73,7 @@ export default {
           x: {
             title: {
               display: true,
-              text: 'My Reservation',
+              text: 'record',
               color: '#3C3D3D',
               font: {
                 family: 'Rubik Mono One',
@@ -94,12 +104,21 @@ export default {
                 family: 'Rubik Mono One',
                 size: 12
               },
+              stepSize: 7200,
               callback: (value) => {
                 // 초 단위에서 HH:00:00 형식으로 변환
                 const hours = Math.floor(value / 3600);
-                return `${String(hours).padStart(2, '0')}:00:00`;
+                return `${String(hours).padStart(2, '0')}H`;
               }
+            },
+            grid: {
+              lineWidth: 1 // y축의 그리드 라인의 두께 설정
             }
+          }
+        },
+        elements: {
+          line: {
+            borderWidth: 2 // 선의 두께 설정
           }
         }
       };
@@ -121,3 +140,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.chart-container {
+  width: 200%;
+  height: 400px;
+}
+</style>
