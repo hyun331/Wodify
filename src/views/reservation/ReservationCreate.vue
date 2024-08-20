@@ -180,10 +180,22 @@ export default {
         removeEntry(index) {
             this.entries.splice(index, 1);
         },
+        hasDuplicateTimes() {
+            const times = this.entries.map(entry => entry.time);
+            const uniqueTimes = new Set(times);
+            return times.length !== uniqueTimes.size;
+        },
         async reservation() {
             if (!this.formattedDate) {
                 this.dialogTitle = "입력사항을 모두 입력해주세요";
                 this.dialogText = "입력사항을 모두 입력해주세요";
+                this.alertModal = true;
+                return;
+            }
+
+            if (this.hasDuplicateTimes()) {
+                this.dialogTitle = "중복된 시간이 있습니다";
+                this.dialogText = "동일한 시간에 두 개 이상의 예약을 할 수 없습니다. 시간을 다시 선택해 주세요.";
                 this.alertModal = true;
                 return;
             }
