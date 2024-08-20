@@ -1,4 +1,5 @@
 <template>
+
     <MemberDetailComponent 
     :memberInfo="memberInfo"
     :isMemberBaseUrl="isMemberBaseUrl"
@@ -71,4 +72,3 @@ export default {
     
 }
 </script>
-
