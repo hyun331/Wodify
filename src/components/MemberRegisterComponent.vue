@@ -120,7 +120,6 @@ import axios from 'axios';
 import RoundedButtonComponent from './RoundedButtonComponent.vue';
 import AlertModalComponent from './AlertModalComponent.vue';
 import { KAKAO_LOGIN_URL } from '@/router/KakaoLoginUrl';
-
 export default {
     props: ['propsRole'],
     components: {
