@@ -33,7 +33,6 @@
                             text="등록/연장"
                             :buttonType='submit'
                             > </RoundedButtonComponent>
-                            <!-- <v-btn color="primary" type="submit" block>등록/연장</v-btn> -->
                         </v-col>
                         <v-col>    
                             <RoundedButtonComponent
@@ -41,7 +40,6 @@
                             :buttonType="'button'" 
                             @click="closeModal"
                             > </RoundedButtonComponent>                
-                            <!-- <v-btn color="secondary" @click="closeModal" block>X</v-btn> -->
 
 
                         </v-col>
