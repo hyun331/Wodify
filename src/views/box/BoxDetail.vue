@@ -7,7 +7,7 @@
                     <img :src="boxDetail.logo" alt="Box Logo" class="rounded-logo" />
                 </v-col>
                 <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
-                <h1 class="noto-sans">{{ boxDetail.name }}</h1>
+                <h1 class="black-han-sans-regular">{{ boxDetail.name }}</h1>
                 <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
             </v-row>
             <!-- 나머지 정보를 표시하는 카드 -->
@@ -86,7 +86,7 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&display=swap');
 
 .title {
     font-family: 'Rubik Mono One', sans-serif;
@@ -201,5 +201,12 @@ export default {
     font-size: 120px;
     font-weight: 400;
     font-style: normal;
+  }
+
+  .black-han-sans-regular {
+    font-family: "Black Han Sans", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 130px;
   }
 </style>

@@ -10,17 +10,17 @@
 
         <v-container>
             <br>
-            <v-row class="reservationHead">
-                <v-col cols="6" class="d-flex justify-center align-center">
+            <v-row class="reservationHead" justify="center">
+                <v-col cols="5" class="d-flex justify-center align-center">
                     DATE
                 </v-col>
-                <v-col cols="6" class="d-flex justify-center align-center">
+                <v-col cols="5" class="d-flex justify-center align-center">
                     WOD
                 </v-col>
             </v-row>
             <v-form @submit.prevent="reservation">
                 <v-row class="d-flex justify-center">
-                    <v-col cols="6" class="d-flex justify-center align-center">
+                    <v-col cols="5" class="d-flex justify-center align-center">
                         <div class="date-picker-container">
                             <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected"
                                 style="width: 400px;" class="custom-date-picker">
@@ -28,28 +28,30 @@
                             </v-date-picker>
                         </div>
                     </v-col>
-                    <v-col cols="6" class="justify-center align-center bordered wod">
-                        <div class="flex-between padded">
-                            <span>date</span>
-                            <span>{{ wod.date }}</span>
+                    <v-col cols="5" class="justify-center align-center">
+                        <div class="bordered wod">
+                            <div class="flex-between padded">
+                                <span>date</span>
+                                <span>{{ wod.date }}</span>
+                            </div>
+                            <div class="flex-between padded">
+                                <span>timeCap</span>
+                                <span>{{ wod.timeCap }}</span>
+                            </div>
+                            <div class="flex-between padded">
+                                <span>rounds</span>
+                                <span>{{ wod.rounds }}</span>
+                            </div>
+                            <div class="wod-info-container">{{ wod.info }}</div>
+                            <v-table>
+                                <tbody style="background-color: #D9D9D9;">
+                                    <tr v-for="detail in wod.wodDetResDtoList" :key="detail.id">
+                                        <td>{{ detail.name }}</td>
+                                        <td>{{ detail.contents }}</td>
+                                    </tr>
+                                </tbody>
+                            </v-table>
                         </div>
-                        <div class="flex-between padded">
-                            <span>timeCap</span>
-                            <span>{{ wod.timeCap }}</span>
-                        </div>
-                        <div class="flex-between padded">
-                            <span>rounds</span>
-                            <span>{{ wod.rounds }}</span>
-                        </div>
-                        <div class="wod-info-container">{{ wod.info }}</div>
-                        <v-table>
-                            <tbody style="background-color: #D9D9D9;">
-                                <tr v-for="detail in wod.wodDetResDtoList" :key="detail.id">
-                                    <td>{{ detail.name }}</td>
-                                    <td>{{ detail.contents }}</td>
-                                </tr>
-                            </tbody>
-                        </v-table>
                     </v-col>
                 </v-row>
                 <v-row class="d-flex justify-center align-center">
@@ -221,8 +223,16 @@ export default {
                         this.dialogText = "대기하시겠습니까?";
                         this.waitingModal = true;
                     } else {
+
+                        let errorMessage = "";
+                        if (error.response.data) {
+                            // 서버에서 반환한 에러 메시지가 있는 경우
+                            errorMessage += `: ${error.response.data.error_message}`;
+                        } else if (error.message) {
+                            errorMessage += `: ${error.message}`;
+                        }
                         this.dialogTitle = "예약이 정상적으로 처리되지 않았습니다";
-                        this.dialogText = error;
+                        this.dialogText = errorMessage;
                         this.alertModal = true;
                     }
                     console.log(error);
@@ -324,5 +334,6 @@ export default {
     margin-top: 20px;
     background-color: #D9D9D9;
     border-radius: 5px;
+    padding: 10px;
 }
 </style>
