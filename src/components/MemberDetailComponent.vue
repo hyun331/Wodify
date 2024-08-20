@@ -133,6 +133,7 @@
 
                     <!-- 차트 -->
                     <v-card v-else>
+
                         <v-card-title>
                           <v-row class="d-flex justify-center align-center">
                             <v-col class="text-center">
