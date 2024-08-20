@@ -25,6 +25,7 @@ public interface ReservationDetailRepository extends JpaRepository<ReservationDe
             "ORDER BY r.date DESC")
     Page<ReservationDetail> findByMemberAndDelYn(@Param("member") Member member, Pageable pageable);
     List<ReservationDetail> findByReservationAndDelYn(Reservation reservation, String delYn);
+//    List<ReservationDetail> findAllByReservationAndDelYn(Reservation reservation, String delYn); //수연
     @Query("SELECT rd FROM ReservationDetail rd " +
             "JOIN rd.reservation r " +
             "JOIN rd.member m " +
