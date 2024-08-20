@@ -45,10 +45,10 @@ export default {
     },
     methods: {
         myBox() {
-            window.location.href = '/box/mybox';
+            this.$router.push('/box/mybox');
         },
         home() {
-            window.location.href = '/';
+          this.$router.push('/');
         }
     }
 };

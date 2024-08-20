@@ -72,7 +72,7 @@ export default {
     data() {
         return {
             currentPage: 1,
-            itemsPerPage: 10,
+            itemsPerPage: 5,
             boxes: [],
             totalPages: 1,
             searchType: 'name',

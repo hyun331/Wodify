@@ -1,14 +1,13 @@
 <template>
     <div class="page-container">
         <v-container>
-            <v-row class="align-center" style="height: 100%; margin-top: 16px;">
-                <v-spacer></v-spacer>
+            <v-row class="align-left justify-start" style="height: 100%; margin-top: 16px;">
                 <v-col cols="auto" class="text-left">
                     <img :src="boxDetail.logo" alt="Box Logo" class="rounded-logo" />
                 </v-col>
-                <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
-                <h1 class="black-han-sans-regular">{{ boxDetail.name }}</h1>
-                <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
+                <v-col class="d-flex align-center">
+                    <h1 class="black-han-sans-regular">{{ boxDetail.name }}</h1>
+                </v-col>
             </v-row>
             <v-row justify="center">
                 <v-col cols="60" md="48" lg="42">

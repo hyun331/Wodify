@@ -1,14 +1,13 @@
 <template>
     <div class="page-container">
         <v-container>
-            <v-row class="align-center" style="height: 100%; margin-top: 16px;">
-                <v-spacer></v-spacer>
+            <v-row class="align-left justify-start" style="height: 100%; margin-top: 16px;">
                 <v-col cols="auto" class="text-left">
                     <img :src="boxDetail.logo" alt="Box Logo" class="rounded-logo" />
                 </v-col>
-                <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
-                <h1 class="black-han-sans-regular">{{ boxDetail.name }}</h1>
-                <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
+                <v-col class="d-flex align-center">
+                    <h1 class="black-han-sans-regular">{{ boxDetail.name }}</h1>
+                </v-col>
             </v-row>
             <v-row justify="center">
                 <v-col cols="60" md="48" lg="42">
@@ -27,15 +26,14 @@
                                 </tbody>
                             </v-table>
                         </v-card-text>
-                            <v-card-actions v-if="userRole === 'CEO'" class="card-actions">
-                                <v-spacer></v-spacer>
-                                <v-btn small class="hover-btn mx-auto custom-btn" @click="updateBox">UPDATE</v-btn>
-                                <v-btn small class="hover-btn mx-auto custom-btn"
-                                    @click="showDeleteDialog">DELETE</v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-col>
-                </v-row>
+                        <v-card-actions v-if="userRole === 'CEO'" class="card-actions">
+                            <v-spacer></v-spacer>
+                            <v-btn small class="hover-btn mx-auto custom-btn" @click="updateBox">UPDATE</v-btn>
+                            <v-btn small class="hover-btn mx-auto custom-btn" @click="showDeleteDialog">DELETE</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-col>
+            </v-row>
         </v-container>
         <OrderListComponent :isAdmin="false" />
 
@@ -66,9 +64,10 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
     </div>
     <AlertModalComponent v-model="alertModal" @update:dialog="alertModal = $event" :dialogTitle="dialogTitle"
-        :dialogText="dialogText" />
+        :dialogText="dialogText" @click="home" />
     <BoxCoachRegister v-model="boxCoachRegister" @update:dialog="boxCoachRegister = $event" />
 </template>
 
@@ -132,6 +131,9 @@ export default {
         }
     },
     methods: {
+        home() {
+            this.$router.push('/');
+        },
         updateBox() {
             this.$router.push('/box/update');
         },
@@ -143,7 +145,7 @@ export default {
         },
         closeSuccessDialog() {
             this.successDialog = false; // 삭제 성공 다이얼로그 숨기기
-            window.location.href = '/';
+            this.$router.push('/');
         },
         async confirmDelete() {
             try {
@@ -172,7 +174,8 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&display=swap');
 
 .page-container {
-    overflow-x: hidden; /* 페이지 전체의 수평 스크롤 숨기기 */
+    overflow-x: hidden;
+    /* 페이지 전체의 수평 스크롤 숨기기 */
 }
 
 .flex-card-row {
@@ -189,16 +192,19 @@ export default {
 
 .dynamic-card {
     width: 100%;
-    min-height: 500px; /* 원하는 최소 높이 설정 */
+    min-height: 500px;
+    /* 원하는 최소 높이 설정 */
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* 내부 스크롤 숨기기 */
+    overflow: hidden;
+    /* 내부 스크롤 숨기기 */
 }
 
 .v-table {
     width: 100%;
     table-layout: fixed;
-    overflow-x: auto; /* 수평 스크롤이 필요할 때만 표시 */
+    overflow-x: auto;
+    /* 수평 스크롤이 필요할 때만 표시 */
 }
 
 .title {
@@ -206,44 +212,61 @@ export default {
     font-size: 30px;
     height: 100%;
     position: relative;
-    left: 10px; 
+    left: 10px;
 }
 
 .text {
-    font-size: 25px; /* 글씨 크기 설정 */
-    display: flex; /* 플렉스 박스를 사용하여 정렬 */
-    align-items: flex-start; /* 위쪽으로 정렬 */
-    justify-content: flex-start; /* 왼쪽으로 정렬 */
-    height: auto; /* 셀 높이를 자동으로 조정 */
-    word-wrap: break-word; /* 긴 단어가 줄바꿈되도록 설정 */
-    white-space: normal; /* 줄바꿈을 허용하도록 설정 */
-    margin-bottom: 20px; /* 항목 간의 간격 조정 */
+    font-size: 25px;
+    /* 글씨 크기 설정 */
+    display: flex;
+    /* 플렉스 박스를 사용하여 정렬 */
+    align-items: flex-start;
+    /* 위쪽으로 정렬 */
+    justify-content: flex-start;
+    /* 왼쪽으로 정렬 */
+    height: auto;
+    /* 셀 높이를 자동으로 조정 */
+    word-wrap: break-word;
+    /* 긴 단어가 줄바꿈되도록 설정 */
+    white-space: normal;
+    /* 줄바꿈을 허용하도록 설정 */
+    margin-bottom: 20px;
+    /* 항목 간의 간격 조정 */
 }
 
 .data-value {
-    white-space: pre-wrap; /* 줄바꿈 유지 */
-    padding-top: 60px; /* 항목 간 간격 조정 */
+    white-space: pre-wrap;
+    /* 줄바꿈 유지 */
+    padding-top: 60px;
+    /* 항목 간 간격 조정 */
     padding-bottom: 60px;
 }
 
 .v-table {
-    width: 100%; /* 테이블이 부모 요소의 전체 너비를 차지하도록 설정 */
-    table-layout: auto; /* 테이블 열 너비를 자동 조정 */
+    width: 100%;
+    /* 테이블이 부모 요소의 전체 너비를 차지하도록 설정 */
+    table-layout: auto;
+    /* 테이블 열 너비를 자동 조정 */
 }
 
 .v-table tbody tr+tr {
-    padding-top: 50px; /* 각 섹션 사이의 간격 조정 */
+    padding-top: 50px;
+    /* 각 섹션 사이의 간격 조정 */
 }
 
 .dynamic-card {
-    min-height: 200px; /* 기본 카드 높이 설정 */
+    min-height: 200px;
+    /* 기본 카드 높이 설정 */
     display: flex;
-    flex-direction: column; /* 내용에 따라 카드가 늘어나도록 설정 */
-    overflow: hidden; /* 카드 내용이 넘치지 않도록 설정 */
+    flex-direction: column;
+    /* 내용에 따라 카드가 늘어나도록 설정 */
+    overflow: hidden;
+    /* 카드 내용이 넘치지 않도록 설정 */
 }
 
 .v-card-text {
-    flex: 1; /* 카드 내용이 카드의 남은 공간을 차지하도록 설정 */
+    flex: 1;
+    /* 카드 내용이 카드의 남은 공간을 차지하도록 설정 */
 }
 
 .rounded-logo {
@@ -288,5 +311,4 @@ export default {
     border: none;
     /* 버튼의 기본 테두리 제거 */
 }
-
 </style>
