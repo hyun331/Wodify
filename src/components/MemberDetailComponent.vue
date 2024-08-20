@@ -123,7 +123,7 @@
 
 
 
-                    <!-- 차트 -->
+
                     <v-card>
                         <v-card-title>
                           <v-row class="d-flex justify-center align-center">
