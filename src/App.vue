@@ -1,7 +1,11 @@
 <template>
   <v-app>
     <HeaderComponent/>
-    <v-main style="background-color: #D9D9D9;">
+    <v-main v-if="userRole=='USER'" class="userBackground">
+      <router-view/>
+    </v-main>
+
+    <v-main v-else style="background-color: #D9D9D9;">
       <router-view/>
     </v-main>
   </v-app>
@@ -14,6 +18,12 @@ export default {
   name: 'App',
   components: {
     HeaderComponent
+  },
+  data(){
+    return{
+      userRole : localStorage.getItem('role'),
+
+    }
   }
 }
 </script>
@@ -26,5 +36,14 @@ export default {
   font-style: normal;
   font-size: 120px;
 
+}
+
+.userBackground {
+  min-height: 100vh;
+  margin: 0;
+  background-image: url("@/assets/background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 </style>

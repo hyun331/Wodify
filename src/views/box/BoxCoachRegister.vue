@@ -1,15 +1,31 @@
 <template>
-    <v-dialog max-width="500px">
+    <v-dialog max-width="650px">
         <v-card>
-            <v-card-title class="text-h5 text-center">박스 가입</v-card-title>
+            <v-card-title class="text-h3 text-center freesentation">박스 가입</v-card-title>
+            <br>
             <v-card-text>
-                <h4>박스 코드를 입력해주세요</h4>
+                <v-row justify="center">
+                    <h4 class="noto-sans" style="font-weight: 500;">박스 코드를 입력해주세요</h4>
+                </v-row>
+                
                 
                 <v-form @submit.prevent="coachRegistrationBox">
-                    <v-text-field :label="boxCodeLabel" v-model="code" type="password" required>
-                    </v-text-field>
+                    <v-row justify="center">
+                        <v-col cols="7">
+                            <v-text-field :label="boxCodeLabel" v-model="code" type="password" required>
+                            </v-text-field>
+                        </v-col>
+                        <v-col cols="auto">
+                            <RoundedButtonComponent text="가입" :buttonType='submit' class="noto-sans" style="font-weight: 500;"> </RoundedButtonComponent>
+                        </v-col>
 
-                    <RoundedButtonComponent text="가입" :buttonType='submit'> </RoundedButtonComponent>
+                        <v-col cols="2">
+                            <RoundedButtonComponent text="X" :buttonType="'button'" @click="closeModal" class="noto-sans" style="font-weight: 500;"> </RoundedButtonComponent>
+                        </v-col>
+                    </v-row>
+                    
+
+                    
                 </v-form>
             </v-card-text>
         </v-card>
@@ -54,7 +70,6 @@ export default {
 
         },
         closeModal() {
-    
             this.boxCodeLabel = 'BOX CODE';
             this.$emit('update:dialog', false)
         }
