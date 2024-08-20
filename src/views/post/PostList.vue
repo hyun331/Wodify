@@ -18,7 +18,8 @@
               </v-col>
               <!-- 검색 입력 필드 -->
               <v-col cols="8" class="search-text-col">
-                <v-text-field v-model="searchText" label="검색" outlined dense hide-details class="search-text-field"></v-text-field>
+                <v-text-field v-model="searchText" label="검색" outlined dense hide-details
+                  class="search-text-field"></v-text-field>
               </v-col>
               <!-- 검색 버튼과 글쓰기 버튼 -->
               <v-col cols="2" class="search-btn-col">
@@ -73,6 +74,18 @@
 
       <!-- 화면 오른쪽 하단의 맨위로 버튼 -->
       <v-btn color="black" dark class="scroll-top-btn" v-show="showScrollTopButton" @click="scrollToTop"> 맨위로 </v-btn>
+
+      <!-- 타입 선택 요청 모달 -->
+      <v-dialog v-model="showTypeSelectionModal" persistent max-width="400px">
+        <v-card>
+          <v-card-title class="headline">알림</v-card-title>
+          <v-card-text>타입을 선택해 주세요.</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="closeTypeSelectionModal">확인</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
   </div>
 </template>
@@ -109,14 +122,14 @@ export default {
   },
   data() {
     return {
-      searchType: '',
+      searchType: '', // 검색타입
+      searchText: "", // 검색어
       searchOptions: [
         { text: "제목", value: "title" },
         { text: "글쓴이", value: "memberName" }
       ],
       currentPage: 1,
       itemsPerPage: 10,
-      searchText: "", // 검색어
       notices: [],
       posts: [],
       totalPages: 1,
@@ -172,6 +185,14 @@ export default {
       }
     },
     searchPosts() {
+      if (!this.searchText.trim()) return ; 
+
+      // 검색어가 비어있지 않지만 검색 타입이 비어있을 때 모달을 표시
+      if (this.searchText && !this.searchType) {
+        this.showTypeSelectionModal = true;
+        return; // 타입을 선택하도록 하고 검색을 중단
+      }
+
       // 검색 요청을 트리거할 때 현재 페이지를 초기화하고 데이터 새로 가져오기
       this.currentPage = 1;
       this.posts = [];
@@ -204,6 +225,9 @@ export default {
     },
     goToDetail(id) {
       this.$router.push(`/post/detail/${id}`);
+    },
+    closeTypeSelectionModal() {
+      this.showTypeSelectionModal = false; // 모달 닫기
     },
   },
 };
