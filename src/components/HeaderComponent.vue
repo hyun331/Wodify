@@ -165,16 +165,6 @@ export default {
                 });
                 sse.onerror = (error) => {
                     console.error('Error event:', error);
-
-                    if (error.error && error.error.message.includes('Reconnecting')) {
-                        sse.close();
-
-                        // 0.05초의 딜레이 후 재연결 시도
-                        setTimeout(() => {
-                            console.log('Attempting to reconnect...');
-                            this.connectToEventSource(token); // Recursively call the function to reconnect
-                        }, 50);
-                    }
                 };
             }
         },
