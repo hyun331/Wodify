@@ -1,6 +1,6 @@
 <template>
   <!-- div로 v-container를 감싸서 배경색을 지정 -->
-  <v-container class="container mt-5">
+  <v-container class="container">
     <!-- post가 null이 아닐 때만 콘텐츠를 렌더링 -->
     <v-card v-if="post" class="post-card">
       <v-card-title>
@@ -153,8 +153,9 @@ export default {
   background-color: transparent;
   /* 투명하게 설정해 그라데이션이 보이도록 */
   padding: 24px;
-  max-width: 1100px;
+  max-width: 1216px;
   margin: auto;
+  margin-top: -8px;
   border-radius: 8px;
 }
 

@@ -18,8 +18,7 @@
               </v-col>
               <!-- 검색 입력 필드 -->
               <v-col cols="8" class="search-text-col">
-                <v-text-field v-model="searchText" label="검색" outlined dense hide-details
-                  class="search-text-field"></v-text-field>
+                <v-text-field v-model="searchText" label="검색" outlined dense hide-details class="search-text-field"></v-text-field>
               </v-col>
               <!-- 검색 버튼과 글쓰기 버튼 -->
               <v-col cols="2" class="search-btn-col">
@@ -155,7 +154,7 @@ export default {
             page: this.currentPage - 1,
             size: this.itemsPerPage,
             sort: "id,desc", // 'id' 필드를 기준으로 내림차순 정렬
-            searchCategory: this.searchCategory, // 검색 기준 (제목 또는 작성자)
+            searchCategory: this.searchType, // 검색 기준 (제목 또는 작성자)
             searchText: this.searchText, // 검색어
           },
         });
@@ -214,53 +213,63 @@ export default {
 .box {
   background-color: #797876;
 }
+
 .right-align {
   text-align: right;
 }
+
 .boxLocation {
   color: white;
   font-weight: 1000;
   font-size: 70px;
   font-family: "Oswald", sans-serif;
 }
+
 .custom-card {
   background-color: #ffffff;
   border-radius: 8px;
   width: 1200px;
   margin: auto;
 }
+
 .search-bar {
   border-radius: 8px;
   background-color: transparent;
   margin-bottom: -8px;
 }
+
 .search-type-col {
   padding-right: 0px;
 }
+
 .search-text-col {
   min-width: 800px;
   padding-left: 0px;
   padding-right: 0px;
 }
+
 .search-btn-col {
   height: 68px;
   padding-left: -40px;
   margin-left: -11px;
   margin-right: -20px;
   padding-right: -20px;
-  background-color:#D9D9D9;
+  background-color: #D9D9D9;
   border-radius: 4px;
 }
+
 .search-select {
   height: 30px;
   min-width: 150px;
   /* v-select의 최소 너비 조절 */
   font-size: 10px;
 }
+
 .search-text-field {
   height: 0px;
   /* 높이 조절 */
 }
+
 .search-btn {
   background-color: black;
   color: white;
@@ -269,6 +278,7 @@ export default {
   height: 56px;
   width: 95px;
 }
+
 .newPost-btn {
   background-color: black;
   color: white;

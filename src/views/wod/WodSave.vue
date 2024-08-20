@@ -1,14 +1,5 @@
 <template>
     <v-container style="min-width: 345px; min-height: 600px; max-width: 800px;">
-        <!-- <v-row class="rubikMonoOne" style="font-size: 50px; margin-left: 3px">
-            <v-col class="auto-width" style="padding: 0; margin-right: 15px;">
-                wod
-            </v-col>
-            <v-col class="auto-width" style="padding: 0;">
-                save
-            </v-col>
-        </v-row> -->
-
         <!-- 입력 필드들 -->
         <v-row style="margin:1px">
             <v-text-field class="custom-text-box" style="margin-right:2px" v-model="wodSaveReqDto.date" label="Date"
@@ -63,7 +54,8 @@
                 auto-grow :rows="2" outlined></v-textarea>
         </v-row>
         <!-- 동적 입력 필드 -->
-        <div v-for="(wodDetSaveReqDto, index) in wodSaveReqDto.wodDetSaveReqDtoList" :key="index" class="exercise-group" outlined>
+        <div v-for="(wodDetSaveReqDto, index) in wodSaveReqDto.wodDetSaveReqDtoList" :key="index" class="exercise-group"
+            outlined>
             <!-- X 버튼 -->
             <v-btn icon @click="removeWodDet(index)" class="remove-btn"> <v-icon>mdi-close</v-icon> </v-btn>
             <v-text-field class="exercise-box" style="border-radius: 4px 4px 0 0;" v-model="wodDetSaveReqDto.name"
@@ -76,8 +68,49 @@
         <div style="display: flex; justify-content: flex-end;">
             <v-btn @click="addRandomWodDet" color="black" style="margin-right: 2px;">랜덤+</v-btn>
             <v-btn @click="addWodDet" color="black" style="margin-right: 2px;">종목+</v-btn>
-            <v-btn @click="submitForm" color="black">등록</v-btn>
+            <v-btn @click="showSubmitConfirmationModal" color="black">등록</v-btn>
         </div>
+
+        <!-- 데이터가 없을 때 보여주는 모달 -->
+        <v-dialog v-model="showNoDataModal" persistent max-width="400px">
+            <v-card>
+                <v-card-title class="headline">알림</v-card-title>
+                <v-card-text>데이터가 없습니다.</v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="primary" text @click="closeNoDataModal">확인</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <!-- 데이터 확인 및 추가 모달 -->
+        <v-dialog v-model="showDataModal" persistent max-width="400px">
+            <v-card>
+                <v-card-title class="headline">랜덤 데이터 추가</v-card-title>
+                <v-card-text>
+                    <p><strong>Name:</strong> {{ tempWodData.name }}</p>
+                    <p><strong>Contents:</strong> {{ tempWodData.contents }}</p>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="green" text @click="addWodData">추가</v-btn>
+                    <v-btn color="grey" text @click="closeDataModal">취소</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <!-- 등록 확인 모달 -->
+        <v-dialog v-model="showSubmitModal" persistent max-width="400px">
+            <v-card>
+                <v-card-title class="headline">등록 확인</v-card-title>
+                <v-card-text>등록하시겠습니까?</v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="green" text @click="submitForm">확인</v-btn>
+                    <v-btn color="grey" text @click="closeSubmitModal">취소</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
@@ -105,6 +138,13 @@ export default {
                 rounds: null,
                 info: '',
                 wodDetSaveReqDtoList: [],
+            },
+            showSubmitModal: false, // 등록 확인 모달 제어 변수
+            showNoDataModal: false, // 모달 제어를 위한 변수
+            showDataModal: false, // 데이터 확인 모달 제어
+            tempWodData: { // 임시로 저장할 데이터
+                name: '',
+                contents: '',
             },
         };
     },
@@ -138,28 +178,35 @@ export default {
                 // 1. repository의 데이터 갯수 가져오기
                 const countResponse = await axios.get("http://localhost:8090/wod/count");
                 const size = countResponse.data.result;
-                console.log(size);
 
+                // 데이터가 없을 때 모달을 띄우기
+                if (size === 0) {
+                    this.showNoDataModal = true; // 모달 표시
+                    return; // 함수 종료
+                }
                 // 2. 난수 생성 및 id 계산
                 let randomIndex = Math.floor(Math.random() * size);
                 if (randomIndex === 0) randomIndex = size;
 
                 // 3. 해당 id의 데이터 가져오기
                 const randomDataResponse = await axios.get(`http://localhost:8090/wod/random/${randomIndex}`);
-                console.log(randomDataResponse.data.result);
-                const { name, contents } = randomDataResponse.data.result;
+                if (randomDataResponse.status === 200) {
+                    const { name, contents } = randomDataResponse.data.result;
 
-                // 4. 가져온 데이터 화면에 추가
-                this.wodSaveReqDto.wodDetSaveReqDtoList.push({
-                    name,
-                    contents,
-                });
+                    // 임시 데이터에 저장
+                    this.tempWodData.name = name;
+                    this.tempWodData.contents = contents;
+
+                    // 모달을 통해 사용자에게 데이터 확인 요청
+                    this.showDataModal = true;
+                }
             } catch (error) {
                 console.error("Error fetching random WOD data:", error);
             }
         },
         async submitForm() {
             try {
+                this.showSubmitModal = false; // 모달 닫기
                 const response = await axios.post('http://localhost:8090/wod/save', this.wodSaveReqDto);
                 if (response.status === 201) {
                     alert("WOD가 성공적으로 등록되었습니다.");
@@ -171,20 +218,39 @@ export default {
                 console.error('Error submitting WOD form:', error.response ? error.response.data : error.message);
                 alert('WOD 등록 중 오류가 발생했습니다.');
             }
+        },
+        closeNoDataModal() {
+            this.showNoDataModal = false; // 데이터 없음 모달 닫기
+        },
+        closeDataModal() {
+            this.showDataModal = false; // 데이터 확인 모달 닫기
+        },
+        addWodData() {
+            // 4. 가져온 데이터를 화면에 추가
+            this.wodSaveReqDto.wodDetSaveReqDtoList.push({
+                name: this.tempWodData.name,
+                contents: this.tempWodData.contents,
+            });
+
+            // 추가 후 모달 닫기
+            this.showDataModal = false;
+
+            // 임시 데이터 초기화
+            this.tempWodData.name = '';
+            this.tempWodData.contents = '';
+        },
+        showSubmitConfirmationModal() {
+            this.showSubmitModal = true; // 모달 열기
+        },
+        closeSubmitModal() {
+            this.showSubmitModal = false; // 모달 닫기
+
         }
-    }
-};
+    },
+}
 </script>
 
 <style scoped>
-/*
-.auto-width {
-    flex: 0 1 auto;
-    width: auto;
-    display: inline-block;
-}
-*/
-
 .custom-text-box {
     background-color: rgba(255, 255, 255, 0.7);
     border-radius: 4px;
