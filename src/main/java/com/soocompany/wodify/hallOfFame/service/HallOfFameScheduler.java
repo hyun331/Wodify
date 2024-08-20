@@ -52,7 +52,6 @@ public class HallOfFameScheduler {
             List<Reservation> reservationList = reservationRepository.findAllByBoxAndDateAndDelYn(box, yesterday, "N");
             List<HallOfFame> hallOfFameList = new ArrayList<>();
             for(Reservation r : reservationList){
-                System.out.println(r.getId()+" 예약");
                 List<ReservationDetail> reservationDetailList = reservationDetailRepository.findByReservationAndDelYn(r, "N");
                 for(ReservationDetail rd : reservationDetailList){
                     if(rd.getRecord() != null && rd.getRecord().getSnf().equals("s")){
