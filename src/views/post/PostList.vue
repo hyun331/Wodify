@@ -109,14 +109,14 @@ export default {
   },
   data() {
     return {
-      searchType: '',
+      searchType: '', // 검색타입
+      searchText: "", // 검색어
       searchOptions: [
         { text: "제목", value: "title" },
         { text: "글쓴이", value: "memberName" }
       ],
       currentPage: 1,
       itemsPerPage: 10,
-      searchText: "", // 검색어
       notices: [],
       posts: [],
       totalPages: 1,
