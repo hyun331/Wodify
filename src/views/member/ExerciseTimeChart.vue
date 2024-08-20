@@ -1,16 +1,6 @@
 <template>
-  <div>
-    <v-container>
-      <v-row justify="center" class="mt-5">
-        <v-col cols="12" md="10">
-          <v-card>
-            <v-card-text>
-              <Line :data="chartData" :options="chartOptions" />
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
+  <div class="chart-container">
+    <Line :data="chartData" :options="chartOptions" />
   </div>
 </template>
 
@@ -32,11 +22,11 @@ export default {
   },
   computed: {
     chartData() {
-      const ids = this.records.map(record => record.id);
+      const ids = this.records.map((_, index) => `day${index + 1}`); // 문자열 레이블로 변경
       const times = this.records.map(record => this.convertLocalTimeToSeconds(record.exerciseTime));
 
       return {
-        labels: ids,
+        labels: ids,  // x축에 표시할 레이블을 ids로 설정
         datasets: [
           {
             label: 'My Exercise Time',
@@ -59,7 +49,6 @@ export default {
           tooltip: {
             callbacks: {
               label: (context) => {
-                // 초 단위를 HH:mm:ss 형식으로 변환
                 const timeInSeconds = context.raw;
                 const hours = Math.floor(timeInSeconds / 3600);
                 const minutes = Math.floor((timeInSeconds % 3600) / 60);
@@ -71,10 +60,10 @@ export default {
         },
         scales: {
           x: {
+            type: 'category', // 범주형 스케일로 설정
             title: {
               display: true,
               text: 'record',
-              color: '#3C3D3D',
               font: {
                 family: 'Rubik Mono One',
                 size: 16
@@ -92,7 +81,6 @@ export default {
             title: {
               display: true,
               text: 'Time',
-              color: '#3C3D3D',
               font: {
                 family: 'Rubik Mono One',
                 size: 16
@@ -104,21 +92,21 @@ export default {
                 family: 'Rubik Mono One',
                 size: 12
               },
-              stepSize: 7200,
+              stepSize: 600, // 600초 = 10분 단위로 눈금 설정
               callback: (value) => {
-                // 초 단위에서 HH:00:00 형식으로 변환
-                const hours = Math.floor(value / 3600);
-                return `${String(hours).padStart(2, '0')}H`;
+                // 초 단위를 분으로 변환
+                const minutes = Math.floor(value / 60);
+                return `${String(minutes)} MM`; // 10분 단위로 눈금 표시
               }
             },
             grid: {
-              lineWidth: 1 // y축의 그리드 라인의 두께 설정
+              lineWidth: 1
             }
           }
         },
         elements: {
           line: {
-            borderWidth: 2 // 선의 두께 설정
+            borderWidth: 2
           }
         }
       };
@@ -127,7 +115,7 @@ export default {
   methods: {
     convertLocalTimeToSeconds(localTime) {
       if (!localTime) return 0;
-      //HH:mm:ss형식은 차트화를 시킬 수 없으므로 초 단위로 변경
+      // HH:mm:ss 형식을 초 단위로 변환
       const [hours, minutes, seconds] = localTime.split(':').map(Number);
       return (hours * 3600) + (minutes * 60) + seconds;
     },
@@ -143,7 +131,7 @@ export default {
 
 <style scoped>
 .chart-container {
-  width: 200%;
-  height: 400px;
+  width: 100%;
+  height: 300px; /* 차트의 높이를 300px로 설정 */
 }
 </style>

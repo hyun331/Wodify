@@ -1,24 +1,22 @@
 <template>
     <div class="page-container">
         <v-container>
+            <v-row class="align-center" style="height: 100%; margin-top: 16px;">
+                <v-spacer></v-spacer>
+                <v-col cols="auto" class="text-left">
+                    <img :src="boxDetail.logo" alt="Box Logo" class="rounded-logo" />
+                </v-col>
+                <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
+                <h1 class="noto-sans">{{ boxDetail.name }}</h1>
+                <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
+            </v-row>
             <!-- 나머지 정보를 표시하는 카드 -->
             <v-row justify="center">
                 <v-col>
-                    <br><br><br><br><br>
+                    <br><br>
                     <v-card>
                         <!-- 로고와 이름을 표시하는 부분 -->
-                        <v-row class="align-center" style="height: 100%; margin-top: 16px;">
-                            <v-spacer></v-spacer>
-                            <v-col cols="auto" class="text-left">
-                                <img :src="boxDetail.logo" alt="Box Logo" class="rounded-logo" />
-                            </v-col>
-                            <v-col cols="auto" style="flex-grow: 1; text-align: center;">
-                                <span class="boxname">
-                                    {{ boxDetail.name }}
-                                </span>
-                            </v-col>
-                            <v-spacer></v-spacer>
-                        </v-row>
+
                         <br><br>
                         <v-card-text>
                             <v-table style="table-layout: fixed; width: 100%; overflow: hidden;">
@@ -197,4 +195,11 @@ export default {
     table-layout: fixed;
     overflow-x: auto; /* 수평 스크롤이 필요할 때만 표시 */
 }
+
+.noto-sans {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 120px;
+    font-weight: 400;
+    font-style: normal;
+  }
 </style>
