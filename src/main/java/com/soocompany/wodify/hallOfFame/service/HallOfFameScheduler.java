@@ -54,7 +54,7 @@ public class HallOfFameScheduler {
             for(Reservation r : reservationList){
                 List<ReservationDetail> reservationDetailList = reservationDetailRepository.findByReservationAndDelYn(r, "N");
                 for(ReservationDetail rd : reservationDetailList){
-                    if(rd.getRecord() != null && rd.getRecord().getSnf().equals("s")){
+                    if(rd.getRecord() != null && rd.getRecord().getSnf().equals("S")){
                         HallOfFame hallOfFame = HallOfFame.builder()
                                 .member(rd.getMember())
                                 .box(box)
