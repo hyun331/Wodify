@@ -125,11 +125,6 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap');
 
 
-.container {
-    background-color: #D9D9D9;
-    min-height: 100vh;
-}
-
 .search-button {
     margin-top: 10px; /* 버튼의 위쪽 여백을 16px로 설정하여 아래로 이동 */
     border-radius: 100px; /* 버튼 모서리를 둥글게 설정 (값 조정 가능) */

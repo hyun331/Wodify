@@ -5,7 +5,7 @@
             <h1 class="rubikMonoOne">SUCCESS</h1>
         </div>
       <br>
-      <v-card-title class="text-center text-h4">
+      <v-card-title class="text-center text-h4 black-han-sans-regular">
         등록이 완료되었습니다!
       </v-card-title>
       <v-container fluid class="d-flex align-center justify-center" style="height: 80vh;">
@@ -56,18 +56,20 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap');
+
 html, body {
   margin: 0; /* 기본 여백 제거 */
   padding: 0; /* 기본 패딩 제거 */
-  height: 100%; /* 전체 높이 설정 */
+  height: 30%; /* 전체 높이 설정 */
+  overflow: hidden; /* 스크롤바 숨기기 */
 }
 
 .background-image {
-    background-image: url('');
-    background-size: cover; /* 이미지 크기 조절 */
+    background-image: url('@/assets/home.png');
+    background-size: 30% auto; /* 이미지 크기 조절 */
     background-position: center; /* 이미지 위치 조정 */
+    background-repeat: no-repeat; /* 이미지 반복 방지 */
     min-height: 100vh; /* 화면 전체 높이 설정 */
     width: 100%; /* 화면 전체 너비 설정 */
-  }
-
+}
 </style>
