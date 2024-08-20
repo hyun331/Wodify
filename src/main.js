@@ -8,6 +8,7 @@ import axios from 'axios';
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
+import '@mdi/font/css/materialdesignicons.css';
 import './assets/styles/global.css';
 
 

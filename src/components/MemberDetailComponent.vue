@@ -19,7 +19,7 @@
                                 <v-col v-else class="profile-image-container">
                                     <v-img :src="memberInfo.imagePath" class="memberImg"></v-img>
                                 </v-col>
-                                <v-col class="rubikMonoOne" style="font-size: 80px;">
+                                <v-col class="rubikMonoOne" cols="9" style="font-size: 80px;">
                                     {{ pageType }}
                                 </v-col>
                             </v-row>
@@ -103,7 +103,7 @@
                                     {{ memberInfo.boxName }}
 
                                 </v-col>
-                                <v-col cols="2" v-if="pageType === 'My Page'">
+                                <v-col cols="2" v-if="pageType === 'My Page' && userRole==='USER'">
                                     <v-btn v-if="!isOnHold" @click="showHoldingModal">정지</v-btn>
                                     <v-btn @click="showUnholdingModal" v-else>정지 해제</v-btn>
                                 </v-col>
@@ -154,7 +154,7 @@ export default {
     data() {
         return {
             holding: false,
-
+            unholding: false,
         }
     },
 

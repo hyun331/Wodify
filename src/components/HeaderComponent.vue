@@ -28,7 +28,7 @@
                 <v-btn color="white" v-bind="props" class="rubikMonoOne">WOD-코치,CEO</v-btn>
             </template>
             <v-list>
-                <v-list-item :to="{path:'/wod/find'}">
+                <v-list-item :to="{path:'/wod/select-date'}">
                     <v-list-item-title>와드조회</v-list-item-title>
                 </v-list-item>
             </v-list>

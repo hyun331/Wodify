@@ -6,15 +6,15 @@
                     <span class="text-center">정지 요청을 해제하시겠습니까?</span>
                 </v-row>
                 <v-row class="d-flex justify-center align-center" style="margin-top: 16px;">
-                    <RoundedButtonComponent @click="hold" text="Yeees" class="mx-2"/>
-                    <RoundedButtonComponent @click="closeModal" text="Nooooo" class="mx-2"/>
+                    <RoundedButtonComponent @click="hold" text="예" class="mx-2"/>
+                    <RoundedButtonComponent @click="closeModal" text="아니오" class="mx-2"/>
                 </v-row>
             </v-card-text>
         </v-card>
     </v-dialog>
 </template>
 
-<script>
+<script >
 import RoundedButtonComponent from '@/components/RoundedButtonComponent.vue';
 import axios from 'axios';
 export default {
