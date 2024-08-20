@@ -67,12 +67,18 @@ public class ReservationDetailService {
             log.error("reservationCreate() : 박스에 등록되어있지 않은 회원은 예약이 불가합니다.");
             throw new IllegalArgumentException("박스에 등록되어있지 않은 회원은 예약이 불가합니다.");
         }
-        RegistrationInfo registrationInfo = registrationInfos.get(0);
+        boolean isRegistration = false;
+        for (RegistrationInfo registrationInfo : registrationInfos) {
+            LocalDate registrationDate = registrationInfo.getRegistrationDate();
+            LocalDate endDate = registrationInfo.getEndDate();
+            LocalDate reservationDate = reservation.getDate();
+            if (!registrationDate.isAfter(reservationDate)&&endDate.isAfter(reservationDate)) {
+                isRegistration = true;
+            }
+        }
+
 //        예약 날짜와 등록 정보 날짜 비교
-        LocalDate registrationDate = registrationInfo.getRegistrationDate();
-        LocalDate endDate = registrationInfo.getEndDate();
-        LocalDate reservationDate = reservation.getDate();
-        if (!registrationDate.isBefore(reservationDate)||!endDate.isAfter(reservationDate)) {
+        if (!isRegistration) {
             log.error("reservationCreate() : 박스 등록기간이 아닌 기간은 예약이 불가합니다.");
             throw new IllegalArgumentException("박스 등록기간이 아닌 기간은 예약이 불가합니다.");
         }
@@ -154,6 +160,7 @@ public class ReservationDetailService {
         }else {
             details = reservationDetailRepository.findByMemberAndDelYn(member, pageable);
         }
+
         return details.map(ReservationDetail::detFromEntity);
     }
 }

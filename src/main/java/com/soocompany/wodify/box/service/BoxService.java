@@ -59,59 +59,47 @@ public class BoxService {
     }
 
 
-    public BoxSaveReqDto boxCreate(BoxSaveReqDto dto) {
-        // 현재 로그인한 사용자 ID 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String memberId = authentication.getName();
+    public Long boxCreate(BoxSaveReqDto dto) {
+        Long memberId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 
-        // 대표 ID가 유일한지 확인
-        Optional<Box> existingBoxByMember = boxRepository.findByMemberIdAndDelYn(Long.parseLong(memberId), "N").stream().findFirst();
-        if (existingBoxByMember.isPresent()) {
+        Member loginMember = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(()->{
+            log.error("boxCreate() : id에 맞는 회원(ceo)가 존재하지 않습니다.");
+            throw new EntityNotFoundException("id에 맞는 회원(ceo)가 존재하지 않습니다.");
+        });
+
+        if(loginMember.getBox() != null){
             String errorMessage = "id가 " + memberId + "인 Member가 이미 다른 Box를 가지고 있습니다";
             log.error("boxCreate() : " + errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
 
-        Member member = memberRepository.getReferenceById(Long.parseLong(memberId));
-
-        //맴버에 박스 넣어주기
-        Member newMember = memberRepository.findByEmailAndDelYn(member.getEmail(), "N")
-                .orElseThrow(() -> new EntityNotFoundException("Test Ceo Initial Data Loader Exception"));
-
-        // MultipartFile에서 파일 저장 경로 얻기 및 AWS S3에 업로드
         MultipartFile logoFile = dto.getLogoPath();
         String s3Path = null;
         if (logoFile != null && !logoFile.isEmpty()) {
             try {
                 byte[] bytes = logoFile.getBytes();
                 String fileName = UUID.randomUUID() + "_" + logoFile.getOriginalFilename();
-                Path path = Paths.get("C:/Users/rnjsc/Desktop/tmp/", fileName);
 
-                // Local PC에 임시 저장
-                Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-
-                // AWS S3에 업로드
                 PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(fileName)
                         .build();
-                PutObjectResponse putObjectResponse = s3Client.putObject(putObjectRequest, RequestBody.fromFile(path));
+                PutObjectResponse putObjectResponse = s3Client.putObject(putObjectRequest,RequestBody.fromBytes(bytes));
                 s3Path = s3Client.utilities().getUrl(a -> a.bucket(bucket).key(fileName)).toExternalForm();
             } catch (IOException e) {
+                log.error("boxCreate() : 이미지 저장 실패");
                 throw new RuntimeException("이미지 저장 실패", e);
             }
         }
 
-        Box box = boxRepository.save(dto.toEntity(member));
+        Box box = boxRepository.save(dto.toEntity(loginMember));
         if (s3Path != null) {
             box.updateLogo(s3Path);
             boxRepository.save(box);
         }
+        loginMember.memberBoxUpdate(box);
 
-        newMember.memberBoxUpdate(box);
-        memberRepository.save(newMember);
-
-        return BoxSaveReqDto.fromEntity(box);
+        return box.getId();
     }
 
 
@@ -188,6 +176,7 @@ public class BoxService {
             log.error("boxDelete() : 대표의 box가 존재하지 않습니다.");
             throw new EntityNotFoundException("대표의 box가 존재하지 않습니다.");
         }
+
         // Box 삭제
         box.updateDelYn();
         //박스에 연관된 코치, 회원 리스트
@@ -195,6 +184,8 @@ public class BoxService {
         for (Member m : boxMemberList) {
             m.memberBoxUpdate(null);
         }
+
+        member.memberBoxUpdate(null);
 
     }
 
