@@ -104,6 +104,8 @@ public class ReservationDetailService {
             Long coachId = coach.getId();
             sseController.publishMessage(reservationDetailDetResDto, String.valueOf(coachId));
         }
+        Member boxRepresentative = box.getMember();
+        sseController.publishMessage(reservationDetailDetResDto, String.valueOf(boxRepresentative.getId()));
         return reservationDetailDetResDto;
     }
 
