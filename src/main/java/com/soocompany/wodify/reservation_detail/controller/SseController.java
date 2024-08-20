@@ -32,10 +32,16 @@ public class SseController implements MessageListener {
 
     @Qualifier("5")
     private final RedisTemplate<String, Object> sseRedisTemplate;
-
+    @Qualifier("5")
     private final RedisMessageListenerContainer redisMessageListenerContainer;
 
-    public SseController(@Qualifier("5") RedisTemplate<String, Object> sseRedisTemplate, RedisMessageListenerContainer redisMessageListenerContainer) {
+//    @Qualifier("6")
+//    private final RedisTemplate<String, Object> reservationRedisTemplate;
+//    @Qualifier("6")
+//    private final RedisMessageListenerContainer reservationRedisMessageListenerContainer;
+
+
+    public SseController(@Qualifier("5") RedisTemplate<String, Object> sseRedisTemplate, @Qualifier("5") RedisMessageListenerContainer redisMessageListenerContainer) {
         this.sseRedisTemplate = sseRedisTemplate;
         this.redisMessageListenerContainer = redisMessageListenerContainer;
     }
@@ -52,6 +58,19 @@ public class SseController implements MessageListener {
     public MessageListenerAdapter createListenerAdapter(SseController sseController){
         return new MessageListenerAdapter(sseController, "onMessage");
     }
+
+//    public void subscribeReservationChannel(String memberId) {
+//        if (!subscribeList.contains(memberId)) {
+//            MessageListenerAdapter listenerAdapter = createReservationListenerAdapter(this);
+//            reservationRedisMessageListenerContainer.addMessageListener(listenerAdapter, new PatternTopic(memberId));
+//            subscribeList.add(memberId);
+//        }
+//    }
+//
+//    public MessageListenerAdapter createReservationListenerAdapter(SseController sseController) {
+//        return new MessageListenerAdapter(sseController, "onReservationMessage");
+//    }
+
 
     @GetMapping("/subscribe")
     public SseEmitter subscribe() {
@@ -97,4 +116,28 @@ public class SseController implements MessageListener {
             emitters.remove(email); // 해당 클라이언트의 Emitter 제거
         }
     }
+
+//    public void publishReservationMessage(ReservationDetailDetResDto dto, String memberId) {
+//        SseEmitter emitter = emitters.get(memberId);
+//        reservationRedisTemplate.convertAndSend(memberId, dto);
+//    }
+//
+//    public void onReservationMessage(Message message, byte[] pattern) {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        String memberId = new String(pattern, StandardCharsets.UTF_8);
+//        try {
+//            System.out.println("yaho");
+//            ReservationDetailDetResDto dto = objectMapper.readValue(message.getBody(), ReservationDetailDetResDto.class);
+//            SseEmitter emitter = emitters.get(memberId);
+//            if (emitter != null) {
+//                emitter.send(SseEmitter.event().name("reservationDetail").data(dto));
+//            }
+//        } catch (IOException e) {
+//            log.error("IOException while sending SSE: {}", e.getMessage());
+//            emitters.remove(memberId); // 해당 클라이언트의 Emitter 제거
+//        } catch (IllegalStateException e) {
+//            log.error("IllegalStateException while sending SSE: {}", e.getMessage());
+//            emitters.remove(memberId); // 해당 클라이언트의 Emitter 제거
+//        }
+//    }
 }

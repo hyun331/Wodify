@@ -76,6 +76,8 @@ public class RedisConfig {
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         return redisTemplate;
     }
+
+
     @Bean
     public RedisConnectionFactory redisZsetFactory(){
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
@@ -93,13 +95,15 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+
+
     @Bean
     @Qualifier("5")
     public RedisConnectionFactory sseFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
         configuration.setHostName(host);
         configuration.setPort(port);
-        configuration.setDatabase(4);
+        configuration.setDatabase(5);
         return new LettuceConnectionFactory(configuration);
 
     }
@@ -124,6 +128,40 @@ public class RedisConfig {
         container.setConnectionFactory(sseFactory);
         return container;
     }
+
+
+
+//    @Bean
+//    @Qualifier("6")
+//    public RedisConnectionFactory reservationFactory() {
+//        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
+//        configuration.setHostName(host);
+//        configuration.setPort(port);
+//        configuration.setDatabase(6);
+//        return new LettuceConnectionFactory(configuration);
+//
+//    }
+//
+//    @Bean
+//    @Qualifier("6")
+//    public RedisTemplate<String, Object> reservationRedisTemplate(@Qualifier("6") RedisConnectionFactory reservationFactory){
+//        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+//        redisTemplate.setKeySerializer(new StringRedisSerializer());
+//        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        serializer.setObjectMapper(objectMapper);
+//        redisTemplate.setValueSerializer(serializer);
+//        redisTemplate.setConnectionFactory(reservationFactory);
+//        return redisTemplate;
+//    }
+//
+//    @Bean
+//    @Qualifier("6")
+//    public RedisMessageListenerContainer redisReservationDetailMessageListenerContainer(@Qualifier("6") RedisConnectionFactory reservationFactory){
+//        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+//        container.setConnectionFactory(reservationFactory);
+//        return container;
+//    }
 
 
 }
