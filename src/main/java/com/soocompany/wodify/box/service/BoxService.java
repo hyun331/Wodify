@@ -278,5 +278,10 @@ public class BoxService {
         String name = member.getBox().getName();
         return name;
     }
+
+    public List<BoxMemberCountDto> recommendBox() {
+        List<BoxMemberCountDto> top4BoxesWithMostMembers = memberRepository.findTop4BoxesWithMostMembers();
+        return top4BoxesWithMostMembers;
+    }
 }
 

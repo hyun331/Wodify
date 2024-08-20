@@ -14,6 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/box")
 
@@ -133,6 +135,13 @@ public class BoxController {
             CommonResDto commonResDto = new CommonResDto(HttpStatus.INTERNAL_SERVER_ERROR, "Box 정보 조회 중 오류 발생: " + e.getMessage(), null);
             return new ResponseEntity<>(commonResDto, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/recommend")
+    public ResponseEntity<CommonResDto> recommendBox() {
+        List<BoxMemberCountDto> boxList = boxService.recommendBox();
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Box리스트가 성공적으로 조회되었습니다", boxList);
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
 }
