@@ -6,49 +6,49 @@
         <v-spacer></v-spacer>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-                <v-btn color="white" v-bind="props" class="rubikMonoOne">BOX-공통</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne">BOX</v-btn>
             </template>
             <v-list>
                 <v-list-item :to="{ path: '/box/list' }">
-                    <v-list-item-title>박스조회-공통</v-list-item-title>
+                    <v-list-item-title>박스조회</v-list-item-title>
                 </v-list-item>
                 <v-list-item :to="{ path: '/box/mybox' }">
-                    <v-list-item-title>내 박스-공통</v-list-item-title>
+                    <v-list-item-title>내 박스</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="userRole === 'CEO'" :to="{ path: '/box/create' }">
-                    <v-list-item-title>박스 생성-CEO</v-list-item-title>
+                    <v-list-item-title>박스 생성</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/member/list/user' }">
-                    <v-list-item-title>박스 회원 관리-코치,CEO</v-list-item-title>
+                    <v-list-item-title>박스 회원 관리</v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-menu>
         <v-menu v-if="userRole === 'COACH' || userRole === 'CEO'" open-on-hover>
             <template v-slot:activator="{ props }">
-                <v-btn color="white" v-bind="props" class="rubikMonoOne">WOD-코치,CEO</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne">WOD</v-btn>
             </template>
             <v-list>
                 <v-list-item :to="{path:'/wod/select-date'}">
-                    <v-list-item-title>와드조회</v-list-item-title>
+                    <v-list-item-title>와드조회 ∙ 등록</v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-                <v-btn color="white" v-bind="props" class="rubikMonoOne">RESERVATION-공통</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne">RESERVATION</v-btn>
             </template>
             <v-list>
                 <v-list-item v-if="userRole === 'USER'" :to="{ path: '/reservation-detail/create' }">
-                    <v-list-item-title>예약하기-멤버</v-list-item-title>
+                    <v-list-item-title>예약하기</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/reservation/create' }">
-                    <v-list-item-title>예약생성-코치,CEO</v-list-item-title>
+                    <v-list-item-title>예약생성</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="userRole === 'USER'" :to="{ path: '/reservation-detail/list' }">
-                    <v-list-item-title>예약조회-멤버</v-list-item-title>
+                    <v-list-item-title>예약조회</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/reservation/list' }">
-                    <v-list-item-title>예약조회-코치,CEO</v-list-item-title>
+                    <v-list-item-title>예약조회</v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-menu>
@@ -60,9 +60,6 @@
                 <v-list-item :to="{ path: '/post/list' }">
                     <v-list-item-title>게시판</v-list-item-title>
                 </v-list-item>
-                <!-- <v-list-item :to="{path:'/'}"> -->
-                <!-- <v-list-item-title>공지사항-공통</v-list-item-title> -->
-                <!-- </v-list-item> -->
                 <v-list-item :to="{ path: '/hallOfFame' }">
                     <v-list-item-title>명예의 전당</v-list-item-title>
                 </v-list-item>
@@ -70,15 +67,15 @@
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-                <v-btn color="white" v-bind="props" class="rubikMonoOne">MY PAGE-공통</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne">MY PAGE</v-btn>
             </template>
             <v-list>
                 <v-list-item :to="{ path: '/member/detail' }">
-                    <v-list-item-title>내 정보-공통</v-list-item-title>
+                    <v-list-item-title>내 정보</v-list-item-title>
                 </v-list-item>
-                <!-- <v-list-item :to="{path:'/'}">
-                    <v-list-item-title>내 기록-멤버</v-list-item-title>
-                </v-list-item> -->
+                <v-list-item v-if="userRole === 'USER'" :to="{path:'/record/list'}">
+                    <v-list-item-title>내 기록</v-list-item-title>
+                </v-list-item>
             </v-list>
         </v-menu>
         <v-menu open-on-hover>
@@ -165,16 +162,6 @@ export default {
                 });
                 sse.onerror = (error) => {
                     console.error('Error event:', error);
-
-                    if (error.error && error.error.message.includes('Reconnecting')) {
-                        sse.close();
-
-                        // 0.05초의 딜레이 후 재연결 시도
-                        setTimeout(() => {
-                            console.log('Attempting to reconnect...');
-                            this.connectToEventSource(token); // Recursively call the function to reconnect
-                        }, 50);
-                    }
                 };
             }
         },

@@ -1,59 +1,55 @@
 <template>
-  <v-card class="mb-2">
-    <v-list-item>
-      <v-list-item-content>
-        <v-row align="center" class="mb-1">
-          <v-col cols="auto"><strong>{{ commentCopy.name }}</strong></v-col>
-          <v-col cols="auto" class="grey--text text--darken-2">{{ commentCopy.createdTime }}</v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="auto" class="d-flex justify-end">
-            <v-btn text small v-if="!isEditing" @click="startReplying" class="ml-2">
-              답글
-            </v-btn>
-            <v-btn text small v-if="!isEditing" @click="startEditing" class="ml-2">
-              수정
-            </v-btn>
-            <v-btn text small v-if="!isEditing" @click="deleteComment" class="ml-2">
-              삭제
-            </v-btn>
-            <v-btn text small v-if="isEditing" @click="saveEdit" class="ml-2">
-              저장
-            </v-btn>
-            <v-btn text small v-if="isEditing" @click="cancelEdit" class="ml-2">
-              취소
-            </v-btn>
-          </v-col>
-        </v-row>
+  <v-list-item style="margin-bottom: -5px;">
+    <v-list-item-content>
+      <v-row align="center">
+        <v-col cols="auto">
+          <strong>{{ commentCopy.name }}</strong> {{ commentCopy.createdTime }}
+        </v-col>
+        <v-col style="width: 100px;"></v-col>
+        <v-col cols="auto" style="text-align: right;">
+          <v-btn v-if="!isEditing" @click="startReplying" class="action-button" style="min-width: 30px; max-width: 30px; padding: 5px;">
+            <v-icon small>mdi-message-reply</v-icon>
+          </v-btn>
+          <v-btn v-if="!isEditing" @click="startEditing" class="action-button" style="min-width: 30px; max-width: 30px; padding: 5px;">
+            <v-icon small>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn v-if="!isEditing" @click="deleteComment" class="action-button" style="min-width: 30px; max-width: 30px; padding: 5px;">
+            <v-icon small>mdi-delete</v-icon>
+          </v-btn>
+          <v-btn v-if="isEditing" @click="saveEdit" class="action-button" style="min-width: 30px; max-width: 30px; padding: 5px;">
+            <v-icon>mdi-check-circle</v-icon> 
+          </v-btn>
+          <v-btn v-if="isEditing" @click="cancelEdit" class="action-button" style="min-width: 30px; max-width: 30px; padding: 5px;">
+            <v-icon>mdi-close-circle</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
 
-        <!-- 댓글 내용 -->
-        <div v-if="!isEditing">{{ commentCopy.comment }}</div>
-        <v-text-field v-else v-model="editedComment" dense hide-details></v-text-field>
+      <!-- 댓글 내용 -->
+      <div v-if="!isEditing">{{ commentCopy.comment }}</div>
+      <v-text-field v-else v-model="editedComment" dense hide-details></v-text-field>
 
-        <!-- 답글 작성 필드 -->
-        <v-row v-if="isReplying" class="mt-2">
-          <v-col cols="10">
-            <v-text-field v-model="replyComment" label="답글을 작성하세요..." hide-details dense></v-text-field>
-          </v-col>
-          <v-col cols="2" class="d-flex justify-end">
-            <v-btn small @click="submitReply" color="primary">전송</v-btn>
-            <v-btn small @click="cancelReply" color="secondary">취소</v-btn>
-          </v-col>
-        </v-row>
+      <!-- 답글 작성 필드 -->
+      <v-row v-if="isReplying" class="mt-2">
+        <v-col cols="10">
+          <v-text-field class="field-style" v-model="replyComment" label="답글을 작성하세요..." hide-details
+            dense></v-text-field>
+        </v-col>
+        <v-col cols="2" class="d-flex justify-end">
+          <v-btn small @click="submitReply" color="primary"
+            class="action-button"><v-icon>mdi-check-circle</v-icon></v-btn>
+          <v-btn small @click="cancelReply" color="secondary"
+            class="action-button"><v-icon>mdi-close-circle</v-icon></v-btn>
+        </v-col>
+      </v-row>
 
-        <!-- 대댓글 리스트 -->
-        <v-list v-if="commentCopy.replies && commentCopy.replies.length">
-          <comment-item
-            v-for="reply in commentCopy.replies"
-            :key="reply.id"
-            :comment="reply"
-            :postId="postId"
-            @comment-deleted="onReplyDeleted"
-            @reply-added="onReplyAdded"
-          ></comment-item>
-        </v-list>
-      </v-list-item-content>
-    </v-list-item>
-  </v-card>
+      <!-- 대댓글 리스트 -->
+      <v-list v-if="commentCopy.replies && commentCopy.replies.length">
+        <comment-item style="margin-right:0px;" v-for="reply in commentCopy.replies" :key="reply.id" :comment="reply"
+          :postId="postId" @comment-deleted="onReplyDeleted" @reply-added="onReplyAdded"></comment-item>
+      </v-list>
+    </v-list-item-content>
+  </v-list-item>
 </template>
 
 <script>
@@ -154,3 +150,35 @@ export default {
   }
 }
 </script>
+
+<style scope>
+.action-button {
+  background-color: #3a3a3a !important;
+  color: #ffffff !important;
+  width: 10px;
+  /* 버튼의 가로 크기 고정 */
+  height: 10px;
+  /* 버튼의 세로 크기 고정 */
+  min-width: 10px;
+  /* 최소 가로 크기 고정 */
+  max-width: 10px;
+  /* 최대 가로 크기 고정 */
+  padding: 0;
+  /* 버튼 내부의 패딩을 제거 */
+  margin: 0;
+  /* 필요 시 마진을 제거 */
+  line-height: 20px;
+  /* 텍스트가 중앙에 위치하도록 설정 */
+  text-align: center;
+  /* 텍스트 가운데 정렬 */
+  font-size: 1px;
+  /* 텍스트 크기 조정 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text-right {
+  text-align: right;
+}
+</style>

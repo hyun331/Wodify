@@ -8,13 +8,13 @@
                         <v-card-title>
                             <v-row>
                                 <v-col v-if="isMemberBaseUrl" class="profile-image-container">
-                           
-                                        <v-img :src="require('@/assets/memberBaseImg.png')" alt="member Image"
+
+                                    <v-img :src="require('@/assets/memberBaseImg.png')" alt="member Image"
                                         class="memberImg" contain></v-img>
-                               
-                                    
-                                       
-                                    
+
+
+
+
                                 </v-col>
                                 <v-col v-else class="profile-image-container">
                                     <v-img :src="memberInfo.imagePath" class="memberImg"></v-img>
@@ -103,13 +103,14 @@
                                     {{ memberInfo.boxName }}
 
                                 </v-col>
-                                <v-col cols="2" v-if="pageType === 'My Page' && userRole==='USER'">
+                                <v-col cols="2" v-if="pageType === 'My Page' && userRole === 'USER'">
                                     <v-btn v-if="!isOnHold" @click="showHoldingModal">정지</v-btn>
                                     <v-btn @click="showUnholdingModal" v-else>정지 해제</v-btn>
                                 </v-col>
 
-                                <v-col cols="2" v-if="pageType === 'My Page' && userRole==='COACH'">
-                                    <v-btn v-if="memberInfo.boxName == null" @click="showBoxCoachRegisterModal">박스 등록</v-btn>
+                                <v-col cols="2" v-if="pageType === 'My Page' && userRole === 'COACH'">
+                                    <v-btn v-if="memberInfo.boxName == null" @click="showBoxCoachRegisterModal">박스
+                                        등록</v-btn>
 
                                     <v-btn v-else @click="showBoxCoachRegisterModal">박스 변경</v-btn>
                                 </v-col>
@@ -118,20 +119,25 @@
                             <br>
                         </v-card-text>
                     </v-card>
-
+                    <br><br><br>
 
 
 
                     <!-- 차트 -->
-                    <v-row justify="center" class="mt-5">
-                        <v-col cols="12" md="10">
-                            <v-label class="d-flex justify-content-center mt-5">운동 기록</v-label>
-                            <div class="chart-container" :style="{ height: chartHeight, width: chartWidth }">
-                                <exercise-time-chart :records="records" />
-                            </div>
-                        </v-col>
-                    </v-row>
-
+                    <v-card>
+                        <v-card-title>
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col class="text-center">
+                              운동 기록
+                            </v-col>
+                          </v-row>
+                        </v-card-title>
+                        <hr>
+                        <v-card-text style="font-size: 20px;">
+                            <exercise-time-chart :records="records" />
+                        </v-card-text>
+                      </v-card>
+                      
 
                 </v-col>
             </v-row>
@@ -177,7 +183,7 @@ export default {
         showUnholdingModal() {
             this.unholding = true;
         },
-        showBoxCoachRegisterModal(){
+        showBoxCoachRegisterModal() {
             this.boxCoachRegister = true;
         }
     }
@@ -185,11 +191,6 @@ export default {
 </script>
 
 <style scoped>
-.chart-container {
-    width: 100%;
-   
-}
-
 .memberImg {
     border-radius: 50%;
     width: 100%;
@@ -208,7 +209,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden; /* 필요 시 추가적으로 오버플로우 숨김 */
+    overflow: hidden;
+    /* 필요 시 추가적으로 오버플로우 숨김 */
     padding: 10px;
     margin: 20px;
 }
