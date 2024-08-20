@@ -66,6 +66,7 @@ public class Reservation extends BaseEntity {
                 .reservationPeople(this.maximumPeople - this.availablePeople)
                 .coach(this.coach.getName())
                 .reservationDetails(dtoList)
+                .wod_id(this.wod.getId())
                 .build();
 
     }

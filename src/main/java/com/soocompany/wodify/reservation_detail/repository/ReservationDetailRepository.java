@@ -39,4 +39,6 @@ public interface ReservationDetailRepository extends JpaRepository<ReservationDe
             @Param("endDate") LocalDate endDate,
             Pageable pageable
     );
+
+    Optional<ReservationDetail> findByReservationAndMemberAndDelYn(Reservation reservation, Member member, String delYn);
 }
