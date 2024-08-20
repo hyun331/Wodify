@@ -1,8 +1,8 @@
 <template>
     <div class="background-image">
         <div class=’rubikMonoOne’>
-            <h1 class="title">BOX</h1>
-            <h1 class="title">SUCCESS</h1>
+            <h1 class="rubikMonoOne">BOX</h1>
+            <h1 class="rubikMonoOne">SUCCESS</h1>
         </div>
       <br>
       <v-card-title class="text-center text-h4">
@@ -56,14 +56,18 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap');
-.title {
-    font-family: 'Rubik Mono One', sans-serif;
-  }
+html, body {
+  margin: 0; /* 기본 여백 제거 */
+  padding: 0; /* 기본 패딩 제거 */
+  height: 100%; /* 전체 높이 설정 */
+}
+
 .background-image {
     background-image: url('');
-    background-size: cover;
-    background-position: center;
-    min-height: 100vh;
+    background-size: cover; /* 이미지 크기 조절 */
+    background-position: center; /* 이미지 위치 조정 */
+    min-height: 100vh; /* 화면 전체 높이 설정 */
+    width: 100%; /* 화면 전체 너비 설정 */
   }
 
 </style>
