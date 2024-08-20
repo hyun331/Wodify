@@ -1,5 +1,4 @@
 <template>
-  <div class="background-wrapper">
     <v-container>
       <v-card>
         <v-card-title>
@@ -56,7 +55,6 @@
       <!-- 모달 컴포넌트 -->
       <ModalRecord v-if="isModalOpen" @close="isModalOpen = false" @insert="insertIntoEditor" />
     </v-container>
-  </div>
 </template>
 
 <script>

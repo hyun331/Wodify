@@ -119,6 +119,7 @@
 import axios from 'axios';
 import RoundedButtonComponent from './RoundedButtonComponent.vue';
 import AlertModalComponent from './AlertModalComponent.vue';
+import { KAKAO_LOGIN_URL } from '@/router/KakaoLoginUrl';
 
 export default {
     props: ['propsRole'],
@@ -180,7 +181,7 @@ export default {
 
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member/register`, registerData);
                 console.log(response.data.result);
-                window.location.href = "/";
+                window.location.href = KAKAO_LOGIN_URL;
             } catch (e) {
                 console.error('Error during registration:', e);
             }

@@ -53,7 +53,7 @@
                       {{ r.reservationPeople }} / {{ r.maxPeople }}
                     </td>
                     <td style="text-align: center;">
-                      <v-btn :to="{ path: '/wod/select-date'}">view</v-btn>
+                      <v-btn @click="showWodModal(r.wod_id)">view</v-btn>
                     </td>
                     <!-- Updated delete button event -->
                     <td style="text-align: center;">
@@ -74,16 +74,19 @@
       <AlertModalComponent v-model="alertModal" @update:dialog="alertModal = $event" :dialogTitle="dialogTitle"
         :dialogText="dialogText" />
 
-        <v-dialog v-model="deleteModal" max-width="400px">
-          <v-card>
-            <v-card-title class="headline">{{ dialogTitle }}</v-card-title>
-            <v-card-text>정말로 예약을 삭제하시겠습니까?</v-card-text>
-            <v-card-actions>
-              <v-btn text @click="deleteModal = false">아니오</v-btn>
-              <v-btn class="hover-btn" text @click="cancel">예</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+      <v-dialog v-model="deleteModal" max-width="400px">
+        <v-card>
+          <v-card-title class="headline">{{ dialogTitle }}</v-card-title>
+          <v-card-text>정말로 예약을 삭제하시겠습니까?</v-card-text>
+          <v-card-actions>
+            <v-btn text @click="deleteModal = false">아니오</v-btn>
+            <v-btn class="hover-btn" text @click="cancel">예</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <WodModal v-if="wodId" v-model="wodModal" :wodId="this.wodId" @update:dialog="wodModal = $event">
+
+      </WodModal>
     </v-container>
   </div>
 </template>
@@ -92,11 +95,12 @@
 import axios from 'axios';
 import ReservationMemberListModal from './ReservationMemberListModal.vue';
 import AlertModalComponent from '@/components/AlertModalComponent.vue';
-
+import WodModal from './WodModal.vue';
 export default {
   components: {
     ReservationMemberListModal,
-    AlertModalComponent
+    AlertModalComponent,
+    WodModal
   },
   data() {
     return {
@@ -115,7 +119,9 @@ export default {
       dialogText: "",
       boxName: "",
       deleteModal: false,
-      reservationIdToDelete: null
+      reservationIdToDelete: null,
+      wodModal: false,
+      wodId: "",
     };
   },
   async created() {
@@ -158,6 +164,10 @@ export default {
     window.removeEventListener('scroll', this.scrollPagination);
   },
   methods: {
+    showWodModal(wodId) {
+      this.wodId = wodId;
+      this.wodModal = true;
+    },
     async loadList() {
       try {
         if (this.isLoading || this.isLastPage) return;
@@ -256,5 +266,4 @@ export default {
   font-size: 70px;
   font-family: "Oswald", sans-serif;
 }
-
 </style>

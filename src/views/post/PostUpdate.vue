@@ -1,12 +1,11 @@
 <template>
-    <div class="background-wrapper">
       <v-container>
         <v-card>
           <v-card-title>
             <v-row align="center">
               <v-col cols="auto">
                 <v-select v-model="post.type" :items="typeOptions" label="Type" required outlined dense
-                  :disabled="userRole === 'USER'" style="width: 200px" />
+                  :disabled="userRole === 'USER'" style="margin-top: 15px; width: 200px" />
               </v-col>
               <v-spacer />
               <v-col cols="auto">
@@ -33,7 +32,6 @@
         </v-card>
         <ModalRecord v-if="isModalOpen" @close="isModalOpen = false" @insert="insertIntoEditor" />
       </v-container>
-    </div>
   </template>
   
   <script>

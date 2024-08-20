@@ -1,5 +1,5 @@
 <template>
-    <div class="content-container mb-10" style="margin-top: 20px;">
+    <div class="content-container mb-10" style="margin-top: 20px; opacity: 0.7;">
         <v-footer class="text-center">
             <v-row class="d-flex justify-center">
                 <v-col class="company-info">
@@ -13,14 +13,13 @@
             </v-row>
         </v-footer>
     </div>
-
 </template>
 <script>
 export default {};
 </script>
 <style scope>
 .company-info {
-    color: grey;
+    color: black;
     font-size: 12px;
     text-align: left;
 }
