@@ -22,8 +22,8 @@
                 <v-row justify="center">
                     <v-col cols="5" class="d-flex justify-center align-center">
                         <div class="date-picker-container">
-                            <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected" style="width: 400px;"
-                                class="custom-date-picker">
+                            <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected"
+                                style="width: 400px;" class="custom-date-picker">
                                 <template v-slot:header></template>
                             </v-date-picker>
                         </div>
@@ -63,20 +63,14 @@
 
                 <v-row v-for="(entry, index) in entries" :key="index" justify="center">
                     <v-col cols="5">
-                        <v-text-field label="Time" type="time" v-model="entry.time" 
-                        placeholder="시간을 입력해주세요"
-                        class="time-field"
-                        style="margin-left:40px;
-                        margin-right:40px;"
-                        required>
+                        <v-text-field label="Time" type="time" v-model="entry.time" placeholder="시간을 입력해주세요"
+                            class="time-field" style="margin-left:40px;
+                        margin-right:40px;" required>
                         </v-text-field>
                     </v-col>
                     <v-col cols="3">
-                        <v-text-field label="People" v-model="entry.people" 
-                        placeholder="인원을 입력해주세요" 
-                        class="people-field"
-                        
-                        required>
+                        <v-text-field label="People" v-model="entry.people" placeholder="인원을 입력해주세요"
+                            class="people-field" required>
                         </v-text-field>
                     </v-col>
                     <v-col cols="2" class="d-flex align-center" style="margin-bottom: 16px;">
@@ -201,12 +195,20 @@ export default {
                 maximumPeople: entry.people
             }));
 
-            alert(JSON.stringify(reservationData, null, 2));
             await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation/create`, reservationData)
                 .then(response => {
                     console.log(response);
-                    alert("예약이 완료되었습니다!");
-                    this.$router.push("/reservation/list");
+                    this.dialogTitle = "예약이 생성을 완료했습니다.";
+                    this.dialogText = "";
+                    this.alertModal = true;
+                    this.$watch(
+                        () => this.alertModal,
+                        (newVal) => {
+                            if (!newVal) {
+                                this.$router.push("/reservation/list");
+                            }
+                        }
+                    );
                 }).catch(error => {
                     let errorMessage = "";
                     if (error.response && error.response.data) {
@@ -278,9 +280,11 @@ export default {
 
 .bordered {
     border: 1px solid #ccc;
-    /* 테두리 스타일 */ padding: 10px;
+    /* 테두리 스타일 */
+    padding: 10px;
     /* 여백 추가 */
 }
+
 .wod-info-container {
     margin: 10px;
     text-align: center;
@@ -297,5 +301,4 @@ export default {
 .wod {
     margin-top: 20px;
 }
-
 </style>

@@ -200,25 +200,33 @@ export default {
                 reservationId: this.time // Use the selected value from the v-select
             };
 
-            try {
-                const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/create`, reservationData);
-                console.log(response.data.result.content);
-                alert("예약 완료 !! ");
-                this.dialogTitle = "예약이 완료되었습니다";
-                this.alertModal = true;
-                this.$router.push('/reservation-detail/list');
-            } catch (error) {
-                if (error.response && error.response.status === 409) {
-                    this.dialogTitle = "예약 인원이 초과하였습니다.";
-                    this.dialogText = "대기하시겠습니까?";
-                    this.waitingModal = true;
-                } else {
-                    this.dialogTitle = "예약이 정상적으로 처리되지 않았습니다";
-                    this.dialogText = error;
+            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/create`, reservationData)
+                .then(response => {
+                    console.log(response.data.result.content);
+
+                    this.dialogTitle = "예약이 완료되었습니다";
+                    this.dialogText = "";
                     this.alertModal = true;
-                }
-                console.log(error);
-            }
+                    this.$watch(
+                        () => this.alertModal,
+                        (newVal) => {
+                            if (!newVal) {
+                                this.$router.push("/reservation-detail/list");
+                            }
+                        }
+                    );
+                }).catch(error => {
+                    if (error.response && error.response.status === 409) {
+                        this.dialogTitle = "예약 인원이 초과하였습니다.";
+                        this.dialogText = "대기하시겠습니까?";
+                        this.waitingModal = true;
+                    } else {
+                        this.dialogTitle = "예약이 정상적으로 처리되지 않았습니다";
+                        this.dialogText = error;
+                        this.alertModal = true;
+                    }
+                    console.log(error);
+                });
 
         },
         async waiting() {
