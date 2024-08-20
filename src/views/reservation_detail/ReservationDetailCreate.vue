@@ -223,8 +223,16 @@ export default {
                         this.dialogText = "대기하시겠습니까?";
                         this.waitingModal = true;
                     } else {
+
+                        let errorMessage = "";
+                        if (error.response.data) {
+                            // 서버에서 반환한 에러 메시지가 있는 경우
+                            errorMessage += `: ${error.response.data.error_message}`;
+                        } else if (error.message) {
+                            errorMessage += `: ${error.message}`;
+                        }
                         this.dialogTitle = "예약이 정상적으로 처리되지 않았습니다";
-                        this.dialogText = error;
+                        this.dialogText = errorMessage;
                         this.alertModal = true;
                     }
                     console.log(error);
