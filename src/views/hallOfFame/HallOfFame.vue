@@ -1,10 +1,10 @@
 <template>
     <v-container>
         <div style="line-height: 1;">
-            <h1 class="do-hyeon-regular text-center">명예의 전당</h1>
+            <h1 class="freesentation text-center" style=" font-size:100px;">명예의 전당</h1>
           </div>
    
-        <v-row justify="center" class="mt-5">
+        <v-row justify="center" class="mt-3">
             <v-col cols="12" md="10">
                 <v-card>
                     <v-card-text>
@@ -103,7 +103,7 @@ export default {
                     x: {
                         type: 'linear',
                         min: 0,
-                        max: 30, 
+                        max: 60, 
                         ticks: {
                             callback: function (value) {
                                 const minutes = value % 60;
@@ -123,10 +123,7 @@ export default {
                     legend: {
                         position: 'top',
                     },
-                    title: {
-                        display: true,
-                        text: 'Exercise Time Leaderboard',
-                    },
+                    
                     tooltip: {
                         callbacks: {
                             label: function (context) {
@@ -151,11 +148,11 @@ export default {
             this.hallOfFameResDtoList = response.data.result.hallOfFameResDtoList;
             this.wodId = response.data.result.wodId;
         } catch (e) {
-            this.dialogTitle='박스에 가입해주세요',
-            this.dialogText='박스에 가입되지 않은 회원은 명예의 전당을 이용할 수 없습니다.',
+            this.dialogTitle='박스에 가입해주세요';
+            this.dialogText=e.response?.data?.error_message;
 
             this.alertModal = true;
-            console.log(e.response.data.error_message);
+            console.error(e.response?.data?.error_message||"???");
 
         }
     },
@@ -167,13 +164,4 @@ export default {
 };
 </script>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap');
-.do-hyeon-regular {
-  font-family: "Do Hyeon", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size: 80px;
-}
 
-</style>
