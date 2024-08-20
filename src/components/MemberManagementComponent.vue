@@ -195,7 +195,7 @@ export default{
 
 </script>
 
-<style>
+<style scoped>
 
 
 .hover-text:hover {
