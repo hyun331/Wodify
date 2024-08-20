@@ -22,4 +22,10 @@ public class HallOfFameController {
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "명예의 전당", hallOfFameService.getHallOfFame());
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
+
+    @GetMapping("/hallOfFame/attendance-rate")
+    public ResponseEntity<?> showHallOfFameAttendanceRate(){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "명예의 전당 - 출석률", hallOfFameService.getHallOfFameAttendanceRate());
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
 }
