@@ -1,15 +1,14 @@
 <template>
     <div class="background">
         <v-container>
-            <v-row>
-                <v-col cols="6">
-                    <v-img :src="require('@/assets/wodify.png')" alt="WODIFY" sizes="70%" contain></v-img>
+            <v-row justify="center">
+                <v-col style="height: 200px;">
+                    <v-img :src="require('@/assets/wodify.png')" alt="WODIFY"  contain></v-img>
                 </v-col>
-                <v-col cols="6">
-                </v-col>
+
             </v-row>
 
-            <v-row class="d-flex justify-content-between mt-5" justify="center">
+            <v-row class="d-flex  mt-5" justify="center">
                 <v-col cols="12" sm="6" md="8">
                     <v-form @submit.prevent="memberRegister" ref="form" lazy-validation>
 
@@ -55,7 +54,7 @@
                             <v-col cols="4" class="divField"><v-label>ADDRESS</v-label></v-col>
                             <v-col cols="8">
 
-                                <v-text-field v-model="address" required>
+                                <v-text-field v-model="address" class="test" required>
                                 </v-text-field>
                             </v-col>
                         </v-row>
@@ -92,7 +91,7 @@
                             <v-col cols="4" class="divField"><v-label>ROLE</v-label></v-col>
                             <v-col cols="8">
 
-                                <v-text-field v-model="role" required readonly="">
+                                <v-text-field  v-model="role" required readonly="">
                                 </v-text-field>
                             </v-col>
                         </v-row>
@@ -111,19 +110,28 @@
             </v-row>
         </v-container>
     </div>
+
+    <AlertModalComponent v-model="alertModal" @update:dialog="alertModal = $event" :dialogTitle="dialogTitle"
+                :dialogText="dialogText" />
 </template>
 
 <script>
 import axios from 'axios';
 import RoundedButtonComponent from './RoundedButtonComponent.vue';
+import AlertModalComponent from './AlertModalComponent.vue';
 
 export default {
     props: ['propsRole'],
     components: {
-        RoundedButtonComponent
+        RoundedButtonComponent,
+        AlertModalComponent,
     },
     data() {
         return {
+            dialogTitle:'',
+            dialogText:'',
+            alertModal: false,
+
             name: '',
             phone: '',
             email: '',
@@ -150,7 +158,9 @@ export default {
                 const validationResult = await form.validate(); 
 
                 if (validationResult.valid === false) { 
-                    alert("필수 입력란을 입력해주세요");
+                    this.dialogTitle = "회원가입 실패"
+                    this.dialogText = "필수 입력란을 입력해주세요";
+                    this.alertModal = true;
                     return;  
                 }
 
@@ -208,9 +218,18 @@ export default {
 
 div.v-col-8 {
     height: 70px;
+    
 }
 
-.v-field {
-    background-color: rgb(203, 203, 203);
+
+::v-deep .v-text-field input  {    
+    background-color: #e7e4e4; 
 }
+
+::v-deep .v-field.v-field--appended{    
+    background-color: #e7e4e4; 
+}
+
+
+
 </style>

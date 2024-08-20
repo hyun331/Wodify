@@ -1,4 +1,5 @@
 <template>
+
     <MemberDetailComponent 
     :memberInfo="memberInfo"
     :isMemberBaseUrl="isMemberBaseUrl"

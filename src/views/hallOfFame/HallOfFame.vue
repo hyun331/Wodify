@@ -26,7 +26,13 @@
         >
 
         </WodModal>
+
+
+        <AlertModalComponent v-model="alertModal" @update:dialog="alertModal = $event" :dialogTitle="dialogTitle"
+        :dialogText="dialogText" />
     </v-container>
+
+
 
     
 </template>
@@ -35,6 +41,7 @@
 import axios from 'axios';
 import { Bar } from 'vue-chartjs';
 import WodModal from './WodModal.vue';
+import AlertModalComponent from '@/components/AlertModalComponent.vue';
 import {
     Chart as ChartJS,
     Title,
@@ -50,7 +57,7 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,
 
 export default {
     components: {
-        Bar, WodModal
+        Bar, WodModal, AlertModalComponent
     },
     computed: {
         chartData() {
@@ -84,6 +91,10 @@ export default {
     data() {
         return {
             wodModal: false,
+            alertModal: false,
+            dialogTitle:'',
+            dialogText:'',
+
             hallOfFameResDtoList: [],
             wodId: null,
             chartOptions: {
@@ -140,7 +151,12 @@ export default {
             this.hallOfFameResDtoList = response.data.result.hallOfFameResDtoList;
             this.wodId = response.data.result.wodId;
         } catch (e) {
-            console.log(e);
+            this.dialogTitle='박스에 가입해주세요',
+            this.dialogText='박스에 가입되지 않은 회원은 명예의 전당을 이용할 수 없습니다.',
+
+            this.alertModal = true;
+            console.log(e.response.data.error_message);
+
         }
     },
     methods:{

@@ -1,5 +1,5 @@
 <template>
-    <div class="background">
+    <div class="chooseRegisterBackground">
         <v-container>
             
             <v-row>
@@ -16,7 +16,7 @@
             </div> -->
             <v-row justify="center" class="d-flex justify-content-between mt-5" style="width: 80%; margin: 0 auto;">
                 <v-col cols="6">
-                    <v-card  class="hover-image"  @click="userLogin">
+                    <v-card  class="choose-register-hover-image"  @click="userLogin">
                         <v-img :src=defaultImage alt="일반회원가입 이미지"  contain></v-img>
                         <v-card-title justify="center"  class="text-center  font-choose" >
                             일반 회원가입
@@ -24,7 +24,7 @@
                     </v-card>
                 </v-col>
                 <v-col cols="6">
-                    <v-card  class="hover-image" @click="coachLogin"> 
+                    <v-card  class="choose-register-hover-image" @click="coachLogin"> 
                         <v-img :src=defaultImage alt="코치회원가입 이미지"  contain></v-img>
                         <v-card-title justify="center" class="text-center font-choose">
                             코치 회원가입
@@ -65,8 +65,8 @@ export default {
 </script>
 
 
-<style scoped>
-.background {
+<style>
+.chooseRegisterBackground {
     min-height: 100vh;
     margin: 0;
     background-image: url("@/assets/background.png");
@@ -75,7 +75,7 @@ export default {
     background-position: center;
 }
 
-.hover-image:hover img{
+.choose-register-hover-image:hover img{
     content: url('@/assets/home_color2.png');
 }
 
