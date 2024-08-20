@@ -1,6 +1,7 @@
 package com.soocompany.wodify.member.repository;
 
 import com.soocompany.wodify.box.domain.Box;
+import com.soocompany.wodify.box.dto.BoxMemberCountDto;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.domain.Role;
 import com.soocompany.wodify.member.dto.MemberManagementListDto;
@@ -62,5 +63,12 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "WHERE m.box.id = :boxId AND m.role = :role AND m.name LIKE %:searchName%")
     Page<MemberManagementListDto> findMemberManagementListByBoxAndName(@Param("boxId") Long boxId, @Param("role") Role role, @Param("searchName") String searchName, Pageable pageable);
 
+    @Query("SELECT new com.soocompany.wodify.box.dto.BoxMemberCountDto(b.id, b.name, b.intro, b.logoPath, COUNT(m.id)) " +
+            "FROM Member m " +
+            "JOIN m.box b " +
+            "WHERE m.delYn = 'N' " +
+            "GROUP BY b.id, b.name, b.intro, b.logoPath " +
+            "ORDER BY COUNT(m.id) DESC")
+    List<BoxMemberCountDto> findTop4BoxesWithMostMembers();
 
 }
