@@ -1,5 +1,5 @@
 <template>
-  <div class="page-container">
+  <div class="background">
     <v-container>
       <div>
         <h1 class="rubikMonoOne">MY</h1>
@@ -24,6 +24,7 @@
                     <td class="menufont">COACH</td>
                     <td>{{ reservation.coachName }}</td>
                   </tr>
+
                   <tr>
                     <td class="menufont">WOD</td>
                     <td><v-btn @click="showWod">VIEW</v-btn></td>
@@ -54,26 +55,16 @@
             <v-card-text>
               <v-form @submit.prevent="createRecord">
                 <v-row class="menufont">
-                  <v-col cols="4"><v-label>SUCCESS OR FAILURE</v-label></v-col>
+                  <v-col cols="4"><label>SUCCESS OR FAILURE</label></v-col>
                   <v-col cols="8">
                     <v-radio-group v-model="registerData.snf" inline>
-                      <v-radio label="SUCCESS" :value="S"></v-radio>
-                      <v-radio label="FAILURE" :value="N"></v-radio>
+                      <v-radio label="SUCCESS" value="S"></v-radio>
+                      <v-radio label="FAILURE" value="F"></v-radio>
                     </v-radio-group>
-                    <!-- <div>
-                      <label class="menufont">
-                        <input type="radio" v-model="registerData.snf" value="S">
-                        SUCCESS
-                      </label>
-                      <label class="menufont">
-                        <input type="radio" v-model="registerData.snf" value="N">
-                        FAILURE
-                      </label>
-                    </div> -->
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="2"><v-label class="menufont">TIME</v-label></v-col>
+                  <v-col cols="2"><label class="menufont">EXERCISE TIME</label></v-col>
                   <v-col cols="5">
                     <v-text-field class="custom-text-box" style="margin-right:2px" v-model="registerData.exerciseTime"
                       label="ExerciseTime" placeholder="HH:mm:ss" @click="timePickerVisible = true"
@@ -100,27 +91,19 @@
                         </v-card-actions>
                       </v-card>
                     </v-dialog>
-                    <!-- <v-text-field v-model="registerData.exerciseTime" :active="menu2" :focus="menu2"
-                      label="Exersice Time" readonly>
-                      <v-menu v-model="menu2" :close-on-content-click="false" activator="parent"
-                        transition="scale-transition">
-                        <v-time-picker use-seconds v-if="menu2" v-model="registerData.exerciseTime"
-                          full-width></v-time-picker>
-                      </v-menu>
-                    </v-text-field> -->
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="2"><v-label class="menufont">COMMENT</v-label></v-col>
+                  <v-col cols="2"><label class="menufont">COMMENT</label></v-col>
                   <v-col cols="9">
                     <v-text-field v-model="registerData.comments" required></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row v-for=" (wodDetDto, index) in wod.wodDetResDtoList" :key="wodDetDto.id">
                   <v-col cols="5">
-                    <v-label class="menufont">name : {{ wodDetDto.name }}</v-label>
+                    <label class="menufont">name : {{ wodDetDto.name }}</label>
                     <br>
-                    <v-label class="menufont">contents : {{ wodDetDto.contents }}</v-label>
+                    <label class="menufont">contents : {{ wodDetDto.contents }}</label>
                   </v-col>
                   <v-col cols="7">
                     <v-text-field v-model="registerData.recordDetSaveReqDtoList[index].detailComments"
@@ -128,7 +111,7 @@
                   </v-col>
                 </v-row>
                 <v-row justify="end">
-                  <v-btn type="submit" color="grey-lighten-1">CREATE</v-btn>
+                  <v-btn type="submit">CREATE</v-btn>
                 </v-row>
               </v-form>
             </v-card-text>
@@ -150,7 +133,7 @@
                     <td></td>
                   </tr>
                   <tr>
-                    <td class="menufont">TIME</td>
+                    <td class="menufont">EXERCISE TIME</td>
                     <td>{{ this.record.exerciseTime }}</td>
                     <td></td>
                   </tr>
@@ -160,16 +143,22 @@
                     <td></td>
                   </tr>
                 </tbody>
-                <tr v-for=" recordDetDto in record.recordResDetDtoList" :key="recordDetDto.id">
-                  <td class="menufont">name : {{ recordDetDto.wodName }}</td>
-                  <td class="menufont">contents : {{ recordDetDto.wodContents }}</td>
-                  <td class="menufont">comment : {{ recordDetDto.detailComments }}</td>
-                </tr>
               </v-table>
+              <hr style="border: solid 0.8px #BDBDBD">
+              <v-row v-for=" recordDetDto in record.recordResDetDtoList" :key="recordDetDto.id">
+                <v-col cols="5">
+                  <label class="menufont">name : {{ recordDetDto.wodName }}</label>
+                  <br>
+                  <label class="menufont">contents : {{ recordDetDto.wodContents }}</label>
+                </v-col>
+                <v-col cols="6">
+                  <label class="menufont">comment : {{ recordDetDto.detailComments }}</label>
+                </v-col>
+              </v-row>
               <br>
               <v-row justify="end">
-                <v-btn @click="changeModifyBtn" color="grey-lighten-1">MODIFY</v-btn>
-                <v-btn @click="showDeleteRecordModal" color="grey-lighten-1">DELETE</v-btn>
+                  <v-btn @click="changeModifyBtn">MODIFY</v-btn>
+                  <v-btn @click="showDeleteRecordModal">DELETE</v-btn>
               </v-row>
             </v-card-text>
           </v-card>
@@ -185,16 +174,16 @@
             <v-card-text>
               <v-form @submit.prevent="modifyRecord">
                 <v-row>
-                  <v-col cols="4"><v-label class="menufont">SUCCESS OR FAILURE</v-label></v-col>
+                  <v-col cols="4"><label class="menufont">SUCCESS OR FAILURE</label></v-col>
                   <v-col cols="8">
                     <v-radio-group v-model="modifyData.snf" inline>
                       <v-radio label="SUCCESS" value="S"></v-radio>
-                      <v-radio label="FAILURE" value="N"></v-radio>
+                      <v-radio label="FAILURE" value="F"></v-radio>
                     </v-radio-group>
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="2"><v-label class="menufont">TIME</v-label></v-col>
+                  <v-col cols="2"><label class="menufont">EXERCISE TIME</label></v-col>
                   <v-col cols="5">
                     <v-text-field class="custom-text-box" style="margin-right:2px" v-model="modifyData.exerciseTime"
                       label="ExerciseTime" placeholder="HH:mm:ss" @click="mtimePickerVisible = true"
@@ -221,27 +210,19 @@
                         </v-card-actions>
                       </v-card>
                     </v-dialog>
-                    <!-- <v-text-field v-model="modifyData.exerciseTime" :active="menu2" :focus="menu2" label="Exersice Time"
-                      readonly>
-                      <v-menu v-model="menu2" :close-on-content-click="false" activator="parent"
-                        transition="scale-transition">
-                        <v-time-picker use-seconds v-if="menu2" v-model="modifyData.exerciseTime"
-                          full-width></v-time-picker>
-                      </v-menu>
-                    </v-text-field> -->
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="2"><v-label class="menufont">COMMENT</v-label></v-col>
+                  <v-col cols="2"><label class="menufont">COMMENT</label></v-col>
                   <v-col cols="9">
                     <v-text-field v-model="modifyData.comments" required></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row v-for=" (wodDetDto, index) in wod.wodDetResDtoList" :key="wodDetDto.id">
                   <v-col cols="5">
-                    <v-label class="menufont">name : {{ wodDetDto.name }}</v-label>
+                    <label class="menufont">name : {{ wodDetDto.name }}</label>
                     <br>
-                    <v-label class="menufont">contents : {{ wodDetDto.contents }}</v-label>
+                    <label class="menufont">contents : {{ wodDetDto.contents }}</label>
                   </v-col>
                   <v-col cols="7">
                     <v-text-field v-model="modifyData.recordDetSaveReqDtoList[index].detailComments"
@@ -249,7 +230,7 @@
                   </v-col>
                 </v-row>
                 <v-row justify="end">
-                  <v-btn type="submit" color="grey-lighten-1">MODIFY</v-btn>
+                  <v-btn type="submit">MODIFY</v-btn>
                 </v-row>
               </v-form>
             </v-card-text>
@@ -286,8 +267,6 @@ export default {
 
       isNotExisted: false, // 등록용 체크
       isExisted: false,    // 조회용 체크
-
-      // menu2: false, // 시계
 
       wod: {},  // 와드내역-디테일 조회
 
@@ -329,7 +308,7 @@ export default {
     recordButtonLabel() { // 예약내역에 운동기록이 있나 없나 표시
       if (this.reservation.recordSnF === 'S') { // 있음
         return 'SUCCESS';
-      } else if (this.reservation.recordSnF === 'N') { // 있음
+      } else if (this.reservation.recordSnF === 'F') { // 있음
         return 'FAILURE';
       } else {                                        // 없음
         return 'CREATE';
@@ -447,9 +426,24 @@ export default {
 </script>
 
 <style scoped>
-.page-container {
-  background-color: #D9D9D9;
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@600&family=Rubik:wght@500&display=swap');
+
+.rubik-button {
+  font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* color="grey-lighten-1" class="rubik-button" */
+
+.background {
   min-height: 100vh;
+  margin: 0;
+  background-image: url("@/assets/background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .menufont {

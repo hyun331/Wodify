@@ -1,5 +1,5 @@
 <template>
-    <div class="page-container">
+    <div>
         <div class="box right-align">
             <br>
             <span class="boxLocation">
@@ -23,8 +23,7 @@
                     <v-col cols="6" class="d-flex justify-center align-center">
                         <div class="date-picker-container">
                             <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected"
-                                style="width: 400px;"
-                                class="custom-date-picker">
+                                style="width: 400px;" class="custom-date-picker">
                                 <template v-slot:header></template>
                             </v-date-picker>
                         </div>
@@ -55,7 +54,6 @@
                 </v-row>
                 <v-row class="d-flex justify-center align-center">
                     <v-col cols="9">
-
                         <v-select v-model="time" :items="timeOptions" item-title="text" item-value="value" label="시간 선택"
                             class="mx-2"></v-select>
                     </v-col>
@@ -202,25 +200,33 @@ export default {
                 reservationId: this.time // Use the selected value from the v-select
             };
 
-            try {
-                const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/create`, reservationData);
-                console.log(response.data.result.content);
-                alert("예약 완료 !! ");
-                this.dialogTitle = "예약이 완료되었습니다";
-                this.alertModal = true;
-                this.$router.push('/reservation-detail/list');
-            } catch (error) {
-                if (error.response && error.response.status === 409) {
-                    this.dialogTitle = "예약 인원이 초과하였습니다.";
-                    this.dialogText = "대기하시겠습니까?";
-                    this.waitingModal = true;
-                } else {
-                    this.dialogTitle = "예약이 정상적으로 처리되지 않았습니다";
-                    this.dialogText = error;
+            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation-detail/create`, reservationData)
+                .then(response => {
+                    console.log(response.data.result.content);
+
+                    this.dialogTitle = "예약이 완료되었습니다";
+                    this.dialogText = "";
                     this.alertModal = true;
-                }
-                console.log(error);
-            }
+                    this.$watch(
+                        () => this.alertModal,
+                        (newVal) => {
+                            if (!newVal) {
+                                this.$router.push("/reservation-detail/list");
+                            }
+                        }
+                    );
+                }).catch(error => {
+                    if (error.response && error.response.status === 409) {
+                        this.dialogTitle = "예약 인원이 초과하였습니다.";
+                        this.dialogText = "대기하시겠습니까?";
+                        this.waitingModal = true;
+                    } else {
+                        this.dialogTitle = "예약이 정상적으로 처리되지 않았습니다";
+                        this.dialogText = error;
+                        this.alertModal = true;
+                    }
+                    console.log(error);
+                });
 
         },
         async waiting() {
@@ -253,6 +259,10 @@ export default {
 </script>
 
 <style scoped>
+::v-deep .v-field__input {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
 .box {
     background-color: #797876;
 }
@@ -268,13 +278,6 @@ export default {
     font-family: "Oswald", sans-serif;
 }
 
-.page-container {
-    /* 전체 페이지의 배경색을 설정합니다 */
-    background-color: #D9D9D9;
-    /* 원하는 배경색으로 변경 */
-    min-height: 100vh;
-    /* 전체 화면 높이로 설정 */
-}
 
 .reservationHead {
     font-weight: bold;
@@ -304,11 +307,6 @@ export default {
     /* Adds space between the value and the label */
 }
 
-.bordered {
-    border: 1px solid #ccc;
-    /* 테두리 스타일 */ padding: 10px;
-    /* 여백 추가 */
-}
 .wod-info-container {
     margin: 10px;
     text-align: center;
@@ -321,7 +319,10 @@ export default {
     background-color: rgba(255, 255, 255, 0.5);
     margin-top: 20px;
 }
+
 .wod {
     margin-top: 20px;
+    background-color: #D9D9D9;
+    border-radius: 5px;
 }
 </style>

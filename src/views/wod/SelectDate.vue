@@ -1,5 +1,4 @@
 <template>
-  <div class="page-container">
     <div class="box right-align">
       <br>
       <span class="boxLocation">
@@ -19,7 +18,6 @@
         </v-col>
       </v-row>
     </v-container>
-  </div>
 </template>
 
 <script>
@@ -39,7 +37,6 @@ export default {
     } catch (error) {
       let errorMessage = "";
       if (error.response && error.response.data) {
-        // 서버에서 반환한 에러 메시지가 있는 경우
         errorMessage += `: ${error.response.data.error_message}`;
       } else if (error.message) {
         errorMessage += `: ${error.message}`;
@@ -108,14 +105,6 @@ export default {
 
 
 <style scoped>
-.page-container {
-  /* 전체 페이지의 배경색을 설정합니다 */
-  background-color: #D9D9D9;
-  /* 원하는 배경색으로 변경 */
-  min-height: 100vh;
-  /* 전체 화면 높이로 설정 */
-}
-
 .box {
   background-color: #797876;
 }
