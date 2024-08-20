@@ -1,60 +1,73 @@
 <template>
-    <v-container>
+  <v-container>
+    <v-card>
+      <v-card-title>
+        <v-row align="center">
+          <v-col cols="auto">
+            <v-select v-model="formData.type" :items="typeOptions" label="Type" required outlined dense
+              :disabled="userRole === 'USER'" style="width: 200px; margin-top: 18px;" />
+          </v-col>
+          <v-spacer />
+          <v-col cols="auto">
+            <v-row justify="end" style="margin-right: 8px">
+              <v-btn class="custom-btn" style="margin-right: 8px" @click="isModalOpen = true">기록</v-btn>
+              <v-btn class="custom-btn" style="margin-right: 8px" @click="validateAndSubmit">저장</v-btn>
+              <v-btn class="custom-btn" @click="showCancelConfirmationModal">취소</v-btn>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-card-title>
+      <v-card-text>
+        <v-row>
+          <v-col cols="12">
+            <v-text-field v-model="formData.title" :rules="title_rule" label="Title" required outlined dense />
+          </v-col>
+          <v-col cols="12">
+            <quill-editor ref="quillEditorRef" v-model:value="formData.contents" :options="editorOptions"
+              @blur="onEditorBlur" @focus="onEditorFocus" @ready="onEditorReady" class="custom-quill-editor" />
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+    <!-- 기록 모달 컴포넌트 -->
+    <ModalRecord v-if="isModalOpen" @close="isModalOpen = false" @insert="insertIntoEditor" />
+
+    <!-- 제목 초과 경고 모달 -->
+    <v-dialog v-model="showTitleLengthModal" persistent max-width="400px">
       <v-card>
-        <v-card-title>
-          <v-row align="center">
-            <v-col cols="auto">
-              <v-select
-                v-model="formData.type"
-                :items="typeOptions"
-                label="Type"
-                required
-                outlined
-                dense
-                :disabled="userRole === 'USER'"
-                style="width: 200px; margin-top: 18px;"
-              />
-            </v-col>
-            <v-spacer />
-            <v-col cols="auto">
-              <v-row justify="end" style="margin-right: 8px">
-                <v-btn
-                  class="custom-btn"
-                  style="margin-right: 8px"
-                  @click="isModalOpen = true"
-                >기록</v-btn>
-                <v-btn
-                  class="custom-btn"
-                  style="margin-right: 8px"
-                  @click="submitForm"
-                >저장</v-btn>
-                <v-btn class="custom-btn" @click="cancel">취소</v-btn>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-card-title>
-        <v-card-text>
-          <v-row>
-            <v-col cols="12">
-              <v-text-field v-model="formData.title" label="Title" required outlined dense />
-            </v-col>
-            <v-col cols="12">
-              <quill-editor
-                ref="quillEditorRef"
-                v-model:value="formData.contents"
-                :options="editorOptions"
-                @blur="onEditorBlur"
-                @focus="onEditorFocus"
-                @ready="onEditorReady"
-                class="custom-quill-editor"
-              />
-            </v-col>
-          </v-row>
-        </v-card-text>
+        <v-card-text>{{ modalMessage }}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="action-button" text @click="closeTitleLengthModal">확인</v-btn>
+        </v-card-actions>
       </v-card>
-      <!-- 모달 컴포넌트 -->
-      <ModalRecord v-if="isModalOpen" @close="isModalOpen = false" @insert="insertIntoEditor" />
-    </v-container>
+    </v-dialog>
+
+    <!-- 저장 확인 모달 -->
+    <v-dialog v-model="showConfirmSaveModal" persistent max-width="400px">
+      <v-card>
+        <v-card-text>저장하시겠습니까?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="action-button" text @click="submitForm">확인</v-btn>
+          <v-btn class="action-button" text @click="closeConfirmSaveModal">취소</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- 취소 확인 모달 -->
+    <v-dialog v-model="showCancelModal" persistent max-width="400px">
+      <v-card>
+        <v-card-text>작성한 내용은 저장되지 않습니다. <br> 목록으로 돌아가시겠습니까?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="action-button" text @click="goBackToList">확인</v-btn>
+          <v-btn class="action-button" text @click="closeCancelModal">취소</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+  </v-container>
 </template>
 
 <script>
@@ -94,6 +107,47 @@ Quill.register(VideoBlot);
 
 export default {
   components: { quillEditor, ModalRecord },
+  data() {
+    return {
+      title_rule: [v => v.length <= 50 || '50자 이하로 작성해주세요.',],
+      showTitleLengthModal: false, // 제목 유효성 검사 모달 제어 변수
+      showConfirmSaveModal: false, // 저장 확인 모달 제어 변수
+      showCancelModal: false, // 취소 확인 모달 제어 변수
+      modalMessage: "", // 모달에 표시될 메시지
+    };
+  },
+  methods: {
+    validateAndSubmit() {
+      // 제목 유효성 검사
+      if (!this.formData.title) {
+        // 제목이 비어 있는 경우
+        this.modalMessage = "제목을 입력해주세요.";
+        this.showTitleLengthModal = true;
+      } else if (this.formData.title.length > 50) {
+        // 제목이 50자를 초과하는 경우
+        this.modalMessage = "제목은 50자 이하로 작성해야 합니다.";
+        this.showTitleLengthModal = true;
+      } else {
+        this.showConfirmSaveModal = true; // 유효성 검사를 통과하면 저장 확인 모달을 띄움      }
+      }
+    },
+    closeTitleLengthModal() {
+      this.showTitleLengthModal = false; // 모달 닫기
+    },
+    closeConfirmSaveModal() {
+      this.showConfirmSaveModal = false; // 저장 확인 모달 닫기
+    },
+    showCancelConfirmationModal() {
+      this.showCancelModal = true; // 취소 확인 모달 열기
+    },
+    closeCancelModal() {
+      this.showCancelModal = false; // 취소 확인 모달 닫기
+    },
+    goBackToList() {
+      this.showCancelModal = false; // 모달 닫기
+      this.$router.push("/post/list"); // 목록 페이지로 이동
+    },
+  },
   setup() {
     const router = useRouter();
     const quillEditorRef = ref(null);
@@ -101,7 +155,7 @@ export default {
     const quillInstance = ref(null);
 
     const formData = reactive({
-      type: null,
+      type: 'POST',
       title: "",
       contents: "",
     });
@@ -216,6 +270,7 @@ export default {
     };
 
     const submitForm = async () => {
+
       const data = new FormData();
       data.append("type", formData.type);
       data.append("title", formData.title);

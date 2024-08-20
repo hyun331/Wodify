@@ -74,11 +74,9 @@
         <!-- 데이터가 없을 때 보여주는 모달 -->
         <v-dialog v-model="showNoDataModal" persistent max-width="400px">
             <v-card>
-                <v-card-title class="headline">알림</v-card-title>
                 <v-card-text>데이터가 없습니다.</v-card-text>
                 <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="closeNoDataModal">확인</v-btn>
+                    <v-btn class="action-button" text @click="closeNoDataModal">확인</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -86,15 +84,14 @@
         <!-- 데이터 확인 및 추가 모달 -->
         <v-dialog v-model="showDataModal" persistent max-width="400px">
             <v-card>
-                <v-card-title class="headline">랜덤 데이터 추가</v-card-title>
-                <v-card-text>
+                <v-card-text style="margin-bottom: -50px;">
                     <p><strong>Name:</strong> {{ tempWodData.name }}</p>
                     <p><strong>Contents:</strong> {{ tempWodData.contents }}</p>
                 </v-card-text>
+                <v-spacer></v-spacer>
                 <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="green" text @click="addWodData">추가</v-btn>
-                    <v-btn color="grey" text @click="closeDataModal">취소</v-btn>
+                    <v-btn class="action-button" text @click="addWodData">추가</v-btn>
+                    <v-btn class="action-button" text @click="closeDataModal">취소</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -102,12 +99,22 @@
         <!-- 등록 확인 모달 -->
         <v-dialog v-model="showSubmitModal" persistent max-width="400px">
             <v-card>
-                <v-card-title class="headline">등록 확인</v-card-title>
-                <v-card-text>등록하시겠습니까?</v-card-text>
+                <v-card-text style="margin-bottom: -20px;">등록하시겠습니까?</v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="green" text @click="submitForm">확인</v-btn>
-                    <v-btn color="grey" text @click="closeSubmitModal">취소</v-btn>
+                    <v-btn class="action-button" text @click="submitForm">확인</v-btn>
+                    <v-btn class="action-button" text @click="closeSubmitModal">취소</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <!-- 등록 결과 모달 -->
+        <v-dialog v-model="showResultModal" persistent max-width="400px">
+            <v-card>
+                <v-card-text style="margin-bottom: -20px;">{{ statusMessage }}</v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn class="action-button" text @click="confirmResultModal">확인</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -134,12 +141,14 @@ export default {
             roundsOptions: Array.from({ length: 20 }, (_, i) => (i + 1).toString()), // 1 ~ 20
             wodSaveReqDto: {
                 date: this.date || "", // props로 받은 date를 사용
-                timeCap: null,
-                rounds: null,
+                timeCap: '00:00:00',
+                rounds: 0,
                 info: '',
                 wodDetSaveReqDtoList: [],
             },
             showSubmitModal: false, // 등록 확인 모달 제어 변수
+            showResultModal: false, // 등록 결과 모달 제어 변수
+            statusMessage: '', // 서버로부터 받은 등록 결과 메시지
             showNoDataModal: false, // 모달 제어를 위한 변수
             showDataModal: false, // 데이터 확인 모달 제어
             tempWodData: { // 임시로 저장할 데이터
@@ -209,14 +218,15 @@ export default {
                 this.showSubmitModal = false; // 모달 닫기
                 const response = await axios.post('http://localhost:8090/wod/save', this.wodSaveReqDto);
                 if (response.status === 201) {
-                    alert("WOD가 성공적으로 등록되었습니다.");
-                    this.$emit('wod-saved', this.date);
+                    this.statusMessage = response.data.status_message; // 서버로부터 받은 메시지 설정
                 } else {
-                    alert('WOD 등록에 실패했습니다.');
+                    this.statusMessage = response.data.error_message
                 }
+                this.showResultModal = true; // 결과 모달 열기
             } catch (error) {
                 console.error('Error submitting WOD form:', error.response ? error.response.data : error.message);
-                alert('WOD 등록 중 오류가 발생했습니다.');
+                this.statusMessage = 'WOD 등록 중 오류가 발생했습니다.'; // 예외 처리 메시지
+                this.showResultModal = true; // 오류 발생 시에도 결과 모달 열기
             }
         },
         closeNoDataModal() {
@@ -245,7 +255,11 @@ export default {
         closeSubmitModal() {
             this.showSubmitModal = false; // 모달 닫기
 
-        }
+        },
+        confirmResultModal() {
+            this.showResultModal = false; // 결과 모달 닫기
+            this.$emit('wod-saved', this.date); // 부모 컴포넌트에 이벤트 전달
+        },
     },
 }
 </script>

@@ -19,12 +19,11 @@
     <!-- 삭제 확인 모달 -->
     <v-dialog v-model="showDeleteConfirmation" persistent max-width="400px">
       <v-card>
-        <v-card-title class="headline">삭제 확인</v-card-title>
         <v-card-text>정말로 이 WOD 데이터를 삭제하시겠습니까?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="red" text @click="confirmDelete">확인</v-btn>
-          <v-btn color="grey" text @click="showDeleteConfirmation = false">취소</v-btn>
+          <v-btn class="action-button" text @click="confirmDelete">확인</v-btn>
+          <v-btn class="action-button" text @click="showDeleteConfirmation = false">취소</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -36,7 +35,7 @@
         <v-card-text>{{ resultMessage }}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="closeResultModal">확인</v-btn>
+          <v-btn class="action-button" text @click="closeResultModal">확인</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
