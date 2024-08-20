@@ -15,6 +15,9 @@
                 <v-list-item :to="{ path: '/box/mybox' }">
                     <v-list-item-title>내 박스-공통</v-list-item-title>
                 </v-list-item>
+                <v-list-item v-if="userRole === 'CEO'" :to="{ path: '/box/create' }">
+                    <v-list-item-title>박스 생성-CEO</v-list-item-title>
+                </v-list-item>
                 <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/member/list/user' }">
                     <v-list-item-title>박스 회원 관리-코치,CEO</v-list-item-title>
                 </v-list-item>
@@ -103,7 +106,6 @@
                 </v-list-item>
             </v-list>
         </v-menu>
-
         <v-btn @click="kakaoLogin" v-if="!isLogin">LOGIN</v-btn>
         <v-btn @click="kakaoLogout" v-if="isLogin">LOGOUT</v-btn>
     </v-app-bar>
@@ -137,6 +139,7 @@ export default {
             this.liveAlert = this.notifications.length; // Update alert count
         }
         this.connectToEventSource(token)
+
     },
     methods: {
         connectToEventSource(token) {
