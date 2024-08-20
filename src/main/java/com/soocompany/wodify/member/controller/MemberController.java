@@ -255,11 +255,19 @@ public class MemberController {
     }
 
 
+//    //코치의 박스 가입 및 변경. 코치 박스 코드 입력 후 submit하면 동작
+//    @PreAuthorize("hasRole('COACH')")
+//    @PatchMapping("/coach/box/update")
+//    public ResponseEntity<CommonResDto> coachBoxUpdate(@RequestParam(value = "code")String code){
+//        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치의 box 수정 성공", memberService.coachBoxUpdate(code));
+//        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+//    }
+
     //코치의 박스 가입 및 변경. 코치 박스 코드 입력 후 submit하면 동작
     @PreAuthorize("hasRole('COACH')")
     @PatchMapping("/coach/box/update")
-    public ResponseEntity<CommonResDto> coachBoxUpdate(@RequestParam(value = "code")String code){
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치의 box 수정 성공", memberService.coachBoxUpdate(code));
+    public ResponseEntity<CommonResDto> coachBoxUpdate(@RequestBody BoxCodeDto dto){
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "코치의 box 수정 성공", memberService.coachBoxUpdate(dto.getCode()));
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
