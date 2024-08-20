@@ -1,12 +1,17 @@
 <template>
-    <div>
-      <v-container>
-        <v-row>
-          <v-col cols="12" md="4">
-            <v-date-picker 
-              v-model="selectedDate" 
-              @update:model-value="onDateSelected">
-            </v-date-picker>
+  <div class="page-container">
+    <div class="box right-align">
+      <br>
+      <span class="boxLocation">
+        {{ this.boxName }}
+      </span>
+      <br>
+    </div>
+    <v-container>
+      <v-row>
+        <v-col cols="12" md="4" class="date-picker-col">
+          <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected" class="custom-date-picker">
+          </v-date-picker>
         </v-col>
         <v-col cols="12" md="8" class="content-col">
           <WodFind v-show="wod" :wod="wod" :key="wod" @wod-deleted="onWodDeleted" />
@@ -27,6 +32,23 @@ export default {
     WodFind,
     WodSave,
   },
+  async created() {
+    try {
+      const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/box/name/`);
+      this.boxName = response.data.result;
+    } catch (error) {
+      let errorMessage = "";
+      if (error.response && error.response.data) {
+        // 서버에서 반환한 에러 메시지가 있는 경우
+        errorMessage += `: ${error.response.data.error_message}`;
+      } else if (error.message) {
+        errorMessage += `: ${error.message}`;
+      }
+      this.dialogTitle = "박스명 로드 실패";
+      this.dialogText = errorMessage;
+      this.alertModal = true;
+    }
+  },
   data() {
     return {
       wod: null,
@@ -34,6 +56,7 @@ export default {
       errorMessage: '',
       formattedDate: this.formatDate(new Date()), // 초기화된 날짜를 포맷
       isLoading: false,
+      boxName: "",
     };
   },
   mounted() {
@@ -85,31 +108,33 @@ export default {
 
 
 <style scoped>
-.background-image {
-  background-image: url('@/assets/background.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 100%;
+.page-container {
+  /* 전체 페이지의 배경색을 설정합니다 */
+  background-color: #D9D9D9;
+  /* 원하는 배경색으로 변경 */
   min-height: 100vh;
-  /* 변경: 100vh에서 min-height: 100vh로 수정 */
-  position: relative;
-  overflow: auto;
-  /* 변경: overflow: hidden에서 overflow: auto로 수정 */
+  /* 전체 화면 높이로 설정 */
 }
 
-.content-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding-top: 20px;
+.box {
+  background-color: #797876;
 }
 
-.fixed-layout {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  flex-wrap: nowrap;
+.right-align {
+  text-align: right;
 }
+
+.boxLocation {
+  color: white;
+  font-weight: 1000;
+  font-size: 70px;
+  font-family: "Oswald", sans-serif;
+}
+
+
+
+
+
 
 .date-picker-col {
   flex: 0 0 auto;
@@ -119,14 +144,32 @@ export default {
   min-width: 300px;
 }
 
+.custom-date-picker {
+  background-color: rgba(255, 255, 255, 0.5);
+  margin-top: 20px;
+}
+
+
+
+
+
+.content-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 20px;
+}
+
 .content-col {
   flex: 1;
   margin-left: 20px;
   box-sizing: border-box;
 }
 
-.custom-date-picker {
-  background-color: rgba(255, 255, 255, 0.5);
-  margin-top: 20px;
+.fixed-layout {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: nowrap;
 }
+
 </style>

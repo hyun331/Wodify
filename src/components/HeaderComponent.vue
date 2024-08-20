@@ -15,6 +15,9 @@
                 <v-list-item :to="{ path: '/box/mybox' }">
                     <v-list-item-title>내 박스-공통</v-list-item-title>
                 </v-list-item>
+                <v-list-item v-if="userRole === 'CEO'" :to="{ path: '/box/create' }">
+                    <v-list-item-title>박스 생성-CEO</v-list-item-title>
+                </v-list-item>
                 <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/member/list/user' }">
                     <v-list-item-title>박스 회원 관리-코치,CEO</v-list-item-title>
                 </v-list-item>
@@ -93,7 +96,8 @@
                 </v-list-item>
 
                 <!-- Loop through notifications -->
-                <v-list-item v-for="(notification, index) in notifications" :key="index" @click="handleNotificationClick(index)">
+                <v-list-item v-for="(notification, index) in notifications" :key="index"
+                    @click="handleNotificationClick(index)">
                     <v-list-item-content>
                         <v-list-item-title>{{ notification.message }}</v-list-item-title>
                         <!-- Optional: Display the date or any other info -->
@@ -102,7 +106,6 @@
                 </v-list-item>
             </v-list>
         </v-menu>
-
         <v-btn @click="kakaoLogin" v-if="!isLogin">LOGIN</v-btn>
         <v-btn @click="kakaoLogout" v-if="isLogin">LOGOUT</v-btn>
     </v-app-bar>
@@ -135,36 +138,49 @@ export default {
             this.notifications = JSON.parse(savedNotifications);
             this.liveAlert = this.notifications.length; // Update alert count
         }
-        if (this.isLogin) {
-            let sse = new EventSourcePolyfill(`${process.env.VUE_APP_API_BASE_URL}/subscribe`, { headers: { Authorization: `Bearer ${token}` } });
-            sse.addEventListener('connect', (event) => { console.log(event) });
-            sse.addEventListener('reservation', (event) => {
-                this.liveAlert++;
+        this.connectToEventSource(token)
 
-                let data = JSON.parse(event.data);
-
-                // 변환된 객체를 사용하여 필요한 데이터를 출력
-                console.log(data); // 전체 객체 출력
-                console.log(data.date); // 예: 특정 필드 출력
-
-                const newNotification = {
-                    memberName: data.memberName,
-                    date: data.date,
-                    message: this.userRole === 'USER'
-                        ? `대기 중이던 ${data.date}일자 수업에 예약이 확정되었습니다.`
-                        : `회원 ${data.memberName}님이 ${data.date}에 예약을 완료했습니다.`
-                };
-                this.notifications.push(newNotification);
-                localStorage.setItem('notifications', JSON.stringify(this.notifications));
-
-            });
-            sse.onerror = (error) => {
-                console.log(error);
-                sse.close();
-            }
-        }
     },
     methods: {
+        connectToEventSource(token) {
+            if (this.isLogin) {
+                let sse = new EventSourcePolyfill(`${process.env.VUE_APP_API_BASE_URL}/subscribe`, { headers: { Authorization: `Bearer ${token}` } });
+                sse.addEventListener('connect', (event) => { console.log(event) });
+                sse.addEventListener('reservation', (event) => {
+                    this.liveAlert++;
+
+                    let data = JSON.parse(event.data);
+
+                    // 변환된 객체를 사용하여 필요한 데이터를 출력
+                    console.log(data); // 전체 객체 출력
+                    console.log(data.date); // 예: 특정 필드 출력
+
+                    const newNotification = {
+                        memberName: data.memberName,
+                        date: data.date,
+                        message: this.userRole === 'USER'
+                            ? `대기 중이던 ${data.date}일자 수업에 예약이 확정되었습니다.`
+                            : `회원 ${data.memberName}님이 ${data.date}에 예약을 완료했습니다.`
+                    };
+                    this.notifications.push(newNotification);
+                    localStorage.setItem('notifications', JSON.stringify(this.notifications));
+
+                });
+                sse.onerror = (error) => {
+                    console.error('Error event:', error);
+
+                    if (error.error && error.error.message.includes('Reconnecting')) {
+                        sse.close();
+
+                        // 0.05초의 딜레이 후 재연결 시도
+                        setTimeout(() => {
+                            console.log('Attempting to reconnect...');
+                            this.connectToEventSource(token); // Recursively call the function to reconnect
+                        }, 50);
+                    }
+                };
+            }
+        },
         kakaoLogin() {
             window.location.href = KAKAO_LOGIN_URL;
         },
@@ -180,9 +196,9 @@ export default {
             console.log(this.showNotifications);
         },
         handleNotificationClick(index) {
-            if(this.userRole === 'USER') {
+            if (this.userRole === 'USER') {
                 this.$router.push('/reservation-detail/list');
-            }else {
+            } else {
                 this.$router.push('/reservation/list');
             }
             // Redirect to /reservation/list

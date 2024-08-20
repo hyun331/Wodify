@@ -19,7 +19,7 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
 .hover-btn {
     background-color: white;
     color: black;

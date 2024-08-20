@@ -1,5 +1,12 @@
 <template>
-  <div class="background-wrapper">
+  <div class="page-container">
+    <div class="box right-align">
+      <br>
+      <span class="boxLocation">
+        {{ this.boxName }}
+      </span>
+      <br>
+    </div>
     <v-container class="container mt-5" fluid>
       <!-- 테이블을 중앙에 정렬 -->
       <v-row justify="center">
@@ -111,6 +118,23 @@ function truncateTitle(title, maxLength) {
 import axios from "axios";
 
 export default {
+  async created() {
+    try {
+      const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/box/name/`);
+      this.boxName = response.data.result;
+    } catch (error) {
+      let errorMessage = "";
+      if (error.response && error.response.data) {
+        // 서버에서 반환한 에러 메시지가 있는 경우
+        errorMessage += `: ${error.response.data.error_message}`;
+      } else if (error.message) {
+        errorMessage += `: ${error.message}`;
+      }
+      this.dialogTitle = "박스명 로드 실패";
+      this.dialogText = errorMessage;
+      this.alertModal = true;
+    }
+  },
   data() {
     return {
       searchType: '',
@@ -126,6 +150,7 @@ export default {
       totalPages: 1,
       isFetching: false,
       showScrollTopButton: false,
+      boxName: "",
     };
   },
   mounted() {
@@ -213,10 +238,25 @@ export default {
 </script>
 
 <style scoped>
-.background-wrapper {
-  background: linear-gradient(135deg, #1c1c1c, #3a3a3a);
-  padding: 20px;
+.page-container {
+  background-color: #D9D9D9;
   min-height: 100vh;
+  padding: 20px;
+}
+
+.box {
+  background-color: #797876;
+}
+
+.right-align {
+  text-align: right;
+}
+
+.boxLocation {
+  color: white;
+  font-weight: 1000;
+  font-size: 70px;
+  font-family: "Oswald", sans-serif;
 }
 
 .container {

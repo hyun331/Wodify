@@ -1,32 +1,21 @@
 <template>
     <v-container style="min-width: 345px; min-height: 600px; max-width: 800px;">
-        <v-row class="rubikMonoOne" style="font-size: 50px; margin-left: 3px">
+        <!-- <v-row class="rubikMonoOne" style="font-size: 50px; margin-left: 3px">
             <v-col class="auto-width" style="padding: 0; margin-right: 15px;">
                 wod
             </v-col>
             <v-col class="auto-width" style="padding: 0;">
                 save
             </v-col>
-        </v-row>
+        </v-row> -->
 
         <!-- 입력 필드들 -->
         <v-row style="margin:1px">
-            <v-text-field 
-            class="custom-text-box" 
-            style="margin-right:2px" 
-            v-model="wodSaveReqDto.date" 
-            label="Date"
-            placeholder="yyyy-mm-dd" 
-            readonly></v-text-field>
+            <v-text-field class="custom-text-box" style="margin-right:2px" v-model="wodSaveReqDto.date" label="Date"
+                placeholder="yyyy-mm-dd" readonly></v-text-field>
             <!-- TimeCap 입력 -->
-            <v-text-field 
-            class="custom-text-box" 
-            style="margin-right:2px" 
-            v-model="wodSaveReqDto.timeCap"
-            label="TimeCap" 
-            placeholder="HH:mm:ss" 
-            @click="timePickerVisible = true" 
-            readonly></v-text-field>
+            <v-text-field class="custom-text-box" style="margin-right:2px" v-model="wodSaveReqDto.timeCap"
+                label="TimeCap" placeholder="HH:mm:ss" @click="timePickerVisible = true" readonly></v-text-field>
             <!-- TimeCap 모달 -->
             <v-dialog v-model="timePickerVisible" persistent width="400px">
                 <v-card class="dark-card">
@@ -52,13 +41,8 @@
             </v-dialog>
 
             <!-- Rounds 입력 -->
-            <v-text-field 
-            class="custom-text-box" 
-            v-model="wodSaveReqDto.rounds" 
-            label="Rounds"
-            placeholder="Select rounds" 
-            @click="roundsPickerVisible = true" 
-            readonly></v-text-field>
+            <v-text-field class="custom-text-box" v-model="wodSaveReqDto.rounds" label="Rounds"
+                placeholder="Select rounds" @click="roundsPickerVisible = true" readonly></v-text-field>
 
             <!-- Rounds 모달 -->
             <v-dialog v-model="roundsPickerVisible" persistent width="180px">
@@ -75,33 +59,17 @@
             </v-dialog>
         </v-row>
         <v-row style="margin:1px">
-            <v-textarea 
-            class="custom-text-box" 
-            v-model="wodSaveReqDto.info" 
-            label="Info" 
-            placeholder="여기에 설명을 입력하세요..."
-            auto-grow
-            :rows="2"
-            outlined></v-textarea>
+            <v-textarea class="custom-text-box" v-model="wodSaveReqDto.info" label="Info" placeholder="설명을 입력하세요"
+                auto-grow :rows="2" outlined></v-textarea>
         </v-row>
         <!-- 동적 입력 필드 -->
         <div v-for="(wodDetSaveReqDto, index) in wodSaveReqDto.wodDetSaveReqDtoList" :key="index" class="exercise-group" outlined>
             <!-- X 버튼 -->
-            <v-btn icon @click="removeWodDet(index)" class="remove-btn">
-                <v-icon>mdi-close</v-icon>
-            </v-btn>
-            <v-text-field 
-            class="exercise-box" 
-            style="border-radius: 4px 4px 0 0;" 
-            v-model="wodDetSaveReqDto.name"
-            :label="`Name ${index + 1}`" 
-            placeholder="Enter exercise name"></v-text-field>
-            <v-text-field 
-            class="exercise-box" 
-            style="border-radius: 0 0 4px 4px;" 
-            v-model="wodDetSaveReqDto.contents"
-            :label="`Contents ${index + 1}`" 
-            placeholder="Enter exercise contents"></v-text-field>
+            <v-btn icon @click="removeWodDet(index)" class="remove-btn"> <v-icon>mdi-close</v-icon> </v-btn>
+            <v-text-field class="exercise-box" style="border-radius: 4px 4px 0 0;" v-model="wodDetSaveReqDto.name"
+                :label="`Name ${index + 1}`" placeholder="Enter exercise name"></v-text-field>
+            <v-text-field class="exercise-box" style="border-radius: 0 0 4px 4px;" v-model="wodDetSaveReqDto.contents"
+                :label="`Contents ${index + 1}`" placeholder="Enter exercise contents"></v-text-field>
         </div>
 
         <!-- 버튼들 -->
@@ -209,15 +177,20 @@ export default {
 </script>
 
 <style scoped>
+/*
 .auto-width {
     flex: 0 1 auto;
     width: auto;
     display: inline-block;
 }
+*/
 
 .custom-text-box {
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.7);
     border-radius: 4px;
+    margin-top: 3px;
+    margin-right: 1px;
+    margin-left: 1px;
     margin-bottom: 2px;
 }
 
@@ -253,7 +226,7 @@ export default {
 }
 
 .exercise-group {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.7);
     border-radius: 9px;
     margin: 2px;
     margin-bottom: 4px;

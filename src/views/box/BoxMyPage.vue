@@ -77,14 +77,30 @@
             </v-card>
         </v-dialog>
     </div>
+    <AlertModalComponent v-model="alertModal" @update:dialog="alertModal = $event" :dialogTitle="dialogTitle"
+        :dialogText="dialogText" />
+    <BoxCoachRegister v-model="boxCoachRegister" @update:dialog="boxCoachRegister = $event" 
+         />
 </template>
 
 <script>
 import axios from 'axios';
+import AlertModalComponent from '@/components/AlertModalComponent.vue';
+import BoxCoachRegister from './BoxCoachRegister.vue';
 
 export default {
+    components:{
+        AlertModalComponent, BoxCoachRegister
+    },
     data() {
         return {
+
+            alertModal: false,
+            dialogTitle:'',
+            dialogText: '',
+
+            boxCoachRegister: false, 
+
             boxDetailId: this.$route.params.id,
             boxDetail: {},
             boxDetailList: [],
@@ -108,7 +124,22 @@ export default {
                 { key: "INTRO", value: this.boxDetail.intro },
             ];
         } catch (error) {
-            console.error("상자 세부정보를 가져오는 중 오류 발생:", error);
+            console.error(this.userRole)
+            console.error("등록된 상자가 존재하지 않습니다:", error);
+            if(this.userRole == 'USER'){
+                this.dialogTitle = '등록된 박스가 존재하지 않습니다';
+                this.dialogText = '박스에 가입해주세요';
+                this.alertModal = true;
+
+            }else if(this.userRole == 'COACH'){
+
+                this.boxCoachRegister = true;
+            }else{
+                //CEO
+                this.dialogTitle = '등록된 박스가 존재하지 않습니다';
+                this.dialogText = '박스에 생성해주세요';
+                this.alertModal = true;
+            }
         }
     },
     methods: {
