@@ -1,5 +1,5 @@
 <template>
-  <div class="page-container">
+  <div class="background">
     <v-container>
       <div>
         <h1 class="rubikMonoOne">MY</h1>
@@ -24,6 +24,7 @@
                     <td class="menufont">COACH</td>
                     <td>{{ reservation.coachName }}</td>
                   </tr>
+
                   <tr>
                     <td class="menufont">WOD</td>
                     <td><v-btn @click="showWod">VIEW</v-btn></td>
@@ -58,7 +59,7 @@
                   <v-col cols="8">
                     <v-radio-group v-model="registerData.snf" inline>
                       <v-radio label="SUCCESS" value="S"></v-radio>
-                      <v-radio label="FAILURE" value="N"></v-radio>
+                      <v-radio label="FAILURE" value="F"></v-radio>
                     </v-radio-group>
                   </v-col>
                 </v-row>
@@ -110,7 +111,7 @@
                   </v-col>
                 </v-row>
                 <v-row justify="end">
-                  <v-btn type="submit" color="grey-lighten-1">CREATE</v-btn>
+                  <v-btn type="submit">CREATE</v-btn>
                 </v-row>
               </v-form>
             </v-card-text>
@@ -156,8 +157,8 @@
               </v-row>
               <br>
               <v-row justify="end">
-                <v-btn @click="changeModifyBtn" color="grey-lighten-1">MODIFY</v-btn>
-                <v-btn @click="showDeleteRecordModal" color="grey-lighten-1">DELETE</v-btn>
+                  <v-btn @click="changeModifyBtn">MODIFY</v-btn>
+                  <v-btn @click="showDeleteRecordModal">DELETE</v-btn>
               </v-row>
             </v-card-text>
           </v-card>
@@ -177,7 +178,7 @@
                   <v-col cols="8">
                     <v-radio-group v-model="modifyData.snf" inline>
                       <v-radio label="SUCCESS" value="S"></v-radio>
-                      <v-radio label="FAILURE" value="N"></v-radio>
+                      <v-radio label="FAILURE" value="F"></v-radio>
                     </v-radio-group>
                   </v-col>
                 </v-row>
@@ -229,7 +230,7 @@
                   </v-col>
                 </v-row>
                 <v-row justify="end">
-                  <v-btn type="submit" color="grey-lighten-1">MODIFY</v-btn>
+                  <v-btn type="submit">MODIFY</v-btn>
                 </v-row>
               </v-form>
             </v-card-text>
@@ -307,7 +308,7 @@ export default {
     recordButtonLabel() { // 예약내역에 운동기록이 있나 없나 표시
       if (this.reservation.recordSnF === 'S') { // 있음
         return 'SUCCESS';
-      } else if (this.reservation.recordSnF === 'N') { // 있음
+      } else if (this.reservation.recordSnF === 'F') { // 있음
         return 'FAILURE';
       } else {                                        // 없음
         return 'CREATE';
@@ -425,9 +426,24 @@ export default {
 </script>
 
 <style scoped>
-.page-container {
-  background-color: #D9D9D9;
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@600&family=Rubik:wght@500&display=swap');
+
+.rubik-button {
+  font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* color="grey-lighten-1" class="rubik-button" */
+
+.background {
   min-height: 100vh;
+  margin: 0;
+  background-image: url("@/assets/background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .menufont {
