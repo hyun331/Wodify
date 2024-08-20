@@ -19,10 +19,11 @@
                 </v-col>
             </v-row>
             <v-form @submit.prevent="reservation">
-                <v-row>
+                <v-row class="d-flex justify-center">
                     <v-col cols="6" class="d-flex justify-center align-center">
                         <div class="date-picker-container">
                             <v-date-picker v-model="selectedDate" @update:model-value="onDateSelected"
+                                style="width: 400px;"
                                 class="custom-date-picker">
                                 <template v-slot:header></template>
                             </v-date-picker>
@@ -52,8 +53,8 @@
                         </v-table>
                     </v-col>
                 </v-row>
-                <v-row>
-                    <v-col cols="12">
+                <v-row class="d-flex justify-center align-center">
+                    <v-col cols="9">
 
                         <v-select v-model="time" :items="timeOptions" item-title="text" item-value="value" label="시간 선택"
                             class="mx-2"></v-select>
