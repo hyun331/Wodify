@@ -53,6 +53,14 @@ public class ReservationService {
                 log.error("reservationCreate() : 해당 와드를 찾을 수 없습니다.");
                 throw  new EntityNotFoundException("해당 와드를 찾을 수 없습니다.");
             });
+            boolean isDuplicate = reservationRepository.existsByBoxAndDateAndTimeAndDelYn(
+                    box, dto.getDate(), dto.getTime(), "N"
+            );
+
+            if (isDuplicate) {
+                log.error("reservationCreate() : 이미 동일한 시간에 예약이 존재합니다.");
+                throw new IllegalStateException("이미 동일한 시간에 예약이 존재합니다.");
+            }
 
             Reservation reservation = dto.toEntity(box, member, wod);
             int maximumPeople = dto.getMaximumPeople();

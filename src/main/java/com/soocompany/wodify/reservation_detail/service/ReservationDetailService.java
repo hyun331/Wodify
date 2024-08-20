@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -56,6 +57,12 @@ public class ReservationDetailService {
             log.error("reservationCreate() : 해당 id의 회원을 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
         });
+        Optional<ReservationDetail> reservationDetailOptional = reservationDetailRepository.findByReservationAndMemberAndDelYn(reservation, member, "N");
+        if (reservationDetailOptional.isPresent()) {
+            log.error("reservationCreate() : 이미 해당 예약을 한 이력이 있습니다.");
+            throw new IllegalArgumentException("이미 해당 예약을 한 이력이 있습니다.");
+        }
+
         // 예약을 요청한 회원의 자격 요건 확인 = 등록 정보가 있는지 & 정지 여부
         Box box = member.getBox();
         if (box==null) {
