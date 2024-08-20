@@ -118,20 +118,25 @@
                             <br>
                         </v-card-text>
                     </v-card>
-
+                    <br><br><br>
 
 
 
                     <!-- 차트 -->
-                    <v-row justify="center" class="mt-5">
-                        <v-col cols="12" md="10">
-                            <v-label class="d-flex justify-content-center mt-5">운동 기록</v-label>
-                            <div class="chart-container" :style="{ height: chartHeight, width: chartWidth }">
-                                <exercise-time-chart :records="records" />
-                            </div>
-                        </v-col>
-                    </v-row>
-
+                    <v-card>
+                        <v-card-title>
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col class="text-center">
+                              운동 기록
+                            </v-col>
+                          </v-row>
+                        </v-card-title>
+                        <hr>
+                        <v-card-text style="font-size: 20px;">
+                            <exercise-time-chart :records="records" />
+                        </v-card-text>
+                      </v-card>
+                      
 
                 </v-col>
             </v-row>
@@ -185,10 +190,8 @@ export default {
 </script>
 
 <style scoped>
-.chart-container {
-    width: 100%;
-    height: 100px; /* 여기서 높이를 늘려줍니다 */
-}
+
+
 
 .memberImg {
     border-radius: 50%;
