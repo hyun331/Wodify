@@ -1,12 +1,11 @@
 <template>
     <v-dialog max-width="500px">
         <v-card>
-            <v-card-title class="text-h5 text-center">회원 등록</v-card-title>
+            <v-card-title class="freesentation text-center" style="font-size: 40px;">회원 등록</v-card-title>
             <v-card-text>
                 <v-form @submit.prevent="registrationCreate">
                     <span v-if="emailError" class="errorSpan">이메일을 입력하세요</span>
                     <v-text-field label="email" v-model="email" type="email" prepend-icon="" 
-                    :placeholder="emailPlaceholder"
                     required>
                     </v-text-field>
                     
@@ -17,7 +16,7 @@
                         
                     </v-text-field>
 
-                    <span v-if="registError" class="errorSpan">이전 등록기간과 중복되는 날이 존재합니다</span>
+                    <span v-if="registError" class="errorSpan">유효한 등록기간을 입력하세요</span>
                     <v-text-field label="등록 기간" v-model="registrationMonth" 
                         required>
                     </v-text-field>
@@ -107,6 +106,10 @@ export default {
             };
 
             try{
+                if(this.registrationMonth == ""){
+                    this.registError = true;
+                    return;
+                }
 
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/registration/create`, registrationData);
                 console.log(response.data.result);
@@ -122,6 +125,7 @@ export default {
                 else{
                     this.registError = true;
                 }
+
         
             }
 
