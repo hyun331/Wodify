@@ -39,6 +39,7 @@ public class MediaUploadController {
     public ResponseEntity<?> uploadMedia(@ModelAttribute ImageSaveReqDto dto) throws IOException {
         MultipartFile file = dto.getFile();
         String fileName = file.getOriginalFilename();
+
         if (fileName == null) {
             return new ResponseEntity<>("Invalid file name", HttpStatus.BAD_REQUEST);
         }
@@ -55,14 +56,16 @@ public class MediaUploadController {
         // 응답 데이터 구성
         HttpStatus code = HttpStatus.OK;
         String msg = "파일이 S3에 업로드 되었습니다.";
-        CommonResDto commonResDto = new CommonResDto(code, msg, url);
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("url", url);
+        responseData.put("type", mediaType.toString()); // MediaType 정보를 함께 반환
 
-        // HTTP 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(mediaType);
+        CommonResDto commonResDto = new CommonResDto(code, msg, responseData);
 
-        return new ResponseEntity<>(commonResDto, headers, code);
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
+
+
 
     // 파일 확장자를 추출하는 메서드
     private String getFileExtension(String fileName) {

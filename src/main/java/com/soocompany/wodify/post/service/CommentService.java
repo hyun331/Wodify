@@ -74,7 +74,7 @@ public class CommentService {
         comment.updateDelYn();
     }
 
-    public PostDetResDto commentUpdate(Long commentId, CommentUpdateReqDto commentUpdateReqDto) {
+    public PostListResDto commentUpdate(Long commentId, CommentUpdateReqDto commentUpdateReqDto) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> {
             log.error("commentUpdate() : 해당 id의 댓글을 찾을 수 없습니다.");
             return new EntityNotFoundException("해당 id의 댓글을 찾을 수 없습니다.");
@@ -93,6 +93,6 @@ public class CommentService {
             throw new IllegalArgumentException("본인의 댓글이 아닙니다.");
         }
         comment.updateComment(commentUpdateReqDto);
-        return PostDetResDto.fromEntity(comment.getPost());
+        return PostListResDto.fromEntity(comment.getPost());
     }
 }

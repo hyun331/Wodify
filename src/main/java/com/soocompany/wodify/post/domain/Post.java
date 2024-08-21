@@ -25,6 +25,10 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToOne
+    @JoinColumn(name = "box_id")
+    private Box box;
+
     private String memberName;
 
     @Enumerated(EnumType.STRING)
@@ -46,10 +50,6 @@ public class Post extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
-
-    @ManyToOne
-    @JoinColumn(name = "box_id")
-    private Box box;
 
     public void updatePost(PostUpdateReqDto postUpdateReqDto) {
         this.type = postUpdateReqDto.getType();
