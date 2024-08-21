@@ -20,11 +20,11 @@
                 <h2>RECOMMED BOXES</h2>
             </div>
             <div class="card-container">
-                <div class="card" v-for="box in boxes" :key="box.id" @click="goToBoxDetail(box.id)"
+                <div class="card" v-for="box in boxes.slice(0, 4)" :key="box.id" @click="goToBoxDetail(box.id)"
                 style="cursor: pointer;">
                     <img :src="box.logoPath" alt="Box Image">
                     <h5 class="box-name">{{ box.name }}</h5>
-                    <p>{{ box.info }}</p>
+                    <!-- <p>{{ box.info }}</p> -->
                 </div>
             </div>
         </div>
