@@ -9,65 +9,20 @@
             <v-row>
                 <v-col>
                     <v-card>
-                        <v-card-text>
-                            <v-row class="d-flex justify-content-center mt-5" justify="center">
-                                <v-col cols="12">
-                                    <v-label>Time by Exercise Record</v-label>
-                                    <div class="chart-container">
-                                        <ExerciseChart :records="records" />
-                                    </div>
-                                </v-col>
-                            </v-row>
+                        <v-card-title>
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col class="text-center">
+                              운동 기록
+                            </v-col>
+                          </v-row>
+                        </v-card-title>
+                        <hr>
+                        <v-card-text style="font-size: 20px;">
+                            <ExerciseChart :records="records" />
                         </v-card-text>
-                    </v-card>
+                      </v-card>
                 </v-col>
             </v-row>
-
-
-            <!--운동기록 리스트-->
-            <!-- <v-row>
-                <v-col>
-                    <v-card>
-                        <v-card-text>
-                            <v-table>
-                                <thead>
-                                    <tr>
-                                        <th style="font-weight: bold; text-align: center;">DATE</th>
-                                        <th style="font-weight: bold; text-align: center;">TIME</th>
-                                        <th style="font-weight: bold; text-align: center;">PEOPLE</th>
-                                        <th style="font-weight: bold; text-align: center;">WOD</th>
-                                        <th style="font-weight: bold; text-align: center;">Delete</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="r in filteredReservationList" :key="r.id">
-                                        <td style="text-align: center;" @click="viewDetail(r.reservationDetails)">
-                                            {{ r.date }}
-                                        </td>
-                                        <td style="text-align: center;" @click="viewDetail(r.reservationDetails)">
-                                            {{ r.time.slice(0, 5) }}
-                                        </td>
-                                        <td style="text-align: center;" @click="viewDetail(r.reservationDetails)">
-                                            {{ r.reservationPeople }} / {{ r.maxPeople }}
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <v-btn :to="{ path: '/wod/select-date' }">view</v-btn>
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <v-btn @click="confirmDelete(r.id)">delete</v-btn>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </v-table>
-
-                            <ReservationMemberListModal v-model="memberListModal"
-                                @update:dialog="memberListModal = $event" :memberList="selectedMemberList" />
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-            </v-row> -->
-
-            
         </v-container>
     </div>
 </template>

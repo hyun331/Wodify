@@ -65,15 +65,20 @@
                 </v-list-item>
             </v-list>
         </v-menu>
-        <v-menu open-on-hover>
+        <v-menu open-on-hover v-if="userRole === 'COACH' || userRole === 'CEO'">
+            <template v-slot:activator="{ props }">
+                <v-btn color="white" v-bind="props" class="rubikMonoOne" :to="{ path: '/member/detail' }">MY PAGE</v-btn>
+            </template>
+        </v-menu>
+        <v-menu open-on-hover v-if="userRole === 'USER'">
             <template v-slot:activator="{ props }">
                 <v-btn color="white" v-bind="props" class="rubikMonoOne">MY PAGE</v-btn>
             </template>
-            <v-list>
+            <v-list >
                 <v-list-item :to="{ path: '/member/detail' }">
                     <v-list-item-title>내 정보</v-list-item-title>
                 </v-list-item>
-                <v-list-item v-if="userRole === 'USER'" :to="{path:'/record/list'}">
+                <v-list-item :to="{path:'/record/list'}">
                     <v-list-item-title>내 기록</v-list-item-title>
                 </v-list-item>
             </v-list>
