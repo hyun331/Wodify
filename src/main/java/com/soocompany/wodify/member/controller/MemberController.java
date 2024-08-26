@@ -59,7 +59,7 @@ public class MemberController {
     public ResponseEntity<?> kakaoLogin(@RequestParam(value = "code")String code) {
         RestTemplate rt = new RestTemplate();   //Post방식으로 key=value 데이터를 요청 //이때 필요한 라이브러리가 RestTemplate. http 요청을 용이하게
 
-        //토큰
+        //카카오 로그인 토큰 요청
         HttpHeaders headers = new HttpHeaders();
 
         headers.add("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
@@ -68,7 +68,7 @@ public class MemberController {
         params.add("grant_type", "authorization_code");
         params.add("client_id", "2d129c6af1317e9dc12a8669b1957416");    //Rest API 키
         params.add("redirect_uri", "http://localhost:8091/member/auth/kakao/callback");
-        params.add("code", code);
+        params.add("code", code); // 프론트에서 받아온 인가 코드
 
         //header body 합치기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
@@ -92,7 +92,7 @@ public class MemberController {
 
         ///////////////////////////////////////////
 
-        //member의 이메일 가져오기
+        //member의 이메일 가져오기 // 카카오 로그인 토큰을 통해
         RestTemplate rt2 = new RestTemplate();
 
         HttpHeaders headers2 = new HttpHeaders();

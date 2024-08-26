@@ -131,37 +131,28 @@ public class RedisConfig {
 
 
 
-//    @Bean
-//    @Qualifier("6")
-//    public RedisConnectionFactory reservationFactory() {
-//        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
-//        configuration.setHostName(host);
-//        configuration.setPort(port);
-//        configuration.setDatabase(6);
-//        return new LettuceConnectionFactory(configuration);
-//
-//    }
-//
-//    @Bean
-//    @Qualifier("6")
-//    public RedisTemplate<String, Object> reservationRedisTemplate(@Qualifier("6") RedisConnectionFactory reservationFactory){
-//        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-//        redisTemplate.setKeySerializer(new StringRedisSerializer());
-//        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        serializer.setObjectMapper(objectMapper);
-//        redisTemplate.setValueSerializer(serializer);
-//        redisTemplate.setConnectionFactory(reservationFactory);
-//        return redisTemplate;
-//    }
-//
-//    @Bean
-//    @Qualifier("6")
-//    public RedisMessageListenerContainer redisReservationDetailMessageListenerContainer(@Qualifier("6") RedisConnectionFactory reservationFactory){
-//        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-//        container.setConnectionFactory(reservationFactory);
-//        return container;
-//    }
+    @Bean
+    @Qualifier("6")
+    public RedisConnectionFactory reservationFactory() {
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
+        configuration.setHostName(host);
+        configuration.setPort(port);
+        configuration.setDatabase(6);
+        return new LettuceConnectionFactory(configuration);
 
+    }
+
+    @Bean
+    @Qualifier("6")
+    public RedisTemplate<String, Object> reservationRedisTemplate(@Qualifier("6") RedisConnectionFactory reservationFactory){
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        serializer.setObjectMapper(objectMapper);
+        redisTemplate.setValueSerializer(serializer);
+        redisTemplate.setConnectionFactory(reservationFactory);
+        return redisTemplate;
+    }
 
 }
