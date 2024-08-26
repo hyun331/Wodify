@@ -125,6 +125,7 @@ export default {
             userRole: null,
             isLogin: false,
             liveAlert: 0,
+            msg: "",
             notifications: [], // 받은 알림 저장
             showNotifications: true, // 토글 드랍다운
         }
@@ -161,6 +162,27 @@ export default {
                             ? `대기 중이던 ${data.date}일자 수업에 예약이 확정되었습니다.`
                             : `회원 ${data.memberName}님이 ${data.date}에 예약을 완료했습니다.`
                     };
+                    localStorage.removeItem('notifications');
+                    this.notifications.push(newNotification);
+                    localStorage.setItem('notifications', JSON.stringify(this.notifications));
+                });
+                sse.addEventListener('reservationDetail', (event) => {
+                    this.liveAlert++;
+
+                    let data = JSON.parse(event.data);
+
+                    if(this.userRole === 'USER'){ 
+                        this.msg = `${data.date}일자 수업이 한시간 남았습니다.`;
+                    }
+
+                    const newNotification = {
+                        memberName: data.memberName,
+                        date: data.date,
+                        createdTime: data.createdTime,
+                        message: this.msg
+                    };
+                    
+                    localStorage.removeItem('notifications');
                     this.notifications.push(newNotification);
                     localStorage.setItem('notifications', JSON.stringify(this.notifications));
 
