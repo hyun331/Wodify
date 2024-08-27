@@ -56,6 +56,7 @@ export default {
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/search/${this.wodId}`);
         this.wod = response.data.result;
         this.wodDetResDtoList = response.data.result.wodDetResDtoList;
+        
         console.log(response.data.result.id);
     },
     methods: {

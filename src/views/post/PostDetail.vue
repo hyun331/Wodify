@@ -163,13 +163,15 @@ export default {
           this.post.likeCount = response.data.result;
         } else { 
           this.resultMessage = "좋아요에 실패했습니다.";
+          this.showResultModal = true; // 결과 모달 열기
+
         }
       } catch (error) {
         console.error("Error liking post:", error);
         this.resultMessage = "좋아요 처리 중 오류가 발생했습니다.";
-      } finally {
         this.showResultModal = true; // 결과 모달 열기
-      }
+
+      } 
     },
     async submitComment() {
       if (!this.newComment.trim()) {
@@ -184,13 +186,13 @@ export default {
           this.newComment = "";
         } else {
           this.resultMessage = "댓글 등록에 실패했습니다.";
+          this.showResultModal = true; // 결과 모달 열기
         }
       } catch (error) {
         console.error("Error submitting comment:", error);
         this.resultMessage = "댓글 등록 중 오류가 발생했습니다.";
-      } finally {
         this.showResultModal = true; // 결과 모달 열기
-      }
+      } 
     },
     removeComment(commentId) {
       this.post.comments = this.post.comments.filter((comment) => comment.id !== commentId);
