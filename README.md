@@ -152,6 +152,17 @@ hyun331">신승현</a>
 
   <img width="849" alt="스크린샷 2024-08-27 오전 9 01 23" src="https://github.com/user-attachments/assets/ec85161d-70c6-473e-82cc-a75bfc49ce45">
 </details>
+<details>
+  <summary> WOD </summary>
+
+  ![image](https://github.com/user-attachments/assets/5470f6df-7705-4c45-a6a8-e57354008834)
+</details>
+<details>
+  <summary> 게시판 </summary>
+
+  ![image](https://github.com/user-attachments/assets/6749682e-0b00-49e9-a234-5a97797a786a)
+</details>
+
 
 
 
