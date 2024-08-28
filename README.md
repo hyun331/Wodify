@@ -154,13 +154,11 @@ hyun331">신승현</a>
 </details>
 <details>
   <summary> WOD </summary>
-
-  ![image](https://github.com/user-attachments/assets/5470f6df-7705-4c45-a6a8-e57354008834)
+  <img width="849" src="https://github.com/user-attachments/assets/5470f6df-7705-4c45-a6a8-e57354008834">
 </details>
 <details>
   <summary> 게시판 </summary>
-
-  ![image](https://github.com/user-attachments/assets/6749682e-0b00-49e9-a234-5a97797a786a)
+  <img width="849" src="https://github.com/user-attachments/assets/6749682e-0b00-49e9-a234-5a97797a786a">
 </details>
 
 
