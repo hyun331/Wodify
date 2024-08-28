@@ -14,7 +14,6 @@ import com.soocompany.wodify.reservation.service.ReservationManageEventHandler;
 import com.soocompany.wodify.reservation.service.ReservationManagementService;
 import com.soocompany.wodify.reservation.domain.Reservation;
 import com.soocompany.wodify.reservation.repository.ReservationRepository;
-//import com.soocompany.wodify.reservation_detail.controller.SseController;
 import com.soocompany.wodify.reservation_detail.controller.SseController;
 import com.soocompany.wodify.reservation_detail.domain.ReservationDetail;
 import com.soocompany.wodify.reservation_detail.dto.ReservationDetCreateReqDto;
@@ -109,9 +108,11 @@ public class ReservationDetailService {
         List<Member> coachs = memberRepository.findByBoxAndRoleAndDelYn(box, Role.COACH,"N");
         for (Member coach : coachs) {
             Long coachId = coach.getId();
+            reservationDetailDetResDto.setCheck("reservation");
             sseController.publishMessage(reservationDetailDetResDto, String.valueOf(coachId));
         }
         Member boxRepresentative = box.getMember();
+        reservationDetailDetResDto.setCheck("reservation");
         sseController.publishMessage(reservationDetailDetResDto, String.valueOf(boxRepresentative.getId()));
         return reservationDetailDetResDto;
     }
@@ -153,6 +154,7 @@ public class ReservationDetailService {
             ReservationDetailDetResDto reservationDetailDetResDto = reservationCreate(ReservationDetCreateReqDto.builder().reservationId(reservation.getId()).build(), Long.valueOf(nextMemberId));
             waitingService.removeFromQueue(String.valueOf(reservation.getId()), nextMemberId);
             // 대기자에게 알림
+            reservationDetailDetResDto.setCheck("reservation");
             sseController.publishMessage(reservationDetailDetResDto, nextMemberId);
         }
     }
