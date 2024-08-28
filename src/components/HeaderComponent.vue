@@ -6,7 +6,7 @@
         <v-spacer></v-spacer>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-                <v-btn color="white" v-bind="props" class="rubikMonoOne">BOX</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne fontClass">BOX</v-btn>
             </template>
             <v-list>
                 <v-list-item :to="{ path: '/box/list' }">
@@ -25,7 +25,7 @@
         </v-menu>
         <v-menu v-if="userRole === 'COACH' || userRole === 'CEO'" open-on-hover>
             <template v-slot:activator="{ props }">
-                <v-btn color="white" v-bind="props" class="rubikMonoOne">WOD</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne fontClass">WOD</v-btn>
             </template>
             <v-list>
                 <v-list-item :to="{path:'/wod/select-date'}">
@@ -35,7 +35,7 @@
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-                <v-btn color="white" v-bind="props" class="rubikMonoOne">RESERVATION</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne fontClass">RESERVATION</v-btn>
             </template>
             <v-list>
                 <v-list-item v-if="userRole === 'USER'" :to="{ path: '/reservation-detail/create' }">
@@ -54,7 +54,7 @@
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-                <v-btn color="white" v-bind="props" class="rubikMonoOne">COMMUNITY</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne fontClass">COMMUNITY</v-btn>
             </template>
             <v-list>
                 <v-list-item :to="{ path: '/post/list' }">
@@ -67,12 +67,12 @@
         </v-menu>
         <v-menu open-on-hover v-if="userRole === 'COACH' || userRole === 'CEO'">
             <template v-slot:activator="{ props }">
-                <v-btn color="white" v-bind="props" class="rubikMonoOne" :to="{ path: '/member/detail' }">MY PAGE</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne fontClass" :to="{ path: '/member/detail' }">MY PAGE</v-btn>
             </template>
         </v-menu>
         <v-menu open-on-hover v-if="userRole === 'USER'">
             <template v-slot:activator="{ props }">
-                <v-btn color="white" v-bind="props" class="rubikMonoOne">MY PAGE</v-btn>
+                <v-btn color="white" v-bind="props" class="rubikMonoOne fontClass">MY PAGE</v-btn>
             </template>
             <v-list >
                 <v-list-item :to="{ path: '/member/detail' }">
@@ -85,7 +85,7 @@
         </v-menu>
         <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
-                <v-btn icon color="white" v-bind="props" class="rubikMonoOne"><v-icon>mdi-bell</v-icon></v-btn>
+                <v-btn icon color="white" v-bind="props"><v-icon>mdi-bell</v-icon></v-btn>
                 <span class="notification-icon">
                     <i class="fa fa-bell"></i>
                     <span v-if="liveAlert > 0" class="notification-count">{{ liveAlert }}</span>
@@ -108,8 +108,8 @@
                 </v-list-item>
             </v-list>
         </v-menu>
-        <v-btn @click="kakaoLogin" v-if="!isLogin">LOGIN</v-btn>
-        <v-btn @click="kakaoLogout" v-if="isLogin">LOGOUT</v-btn>
+        <v-btn @click="kakaoLogin" v-if="!isLogin" class="rubikMonoOne fontClass">LOGIN</v-btn>
+        <v-btn @click="kakaoLogout" v-if="isLogin" class="rubikMonoOne fontClass">LOGOUT</v-btn>
     </v-app-bar>
 
 </template>
@@ -244,5 +244,10 @@ export default {
     border-radius: 50%;
     padding: 2px 6px;
     font-size: 12px;
+}
+
+.fontClass{
+    font-size: 14px;
+
 }
 </style>
