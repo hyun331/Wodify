@@ -21,8 +21,8 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           # 은지님 access key, secret key 사용
-          aws-access-key-id: ${{secrets.S3_KEY}}
-          aws-secret-access-key: ${{secrets.S3_SECRET}}
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET}}
           aws-region: ap-northeast-2
 
       - name: update cluster information
