@@ -69,7 +69,7 @@ public class MemberController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "2d129c6af1317e9dc12a8669b1957416");    //Rest API 키
-        params.add("redirect_uri", "https://www.wodify.site/member/auth/kakao/callback");
+        params.add("redirect_uri", "https://server.wodify.site/member/auth/kakao/callback");
         params.add("code", code); // 프론트에서 받아온 인가 코드
 
         //header body 합치기
