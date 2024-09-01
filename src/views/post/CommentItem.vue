@@ -109,7 +109,7 @@ export default {
     },
     async saveEdit() {
       try {
-        const response = await axios.patch(`http://localhost:8090/post/comment/update/${this.comment.id}`, {
+        const response = await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/post/comment/update/${this.comment.id}`, {
           comment: this.editedComment,
         });
         if (response.status === 200) {
@@ -141,7 +141,7 @@ export default {
       }
 
       try {
-        const response = await axios.post(`http://localhost:8090/post/comment/create/${this.postId}`, {
+        const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/post/comment/create/${this.postId}`, {
           comment: this.replyComment,
           parentId: this.comment.id, // 현재 댓글의 ID를 parentId로 전송
         });
@@ -171,7 +171,7 @@ export default {
     },
     async deleteComment() {
       try {
-        const response = await axios.patch(`http://localhost:8090/post/comment/delete/${this.comment.id}`);
+        const response = await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/post/comment/delete/${this.comment.id}`);
         if (response.status === 200) {
           this.resultMessage = response.data.status_message;
           this.$emit('comment-deleted', this.comment.id);

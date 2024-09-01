@@ -87,7 +87,7 @@ export default {
 
     const loadPostData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8090/post/detail/${props.id}`);
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/post/detail/${props.id}`);
         Object.assign(post, response.data.result);
       } catch (error) {
         console.error('Error loading post:', error);
@@ -135,7 +135,7 @@ export default {
       formData.append("file", file);
       try {
         const response = await axios.post(
-          "http://localhost:8090/post/upload-media",
+          `${process.env.VUE_APP_API_BASE_URL}/post/upload-media`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -211,7 +211,7 @@ export default {
       formData.append('type', post.type);
 
       try {
-        const response = await axios.patch(`http://localhost:8090/post/update/${props.id}`, formData, {
+        const response = await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/post/update/${props.id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
 

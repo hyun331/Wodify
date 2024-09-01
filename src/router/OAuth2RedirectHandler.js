@@ -18,7 +18,7 @@ export default{
     methods:{
         async getAuthToken(code){
             try{
-                const response = await axios.get(`http://localhost:8090/member/auth/kakao/callback?code=${code}`);
+                const response = await axios.get(`https://server.woidfy.site/member/auth/kakao/callback?code=${code}`);
                 //홈화면
                 const token = response.data.result.token;
                 const refreshToken = response.data.result.refreshToken;
