@@ -1,12 +1,12 @@
 package com.soocompany.wodify.post.service;
-import com.soocompany.wodify.common.config.RabbitMqConfig;
+//import com.soocompany.wodify.common.config.RabbitMqConfig;
 import com.soocompany.wodify.member.domain.Member;
 import com.soocompany.wodify.member.repository.MemberRepository;
 import com.soocompany.wodify.post.domain.LikeEvent;
 import com.soocompany.wodify.post.domain.Post;
 import com.soocompany.wodify.post.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+//import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,13 +21,14 @@ public class LikeService {
     private final RedisTemplate<String, Object> redisLikeTemplate;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-    private final RabbitTemplate rabbitTemplate;
+//    private final RabbitTemplate rabbitTemplate;
 
-    public LikeService(@Qualifier("redisLikeTemplate") RedisTemplate<String, Object> redisLikeTemplate, PostRepository postRepository, MemberRepository memberRepository, RabbitTemplate rabbitTemplate) {
+    public LikeService(@Qualifier("redisLikeTemplate") RedisTemplate<String, Object> redisLikeTemplate, PostRepository postRepository, MemberRepository memberRepository){
+//            , RabbitTemplate rabbitTemplate) {
         this.redisLikeTemplate = redisLikeTemplate;
         this.postRepository = postRepository;
         this.memberRepository = memberRepository;
-        this.rabbitTemplate = rabbitTemplate;
+//        this.rabbitTemplate = rabbitTemplate;
     }
 
     public Long postLike(Long postId) {
@@ -61,7 +62,7 @@ public class LikeService {
             likeCount = redisLikeTemplate.opsForValue().increment(likeCountKey);
         }
 
-        rabbitTemplate.convertAndSend(RabbitMqConfig.LIKE_EVENT_QUEUE, new LikeEvent(post.getId(), member.getId(), likeCount));
+//        rabbitTemplate.convertAndSend(RabbitMqConfig.LIKE_EVENT_QUEUE, new LikeEvent(post.getId(), member.getId(), likeCount));
         return likeCount;
     }
 }
