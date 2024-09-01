@@ -13,6 +13,7 @@ import com.soocompany.wodify.member.dto.*;
 import com.soocompany.wodify.member.service.MemberService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 @RequestMapping("/member")
 @RestController
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
@@ -58,7 +60,7 @@ public class MemberController {
     @GetMapping("/auth/kakao/callback")
     public ResponseEntity<?> kakaoLogin(@RequestParam(value = "code")String code) {
         RestTemplate rt = new RestTemplate();   //Post방식으로 key=value 데이터를 요청 //이때 필요한 라이브러리가 RestTemplate. http 요청을 용이하게
-
+        log.info("login backend 요청!!!!!!!!!!!!!!"+code);
         //카카오 로그인 토큰 요청
         HttpHeaders headers = new HttpHeaders();
 
@@ -84,10 +86,13 @@ public class MemberController {
         OAuthToken oAuthToken = null;
         try{
             oAuthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+            log.info("token : "+oAuthToken.getAccess_token());
         }catch (JsonMappingException e){
             e.printStackTrace();
+            log.error(e.getMessage());
         }catch (JsonProcessingException e){
             e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         ///////////////////////////////////////////
@@ -113,8 +118,10 @@ public class MemberController {
         try{
             jsonNode = objectMapper.readTree(response2.getBody());
             email = jsonNode.get("kakao_account").get("email").asText();
+            log.info("email : " + email);
         }catch (JsonProcessingException e){
             e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         //현재 데이터베이스에 있는지 확인
@@ -133,7 +140,7 @@ public class MemberController {
             loginInfo.put("refreshToken", refreshToken);
 
             CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, member.getName()+"회원님 login 완료", loginInfo);
-
+            log.info("존재하는 이메일");
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 
         }else{
