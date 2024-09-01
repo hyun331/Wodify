@@ -216,7 +216,7 @@ export default {
         async submitForm() {
             try {
                 this.showSubmitModal = false; // 모달 닫기
-                const response = await axios.post('${process.env.VUE_APP_API_BASE_URL}/wod/save', this.wodSaveReqDto);
+                const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/wod/save`, this.wodSaveReqDto);
                 if (response.status === 201) {
                     this.statusMessage = response.data.status_message; // 서버로부터 받은 메시지 설정
                 } else {
