@@ -18,7 +18,8 @@ export default{
     methods:{
         async getAuthToken(code){
             try{
-                const response = await axios.get(`https://server.woidfy.site/member/auth/kakao/callback?code=${code}`);
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member/auth/kakao/callback?code=${code}`);
+                console.log(response.data.result);
                 //홈화면
                 const token = response.data.result.token;
                 const refreshToken = response.data.result.refreshToken;
@@ -31,6 +32,7 @@ export default{
                 localStorage.setItem('memberId', memberId);
                 window.location.href="/";
             }catch(e){
+                console.log(e);
                 // alert(e.response.data.result);
                 window.location.href=`/member/choose/register?email=${e.response.data.result}`;
             }
