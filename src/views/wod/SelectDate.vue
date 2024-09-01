@@ -75,7 +75,7 @@ export default {
       try {
         this.isLoading = true;
         this.wod = null;
-        const response = await axios.get(`http://localhost:8090/wod/find/${date}`);
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find/${date}`);
 
         if (response.status === 200) {
           this.wod = response.data.result;

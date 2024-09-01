@@ -138,7 +138,7 @@ export default {
     async fetchNotices() {
       try {
         const response = await axios.get(
-          "http://localhost:8090/post/list/notice"
+          "${process.env.VUE_APP_API_BASE_URL}/post/list/notice"
         );
         this.notices = response.data.result;
       } catch (error) {
@@ -149,7 +149,7 @@ export default {
       if (this.isFetching || this.currentPage > this.totalPages) return;
       this.isFetching = true;
       try {
-        const response = await axios.get("http://localhost:8090/post/list/page", {
+        const response = await axios.get("${process.env.VUE_APP_API_BASE_URL}/post/list/page", {
           params: {
             page: this.currentPage - 1,
             size: this.itemsPerPage,

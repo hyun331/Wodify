@@ -185,7 +185,7 @@ export default {
         async addRandomWodDet() {
             try {
                 // 1. repository의 데이터 갯수 가져오기
-                const countResponse = await axios.get("http://localhost:8090/wod/count");
+                const countResponse = await axios.get("${process.env.VUE_APP_API_BASE_URL}/wod/count");
                 const size = countResponse.data.result;
 
                 // 데이터가 없을 때 모달을 띄우기
@@ -198,7 +198,7 @@ export default {
                 if (randomIndex === 0) randomIndex = size;
 
                 // 3. 해당 id의 데이터 가져오기
-                const randomDataResponse = await axios.get(`http://localhost:8090/wod/random/${randomIndex}`);
+                const randomDataResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/random/${randomIndex}`);
                 if (randomDataResponse.status === 200) {
                     const { name, contents } = randomDataResponse.data.result;
 
@@ -216,7 +216,7 @@ export default {
         async submitForm() {
             try {
                 this.showSubmitModal = false; // 모달 닫기
-                const response = await axios.post('http://localhost:8090/wod/save', this.wodSaveReqDto);
+                const response = await axios.post('${process.env.VUE_APP_API_BASE_URL}/wod/save', this.wodSaveReqDto);
                 if (response.status === 201) {
                     this.statusMessage = response.data.status_message; // 서버로부터 받은 메시지 설정
                 } else {

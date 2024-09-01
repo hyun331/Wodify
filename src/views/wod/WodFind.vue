@@ -63,7 +63,7 @@ export default {
   methods: {
     async deleteWod() {
       try {
-        const response = await axios.patch(`http://localhost:8090/wod/delete/${this.localWod.date}`);
+        const response = await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/wod/delete/${this.localWod.date}`);
         if (response.status === 200) {
           this.resultMessage = response.data.status_message; // 서버에서 받은 메시지 설정
           this.showResultModal = true; // 결과 모달 열기
