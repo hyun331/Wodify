@@ -33,7 +33,7 @@ dependencies {
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	//rabbitmq
-//	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 
 	//smtp
 	implementation 'org.springframework.boot:spring-boot-starter-mail'

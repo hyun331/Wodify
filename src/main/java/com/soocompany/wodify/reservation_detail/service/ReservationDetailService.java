@@ -10,7 +10,7 @@ import com.soocompany.wodify.registration_info.domain.RegistrationInfo;
 import com.soocompany.wodify.registration_info.repository.RegistrationInfoRepository;
 import com.soocompany.wodify.reservation.dto.ReservationManageEvent;
 import com.soocompany.wodify.reservation.dto.ReservationSearchDto;
-//import com.soocompany.wodify.reservation.service.ReservationManageEventHandler;
+import com.soocompany.wodify.reservation.service.ReservationManageEventHandler;
 import com.soocompany.wodify.reservation.service.ReservationManagementService;
 import com.soocompany.wodify.reservation.domain.Reservation;
 import com.soocompany.wodify.reservation.repository.ReservationRepository;
@@ -46,7 +46,7 @@ public class ReservationDetailService {
     private final RegistrationInfoRepository registrationInfoRepository;
     private final HoldingInfoRepository holdingInfoRepository;
     private final ReservationManagementService reservationManagementService;
-//    private final ReservationManageEventHandler reservationManageEventHandler;
+    private final ReservationManageEventHandler reservationManageEventHandler;
     private final WaitingService waitingService;
     private final SseController sseController;
 
@@ -100,7 +100,7 @@ public class ReservationDetailService {
         if (reservationManagementService.decreaseAvailable(reservation.getId(),1) < 0) {
             throw new IllegalStateException("예약 인원이 초과되어 예약이 불가능합니다.");
         }
-//        reservationManageEventHandler.publish(new ReservationManageEvent(reservation.getId(), 1));
+        reservationManageEventHandler.publish(new ReservationManageEvent(reservation.getId(), 1));
 
         ReservationDetail reservationDetail = dto.toEntity(reservation, member);
         ReservationDetail savedDetail = reservationDetailRepository.save(reservationDetail);
