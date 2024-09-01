@@ -185,7 +185,7 @@ export default {
         async addRandomWodDet() {
             try {
                 // 1. repository의 데이터 갯수 가져오기
-                const countResponse = await axios.get("${process.env.VUE_APP_API_BASE_URL}/wod/count");
+                const countResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/count`);
                 const size = countResponse.data.result;
 
                 // 데이터가 없을 때 모달을 띄우기

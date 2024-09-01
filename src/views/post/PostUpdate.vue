@@ -135,7 +135,7 @@ export default {
       formData.append("file", file);
       try {
         const response = await axios.post(
-          "${process.env.VUE_APP_API_BASE_URL}/post/upload-media",
+          `${process.env.VUE_APP_API_BASE_URL}/post/upload-media`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
