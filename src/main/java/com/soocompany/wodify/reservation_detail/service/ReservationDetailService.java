@@ -144,6 +144,16 @@ public class ReservationDetailService {
         reservation.increaseAvailablePeople();
         reservationDetail.updateDelYn();
         reservationDetailRepository.save(reservationDetail);
+
+        // 대기자 처리 로직 예외 처리
+        try {
+            handleWaitlist(reservation);
+        } catch (Exception e) {
+            log.error("delete() : 대기자 처리 중 오류가 발생하였으나, 예약 삭제는 성공하였습니다.", e);
+        }
+    }
+
+    private void handleWaitlist(Reservation reservation) {
         // 대기자 명단에서 첫 번째 사용자에게 예약 기회 제공
         String nextMemberId = waitingService.getNextMember(String.valueOf(reservation.getId()));
         if (nextMemberId!=null) {
