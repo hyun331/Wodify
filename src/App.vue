@@ -1,5 +1,5 @@
 <template>
-  <v-app class="lyrics">
+  <v-app>
     <HeaderComponent/>
     <v-main v-if="userRole=='USER'" class="userBackground">
       <router-view/>
@@ -45,8 +45,5 @@ export default {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-}
-.lyrics{
-  overflow: scroll;
 }
 </style>
