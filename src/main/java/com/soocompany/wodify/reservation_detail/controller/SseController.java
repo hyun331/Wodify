@@ -91,6 +91,19 @@ public class SseController implements MessageListener {
         }
     }
 
+    public void publishReservationMessage(ReservationDetailDetResDto dto, String memberId) {
+        SseEmitter emitter = emitters.get(memberId);
+        if (emitter != null) {
+            try {
+                emitter.send(SseEmitter.event().name("reservationDetail").data(dto));
+            }catch (IOException e){
+                throw new RuntimeException(e);
+            }
+        }else { // 현재 서버의 받는 이의 emitter 정보가 없는 경우
+            reservationRedisTemplate.convertAndSend(memberId, dto);
+        }
+    }
+
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
