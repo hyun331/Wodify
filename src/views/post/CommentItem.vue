@@ -118,11 +118,11 @@ export default {
           this.resultMessage = response.data.status_message;
         } else {
           this.resultMessage = response.data.error_message;
+          this.showResultModal = true; // 결과 모달 열기
         }
       } catch (error) {
         console.error("Error updating comment:", error.response ? error.response.data : error.message);
         this.resultMessage = "댓글 수정 중 오류가 발생했습니다.";
-      } finally {
         this.showResultModal = true; // 결과 모달 열기
       }
     },

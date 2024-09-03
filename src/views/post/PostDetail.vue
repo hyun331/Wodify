@@ -6,8 +6,11 @@
       <v-card-title>
         <v-row align="center" justify="space-between" class="mb-1">
           <v-col>
-            <v-row align="center">
-              <v-icon class="announcement-icon mr-2">mdi-alert-circle-outline</v-icon>
+            <v-row align="center" class="ml-1 mt-1">
+              <v-icon v-if="post.type === 'NOTICE'" class="announcement-icon mr-2"
+                >mdi-bell-ring-outline</v-icon
+              >
+              <v-icon v-else class="post-icon mr-2">mdi-note-outline</v-icon>
               <h2>{{ post.title }}</h2>
             </v-row>
           </v-col>
@@ -21,7 +24,11 @@
             <v-btn class="action-button mx-1" v-if="isAuthor" @click="goToEditPost">
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
-            <v-btn class="action-button mx-1" v-if="isAuthor" @click="showDeleteConfirmationModal">
+            <v-btn
+              class="action-button mx-1"
+              v-if="isAuthor"
+              @click="showDeleteConfirmationModal"
+            >
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </v-col>
@@ -45,8 +52,13 @@
       <v-card-text>
         <v-row class="comment-box" align="center">
           <v-col>
-            <v-text-field v-model="newComment" label="Write a comment..." style="margin-top: -10px; margin-bottom: -10;"
-              hide-details dense></v-text-field>
+            <v-text-field
+              v-model="newComment"
+              label="Write a comment..."
+              style="margin-top: -10px; margin-bottom: -10"
+              hide-details
+              dense
+            ></v-text-field>
           </v-col>
           <v-col cols="auto">
             <v-btn icon class="action-button" @click="submitComment">
@@ -56,8 +68,14 @@
         </v-row>
         <v-divider class="my-1"></v-divider>
         <v-list>
-          <comment-item v-for="comment in post.comments" :key="comment.id" :comment="comment" :postId="post.id"
-            :currentUserId="this.currentUserId" @comment-deleted="removeComment"></comment-item>
+          <comment-item
+            v-for="comment in post.comments"
+            :key="comment.id"
+            :comment="comment"
+            :postId="post.id"
+            :currentUserId="this.currentUserId"
+            @comment-deleted="removeComment"
+          ></comment-item>
         </v-list>
       </v-card-text>
     </v-card>
@@ -121,12 +139,24 @@ export default {
     this.fetchPostDetail();
   },
   methods: {
-    goBackToList() { this.$router.push("/post/list"); },
-    goToEditPost() { this.$router.push(`/post/update/${this.id}`); },
-    getCurrentUserId() { this.currentUserId = localStorage.getItem("memberId"); },
-    checkAuthor() { if (this.post) this.isAuthor = this.post.memberId === Number(this.currentUserId); },
-    showDeleteConfirmationModal() { this.showDeleteModal = true; }, // 삭제 확인 모달 열기 
-    closeDeleteModal() { this.showDeleteModal = false; }, // 삭제 확인 모달 닫기 
+    goBackToList() {
+      this.$router.push("/post/list");
+    },
+    goToEditPost() {
+      this.$router.push(`/post/update/${this.id}`);
+    },
+    getCurrentUserId() {
+      this.currentUserId = localStorage.getItem("memberId");
+    },
+    checkAuthor() {
+      if (this.post) this.isAuthor = this.post.memberId === Number(this.currentUserId);
+    },
+    showDeleteConfirmationModal() {
+      this.showDeleteModal = true;
+    }, // 삭제 확인 모달 열기
+    closeDeleteModal() {
+      this.showDeleteModal = false;
+    }, // 삭제 확인 모달 닫기
     async fetchPostDetail() {
       try {
         const response = await axios.get(`http://localhost:8090/post/detail/${this.id}`);
@@ -142,17 +172,19 @@ export default {
     },
     async deletePost() {
       try {
-        const response = await axios.patch(`http://localhost:8090/post/delete/${this.id}`);
+        const response = await axios.patch(
+          `http://localhost:8090/post/delete/${this.id}`
+        );
         if (response.status === 200) {
           this.resultMessage = response.data.status_message;
           this.goBackToList();
         } else {
           this.resultMessage = response.data.error_message;
+          this.showResultModal = true; // 결과 모달 열기
         }
       } catch (error) {
         console.error("Error deleting post:", error);
         this.resultMessage = "게시물 삭제 중 오류가 발생했습니다.";
-      } finally {
         this.showResultModal = true; // 결과 모달 열기
       }
     },
@@ -161,13 +193,13 @@ export default {
         const response = await axios.post(`http://localhost:8090/post/like/${this.id}`);
         if (response.status === 200) {
           this.post.likeCount = response.data.result;
-        } else { 
+        } else {
           this.resultMessage = "좋아요에 실패했습니다.";
+          this.showResultModal = true; // 결과 모달 열기
         }
       } catch (error) {
         console.error("Error liking post:", error);
         this.resultMessage = "좋아요 처리 중 오류가 발생했습니다.";
-      } finally {
         this.showResultModal = true; // 결과 모달 열기
       }
     },
@@ -178,22 +210,27 @@ export default {
       }
       const commentData = { comment: this.newComment, parentId: null };
       try {
-        const response = await axios.post(`http://localhost:8090/post/comment/create/${this.id}`, commentData);
+        const response = await axios.post(
+          `http://localhost:8090/post/comment/create/${this.id}`,
+          commentData
+        );
         if (response.status === 201) {
           this.post.comments.push(response.data.result);
           this.newComment = "";
         } else {
           this.resultMessage = "댓글 등록에 실패했습니다.";
+          this.showResultModal = true; // 결과 모달 열기
         }
       } catch (error) {
         console.error("Error submitting comment:", error);
         this.resultMessage = "댓글 등록 중 오류가 발생했습니다.";
-      } finally {
         this.showResultModal = true; // 결과 모달 열기
       }
     },
     removeComment(commentId) {
-      this.post.comments = this.post.comments.filter((comment) => comment.id !== commentId);
+      this.post.comments = this.post.comments.filter(
+        (comment) => comment.id !== commentId
+      );
     },
     closeEmptyCommentModal() {
       this.showEmptyCommentModal = false; // 모달 닫기
@@ -203,7 +240,7 @@ export default {
     },
     handleResultConfirmation() {
       this.showResultModal = false; // 결과 모달 닫기
-    }
+    },
   },
   components: { CommentItem },
 };
