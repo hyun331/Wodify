@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -91,6 +92,23 @@ public class SseController implements MessageListener {
         }
     }
 
+    //명예의 전당 알림
+    public void publishHallOfFameMessage(String memberId) {
+        SseEmitter emitter = emitters.get(memberId);
+        if (emitter != null) {
+            try {
+                emitter.send(SseEmitter.event().name("hallOfFame").data("{\"message\":\"명예의전당에 등록되었습니다!\"}"));
+            }catch (IOException e){
+                throw new RuntimeException(e);
+            }
+        }else { // 현재 서버의 받는 이의 emitter 정보가 없는 경우
+            Map<String, String> message = new HashMap<>();
+            message.put("event", "hallOfFame");
+            message.put("data", "{\"message\":\"명예의전당에 등록되었습니다!\"}");
+            sseRedisTemplate.convertAndSend(memberId, message);
+        }
+    }
+
     public void publishReservationMessage(ReservationDetailDetResDto dto, String memberId) {
         SseEmitter emitter = emitters.get(memberId);
         if (emitter != null) {
@@ -108,7 +126,7 @@ public class SseController implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         ObjectMapper objectMapper = new ObjectMapper();
-        String email = new String(pattern, StandardCharsets.UTF_8);
+        String email = new String(pattern, StandardCharsets.UTF_8); //email이 아닌 id
         try {
             System.out.println("listening");
             ReservationDetailDetResDto dto = objectMapper.readValue(message.getBody(), ReservationDetailDetResDto.class);
