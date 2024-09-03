@@ -30,8 +30,8 @@ public class ReservationScheduler {
         this.reservationDetailRepository = reservationDetailRepository;
     }
 
-//    @Scheduled(cron="0 0/1 * * * *") // test
-    @Scheduled(cron="0 0/5 * * * *")
+    @Scheduled(cron="0 0/1 * * * *") // test
+//    @Scheduled(cron="0 0/5 * * * *")  // test
     @Transactional
     public void alarmReservation(){
         LocalDate date = LocalDate.now();
