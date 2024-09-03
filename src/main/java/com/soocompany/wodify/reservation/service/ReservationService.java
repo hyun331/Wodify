@@ -15,9 +15,7 @@ import com.soocompany.wodify.wod.domain.Wod;
 import com.soocompany.wodify.wod.repository.WodRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,14 +89,18 @@ public class ReservationService {
             throw new IllegalArgumentException("박스에 대한 권한이 없습니다.");
         }
         Page<Reservation> reservationList;
+        Sort sort = Sort.by(Sort.Order.desc("date"), Sort.Order.desc("time")); // 날짜 및 시간으로 내림차순 정렬
+
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
         if (searchDto.getStartDate()!=null&&searchDto.getEndDate()!=null) {
-            reservationList = reservationRepository.findByBoxAndDateBetweenAndDelYn(box, searchDto.getStartDate(), searchDto.getEndDate(), "N", pageable);
+            reservationList = reservationRepository.findByBoxAndDateBetweenAndDelYn(box, searchDto.getStartDate(), searchDto.getEndDate(), "N", sortedPageable);
         }else {
-            reservationList = reservationRepository.findByBoxAndDelYn(box,"N", pageable);
+            reservationList = reservationRepository.findByBoxAndDelYn(box,"N", sortedPageable);
         }
         List<ReservationListResDto> list = new ArrayList<>();
 
-        // Convert each Reservation to ReservationListResDto
+        //  Reservation to ReservationListResDto 변환
         for (Reservation reservation : reservationList) {
             List<ReservationDetListResDto> dtoList = new ArrayList<>();
             List<ReservationDetail> reservationDetails = reservationDetailRepository.findByReservationAndDelYn(reservation, "N");
@@ -108,7 +110,6 @@ public class ReservationService {
             list.add(reservation.ListResDtoFromEntity(dtoList));
         }
 
-        // Convert the list to a Page object
         return new PageImpl<>(list, pageable, reservationList.getTotalElements());
     }
 
