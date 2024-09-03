@@ -14,4 +14,6 @@ import java.time.LocalTime;
 public class ReservationTimeResDto {
     private Long id;
     private LocalTime time;
+    private int maxPeople;
+    private int reservationPeople;
 }
