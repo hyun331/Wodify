@@ -155,4 +155,25 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+
+
+
+    //스케쥴러 lock 설정 redis
+    @Bean
+    public RedisConnectionFactory schedulerLockRedis(){
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
+        configuration.setHostName(host);
+        configuration.setPort(port);
+        configuration.setDatabase(7);
+        return new LettuceConnectionFactory(configuration);
+    }
+    @Bean(name = "schedulerLockTemplate")
+    public RedisTemplate<String, Object> schedulreRedisTemplate(RedisConnectionFactory redisConnectionFactory){
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        return redisTemplate;
+    }
+
 }
