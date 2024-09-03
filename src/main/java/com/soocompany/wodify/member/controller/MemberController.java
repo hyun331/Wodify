@@ -55,6 +55,9 @@ public class MemberController {
     @Value("${jwt.secretKeyRt}")
     String secretKeyRt;
 
+    @Value("${spring.profiles.active}")
+    String applicationYml;
+
     ////////////////////////////////////////////////
     //kakao login
     @GetMapping("/auth/kakao/callback")
@@ -69,7 +72,12 @@ public class MemberController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "2d129c6af1317e9dc12a8669b1957416");    //Rest API 키
-        params.add("redirect_uri", "https://www.wodify.site/member/auth/kakao/callback");
+        if(applicationYml.equals("local")){
+            params.add("redirect_uri", "http://localhost:8081/member/auth/kakao/callback");
+        }else{
+            params.add("redirect_uri", "https://www.wodify.site/member/auth/kakao/callback");
+        }
+
         params.add("code", code); // 프론트에서 받아온 인가 코드
 
         //header body 합치기
@@ -189,8 +197,6 @@ public class MemberController {
         if(member!=null){
             String jwtToken = jwtTokenProvider.createToken(member.getId().toString(), member.getRole().toString());
             String refreshToken = jwtTokenProvider.createRefreshToken(member.getId().toString(), member.getRole().toString());
-
-            System.out.println("로그인화면");
 
             redisTemplate.opsForValue().set(member.getId().toString(), refreshToken, 240, TimeUnit.HOURS);
             Map<String, Object> loginInfo = new HashMap<>();
