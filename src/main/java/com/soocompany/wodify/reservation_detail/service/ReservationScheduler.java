@@ -43,7 +43,7 @@ public class ReservationScheduler {
                     ReservationDetailDetResDto dto = reservationDetail.detFromEntity();
                     dto.setCheck("reservationDetail");
                     String memberId = String.valueOf(reservationDetail.getMember().getId());
-                    sseController.publishReservationMessage(dto,memberId);
+                    sseController.publishMessage(dto,memberId);
                 }
             }
         }

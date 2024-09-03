@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 @Slf4j
 @RestController
 public class SseController implements MessageListener {
@@ -39,22 +40,22 @@ public class SseController implements MessageListener {
 
 
     public SseController(@Qualifier("5") RedisTemplate<String, Object> sseRedisTemplate, @Qualifier("5") RedisMessageListenerContainer redisMessageListenerContainer,
-                         @Qualifier("6")RedisTemplate<String, Object> reservationRedisTemplate) {
+                         @Qualifier("6") RedisTemplate<String, Object> reservationRedisTemplate) {
         this.sseRedisTemplate = sseRedisTemplate;
         this.redisMessageListenerContainer = redisMessageListenerContainer;
         this.reservationRedisTemplate = reservationRedisTemplate;
     }
 
 
-    public void subscribeChannel(String email){
-        if(!subscribeList.contains(email)){
+    public void subscribeChannel(String email) {
+        if (!subscribeList.contains(email)) {
             MessageListenerAdapter listenerAdapter = createListenerAdapter(this);
             redisMessageListenerContainer.addMessageListener(listenerAdapter, new PatternTopic(email));
             subscribeList.add(email);
         }
     }
 
-    public MessageListenerAdapter createListenerAdapter(SseController sseController){
+    public MessageListenerAdapter createListenerAdapter(SseController sseController) {
         return new MessageListenerAdapter(sseController, "onMessage");
     }
 
@@ -77,10 +78,19 @@ public class SseController implements MessageListener {
         return emitter;
     }
 
-    public void publishMessage(ReservationDetailDetResDto dto, String memberId){
+    public void publishMessage(ReservationDetailDetResDto dto, String memberId) {
         SseEmitter emitter = emitters.get(memberId);
-        sseRedisTemplate.convertAndSend(memberId, dto);
+        if (emitter != null) {
+            try {
+                emitter.send(SseEmitter.event().name("reservation").data(dto));
+            }catch (IOException e){
+                throw new RuntimeException(e);
+            }
+        }else { // 현재 서버의 받는 이의 emitter 정보가 없는 경우
+            sseRedisTemplate.convertAndSend(memberId, dto);
+        }
     }
+
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
@@ -90,11 +100,11 @@ public class SseController implements MessageListener {
             System.out.println("listening");
             ReservationDetailDetResDto dto = objectMapper.readValue(message.getBody(), ReservationDetailDetResDto.class);
             SseEmitter emitter = emitters.get(email);
-            if(emitter!=null){
-                if(dto.getCheck().equals("reservation")){
+            if (emitter != null) {
+                if (dto.getCheck().equals("reservation")) {
                     emitter.send(SseEmitter.event().name("reservation").data(dto));
                 }
-                if(dto.getCheck().equals("reservationDetail")){
+                if (dto.getCheck().equals("reservationDetail")) {
                     emitter.send(SseEmitter.event().name("reservationDetail").data(dto));
                 }
             }
@@ -106,11 +116,6 @@ public class SseController implements MessageListener {
             log.error("IllegalStateException while sending SSE: {}", e.getMessage());
             emitters.remove(email); // 해당 클라이언트의 Emitter 제거
         }
-    }
-
-    public void publishReservationMessage(ReservationDetailDetResDto dto, String memberId) {
-        SseEmitter emitter = emitters.get(memberId);
-        reservationRedisTemplate.convertAndSend(memberId, dto);
     }
 
 }
