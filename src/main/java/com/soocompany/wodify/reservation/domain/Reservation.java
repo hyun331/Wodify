@@ -90,6 +90,11 @@ public class Reservation extends BaseEntity {
     }
 
     public ReservationTimeResDto timeFromEntity() {
-        return ReservationTimeResDto.builder().id(this.id).time(this.time).build();
+        return ReservationTimeResDto.builder()
+                .id(this.id)
+                .time(this.time)
+                .maxPeople(this.maximumPeople)
+                .reservationPeople(this.maximumPeople - this.availablePeople)
+                .build();
     }
 }

@@ -26,7 +26,7 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: update cluster information
-        run: aws eks update-kubeconfig  --name wodify --region ap-northeast-2
+        run: aws eks update-kubeconfig  --name wodify-cluster --region ap-northeast-2
 
       - name: login ecr
         id: login-ecr
