@@ -99,11 +99,11 @@
 
                 <!-- Loop through notifications -->
                 <v-list-item v-for="(notification, index) in notifications" :key="index"
-                    @click="handleNotificationClick(index)">
+                    @click="handleNotificationClick(index, notification.createdTime)">
                     <v-list-item-content>
                         <v-list-item-title>{{ notification.message }}</v-list-item-title>
                         <!-- Optional: Display the date or any other info -->
-                        <v-list-item-subtitle>{{ notification.createdTime.slice(0,10) }}</v-list-item-subtitle>
+                        <v-list-item-subtitle v-if="notification.createdTime !='hallOfFame'">{{ notification.createdTime.slice(0,10) }}</v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
@@ -176,11 +176,28 @@ export default {
                     }
 
                     const newNotification = {
-                        memberName: data.memberName,
-                        date: data.date,
-                        createdTime: data.createdTime,
                         message: this.msg
                     };
+                    
+                    localStorage.removeItem('notifications');
+                    this.notifications.push(newNotification);
+                    localStorage.setItem('notifications', JSON.stringify(this.notifications));
+
+                });
+
+                sse.addEventListener('hallOfFame', (event) => {
+                    this.liveAlert++;
+
+                    let data = JSON.parse(event.data);
+                    console.log(data);
+                    const newNotification = {
+                        memberName: "",
+                        date: "",
+                        createdTime: "hallOfFame",
+                        message: data.message
+                    };
+                    
+                    
                     
                     localStorage.removeItem('notifications');
                     this.notifications.push(newNotification);
@@ -207,12 +224,24 @@ export default {
             this.showNotifications = !this.showNotifications;
             console.log(this.showNotifications);
         },
-        handleNotificationClick(index) {
+        handleNotificationClick(index, createdTime) {
+            if(createdTime==='hallOfFame'){
+                this.$router.push('/');
+                this.notifications.splice(index, 1);
+
+            // Update localStorage
+                localStorage.setItem('notifications', JSON.stringify(this.notifications));
+
+            // Update liveAlert count
+                this.liveAlert = this.notifications.length;
+                return;
+            }
             if (this.userRole === 'USER') {
                 this.$router.push('/reservation-detail/list');
             } else {
                 this.$router.push('/reservation/list');
             }
+            
             // Redirect to /reservation/list
 
             // Remove the clicked notification
