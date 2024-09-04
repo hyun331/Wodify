@@ -46,7 +46,7 @@ public class ReservationScheduler {
         Boolean isLocked = schedulreRedisTemplate.opsForValue().setIfAbsent(lockKey, "true", Duration.ofSeconds(60)); // 60초간 락 유지
         if(Boolean.TRUE.equals(isLocked)){
             try {
-                System.out.println("서버 1 예약 알림 스케쥴러 시작 ");
+                log.info("예약 알림 : 현재 서버에서 스케쥴러 실행중");
                 LocalDate date = LocalDate.now();
                 List<Reservation> reservationList = reservationRepository.findAllByDateAndDelYn(date, "N");
                 for(Reservation reservation : reservationList){
@@ -61,12 +61,12 @@ public class ReservationScheduler {
                         }
                     }
                 }
-                System.out.println("서버 1 예약 알림 스케쥴러 끝 ");
+                log.info("예약 알림 : 현재 서버에서 스케쥴러 끝");
             }finally {
                 schedulreRedisTemplate.delete(lockKey);
             }
         }else {
-            System.out.println("다른 인스턴스에서 예약 알림 스케쥴러가 실행 중");
+            log.info("예약 알림 : 다른 서버에서 스케쥴러 실행중");
         }
 
 //        LocalDate date = LocalDate.now();
