@@ -101,7 +101,7 @@ public class WodService {
             log.error("wodDelete() : 해당 WOD 가 등록된 Box 와 본인의 Box 가 다릅니다.");
             throw new IllegalArgumentException("해당 WOD 가 등록된 Box 와 본인의 Box 가 다릅니다.");
         }
-        if (!reservationRepository.findByBoxAndDateAndDelYn(box, date, "N", Pageable.unpaged()).isEmpty()) {
+        if (!reservationRepository.findByBoxAndDateAndDelYn(box, date, "N").isEmpty()) {
             log.error("wodDelete() : 해당 와드에 대한 예약이 있습니다.");
             throw new EntityNotFoundException("해당 와드에 대한 예약이 있습니다.");
         }
