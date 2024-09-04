@@ -168,7 +168,24 @@ public class RedisConfig {
         return new LettuceConnectionFactory(configuration);
     }
     @Bean(name = "schedulerLockTemplate")
-    public RedisTemplate<String, Object> schedulreRedisTemplate(RedisConnectionFactory redisConnectionFactory){
+    public RedisTemplate<String, Object> schedulerRedisTemplate(RedisConnectionFactory redisConnectionFactory){
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        return redisTemplate;
+    }
+
+    @Bean
+    public RedisConnectionFactory schedulerLockRedis2(){
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
+        configuration.setHostName(host);
+        configuration.setPort(port);
+        configuration.setDatabase(8);
+        return new LettuceConnectionFactory(configuration);
+    }
+    @Bean(name = "schedulerLockTemplate2")
+    public RedisTemplate<String, Object> schedulerRedisTemplate2(RedisConnectionFactory redisConnectionFactory){
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());

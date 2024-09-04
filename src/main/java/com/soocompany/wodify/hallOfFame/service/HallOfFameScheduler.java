@@ -32,26 +32,29 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class HallOfFameScheduler {
-    @Autowired
-    private BoxRepository boxRepository;
-    @Autowired
-    private MemberRepository memberRepository;
+    private final BoxRepository boxRepository;
+    private final MemberRepository memberRepository;
+    private final HallOfFameRepository hallOfFameRepository;
+    private final ReservationRepository reservationRepository;
+    private final ReservationDetailRepository reservationDetailRepository;
+    private final SseController sseController;
 
-    @Autowired
-    private HallOfFameRepository hallOfFameRepository;
-
-    @Autowired
-    private ReservationRepository reservationRepository;
-
-    @Autowired
-    private ReservationDetailRepository reservationDetailRepository;
-
-    @Autowired
-    private SseController sseController;
-
-    @Autowired
     @Qualifier("schedulerLockTemplate")
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    public HallOfFameScheduler(BoxRepository boxRepository, @Qualifier("schedulerLockTemplate") RedisTemplate<String, Object> redisTemplate, SseController sseController, ReservationDetailRepository reservationDetailRepository, ReservationRepository reservationRepository, HallOfFameRepository hallOfFameRepository, MemberRepository memberRepository) {
+        this.boxRepository = boxRepository;
+        this.redisTemplate = redisTemplate;
+        this.sseController = sseController;
+        this.reservationDetailRepository = reservationDetailRepository;
+        this.reservationRepository = reservationRepository;
+        this.hallOfFameRepository = hallOfFameRepository;
+        this.memberRepository = memberRepository;
+    }
+
+
+
+
 
 
     //    @Scheduled(cron = "0 0 0 * * *")  //자정
