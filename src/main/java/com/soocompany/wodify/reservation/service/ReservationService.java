@@ -63,7 +63,7 @@ public class ReservationService {
             Reservation reservation = dto.toEntity(box, member, wod);
             int maximumPeople = dto.getMaximumPeople();
             Reservation savedReservation = reservationRepository.save(reservation);
-            reservationManagementService.increaseAvailable(savedReservation.getId(), maximumPeople);
+            reservationManagementService.updateAvailable(savedReservation.getId(), maximumPeople);
             ReservationDetailResDto detailResDto = savedReservation.detailResDtoFromEntity();
             list.add(detailResDto);
         }
