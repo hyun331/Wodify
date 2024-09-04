@@ -194,6 +194,10 @@ export default {
         } else {
           this.resultMessage = "좋아요에 실패했습니다.";
           this.showResultModal = true; // 결과 모달 열기
+<<<<<<< HEAD
+=======
+
+>>>>>>> 33a7be3fd0d9c5be3f46b8f90a1ccc0b97d82fe4
         }
       } catch (error) {
         console.error("Error liking post:", error);
@@ -215,6 +219,7 @@ export default {
           this.newComment = "";
         } else {
           this.resultMessage = "댓글 등록에 실패했습니다.";
+          this.showResultModal = true; // 결과 모달 열기
           this.showResultModal = true; // 결과 모달 열기
         }
       } catch (error) {
