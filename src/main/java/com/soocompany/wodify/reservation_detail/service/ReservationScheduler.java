@@ -53,6 +53,7 @@ public class ReservationScheduler {
                     List<ReservationDetail> reservationDetails = reservationDetailRepository.findAllByReservationAndDelYn(reservation, "N");
                     for(ReservationDetail reservationDetail : reservationDetails){
                         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+                        log.info(LocalTime.now().format(dateTimeFormatter));
                         if(reservationDetail.getReservation().getTime().minusHours(1).format(dateTimeFormatter).equals(LocalTime.now().format(dateTimeFormatter))){
                             ReservationDetailDetResDto dto = reservationDetail.detFromEntity();
                             dto.setCheck("reservationDetail");

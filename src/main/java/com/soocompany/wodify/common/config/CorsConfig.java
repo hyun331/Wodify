@@ -17,7 +17,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry corsRegistry) {
         if(applicationYml.equals("local")){
-            corsUrl = "http://localhost:8081";
+            corsUrl = "http://localhost:3000";
         }else{
             corsUrl = "https://www.wodify.site";
         }

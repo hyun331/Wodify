@@ -73,7 +73,7 @@ public class MemberController {
         params.add("grant_type", "authorization_code");
         params.add("client_id", "2d129c6af1317e9dc12a8669b1957416");    //Rest API 키
         if(applicationYml.equals("local")){
-            params.add("redirect_uri", "http://localhost:8081/member/auth/kakao/callback");
+            params.add("redirect_uri", "http://localhost:3000/member/auth/kakao/callback"); //0904
         }else{
             params.add("redirect_uri", "https://www.wodify.site/member/auth/kakao/callback");
         }
