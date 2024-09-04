@@ -43,13 +43,11 @@ public class ReservationManageEventHandler {
         }
     }
     @Transactional
-    @RabbitListener(queues = RabbitMqConfig.RESERVATION_MANAGE_QUEUE)
-    public void listen(Message message) {
+    @RabbitListener(queues = RabbitMqConfig.RESERVATION_MANAGE_QUEUE, ackMode = "MANUAL")
+    public void listen(Message message, Channel channel) {
         String messageBody = new String(message.getBody());
-//        json 메시지를 ObjectMapper로 직접 parsing
         ObjectMapper objectMapper = new ObjectMapper();
         ReservationManageEvent dto = null;
-        log.info("mq 활동중 영차영차 : listen을 하긴 함");
         try {
             dto = objectMapper.readValue(messageBody, ReservationManageEvent.class);
             log.info("mq 활동중 영차영차 : listen : " + dto.toString());
@@ -59,11 +57,24 @@ public class ReservationManageEventHandler {
                     .orElseThrow(() -> new EntityNotFoundException("해당 예약을 찾을 수 없습니다."));
             reservation.decreaseAvailablePeople();
 
+            // 메시지 처리 성공 시 ACK 전송
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (JsonProcessingException e) {
             log.error("JSON 파싱 에러: ", e);
+            try {// 재처리 시도
+                channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
+            } catch (IOException ex) {
+                log.error("메시지 NACK 실패: ", ex);
+                throw new RuntimeException(ex);
+            }
         } catch (Exception e) {
             log.error("메시지 처리 실패: ", e);
+            try {// 재처리 시도
+                channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
+            } catch (IOException ex) {
+                log.error("메시지 NACK 실패: ", ex);
+                throw new RuntimeException(ex);
+            }
         }
-
     }
 }
