@@ -106,7 +106,7 @@ public class SseController implements MessageListener {
                 throw new RuntimeException(e);
             }
         }else { // 현재 서버의 받는 이의 emitter 정보가 없는 경우
-            reservationRedisTemplate.convertAndSend(memberId, dto);
+            sseRedisTemplate.convertAndSend(memberId, dto);
         }
     }
 
@@ -120,7 +120,7 @@ public class SseController implements MessageListener {
                 throw new RuntimeException(e);
             }
         }else { // 현재 서버의 받는 이의 emitter 정보가 없는 경우
-            reservationRedisTemplate.convertAndSend(memberId, dto);
+            sseRedisTemplate.convertAndSend(memberId, dto);
         }
     }
 
