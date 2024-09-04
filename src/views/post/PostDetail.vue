@@ -216,7 +216,6 @@ export default {
         } else {
           this.resultMessage = "댓글 등록에 실패했습니다.";
           this.showResultModal = true; // 결과 모달 열기
-          this.showResultModal = true; // 결과 모달 열기
         }
       } catch (error) {
         console.error("Error submitting comment:", error);
