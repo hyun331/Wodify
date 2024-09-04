@@ -44,7 +44,7 @@ public class ReservationManageEventHandler {
     }
     @Transactional
     @RabbitListener(queues = RabbitMqConfig.RESERVATION_MANAGE_QUEUE)
-    public void listen(Message message, Channel channel) {
+    public void listen(Message message) {
         String messageBody = new String(message.getBody());
 //        json 메시지를 ObjectMapper로 직접 parsing
         ObjectMapper objectMapper = new ObjectMapper();
@@ -59,8 +59,6 @@ public class ReservationManageEventHandler {
                     .orElseThrow(() -> new EntityNotFoundException("해당 예약을 찾을 수 없습니다."));
             reservation.decreaseAvailablePeople();
 
-            // 메시지 처리 성공 시 ACK 전송
-            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (JsonProcessingException e) {
             log.error("JSON 파싱 에러: ", e);
         } catch (Exception e) {
