@@ -1,5 +1,4 @@
 <template>
-  <div class="page-container">
     <div class="box right-align"> <br>
       <span class="boxLocation"> {{ this.boxName }} </span> <br>
     </div>
@@ -74,7 +73,6 @@
       <!-- 화면 오른쪽 하단의 맨위로 버튼 -->
       <v-btn color="black" dark class="scroll-top-btn" v-show="showScrollTopButton" @click="scrollToTop"> 맨위로 </v-btn>
     </v-container>
-  </div>
 </template>
 
 <script setup>

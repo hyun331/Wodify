@@ -173,8 +173,8 @@ export default {
         async addWodDet() {
             this.count++;
             this.wodSaveReqDto.wodDetSaveReqDtoList.push({
-                name: `종목명${this.count}`,
-                contents: `종목내용${this.count}`,
+                name: '',
+                contents: '',
             });
         },
         removeWodDet(index) {

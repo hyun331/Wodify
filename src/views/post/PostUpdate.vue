@@ -31,6 +31,18 @@
       </v-card-text>
     </v-card>
     <ModalRecord v-if="isModalOpen" @close="isModalOpen = false" @insert="insertIntoEditor" />
+
+    <!-- 알림 모달 -->
+    <v-dialog v-model="isAlertDialogOpen" max-width="500px">
+      <v-card>
+        <v-card-title class="headline">{{ alertDialogTitle }}</v-card-title>
+        <v-card-text>{{ alertDialogMessage }}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="closeAlertDialog">확인</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -135,7 +147,7 @@ export default {
       formData.append("file", file);
       try {
         const response = await axios.post(
-          `${process.env.VUE_APP_API_BASE_URL}/post/upload-media`,
+          `${process.env.VUE_APP_API_BASE_URL}/upload-media`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -216,7 +228,6 @@ export default {
         });
 
         if (response.status === 200) {
-          alert('Post updated successfully.');
           goBackToDetail();
         } else {
           alert('Failed to update post.');
