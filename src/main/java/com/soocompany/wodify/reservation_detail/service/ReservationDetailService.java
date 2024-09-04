@@ -97,7 +97,9 @@ public class ReservationDetailService {
             }
         }
 
-        if (reservationManagementService.decreaseAvailable(reservation.getId(),1) < 0) {
+        Long available = reservationManagementService.decreaseAvailable(reservation.getId(), 1);
+        log.info(reservation.getId() + String.valueOf(available));
+        if (available < 0) {
             throw new IllegalStateException("예약 인원이 초과되어 예약이 불가능합니다.");
         }
         reservationManageEventHandler.publish(new ReservationManageEvent(reservation.getId(), 1));
