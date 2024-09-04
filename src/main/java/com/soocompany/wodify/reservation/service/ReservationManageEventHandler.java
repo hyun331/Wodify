@@ -8,6 +8,7 @@ import com.soocompany.wodify.reservation.domain.Reservation;
 import com.soocompany.wodify.reservation.dto.ReservationManageEvent;
 import com.soocompany.wodify.reservation.repository.ReservationRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -30,8 +31,14 @@ public class ReservationManageEventHandler {
     }
 
     public void publish(ReservationManageEvent event) {
-        log.info("mq 활동중 영차영차 : publish : reservation ="+event.getReservationId());
-        rabbitTemplate.convertAndSend(RabbitMqConfig.RESERVATION_MANAGE_QUEUE, event);
+        log.info("mq 활동중 영차영차 : publish : reservation = " + event.getReservationId());
+        try {
+            rabbitTemplate.convertAndSend(RabbitMqConfig.RESERVATION_MANAGE_QUEUE, event);
+            log.info("mq 메시지 전송 성공");
+        } catch (AmqpException e) {
+            log.error("mq 메시지 전송 실패: ", e);
+            // 예외 처리 로직 추가
+        }
     }
     @Transactional
     @RabbitListener(queues = RabbitMqConfig.RESERVATION_MANAGE_QUEUE)
@@ -54,18 +61,8 @@ public class ReservationManageEventHandler {
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (JsonProcessingException e) {
             log.error("JSON 파싱 에러: ", e);
-            try {
-                channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true); // 재처리 시도
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
         } catch (Exception e) {
             log.error("메시지 처리 실패: ", e);
-            try {
-                channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true); // 재처리 시도
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
         }
 
     }
