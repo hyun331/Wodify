@@ -24,4 +24,8 @@ public class ReservationManagementService {
             return redisTemplate.opsForValue().decrement(String.valueOf(reservationId), people);
         }
     }
+
+    public void updateAvailable(Long reservationId, int people) {
+        redisTemplate.opsForValue().set(String.valueOf(reservationId), people);
+    }
 }
