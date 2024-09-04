@@ -6,6 +6,7 @@ import com.soocompany.wodify.common.config.RabbitMqConfig;
 import com.soocompany.wodify.reservation.domain.Reservation;
 import com.soocompany.wodify.reservation.dto.ReservationManageEvent;
 import com.soocompany.wodify.reservation.repository.ReservationRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -16,6 +17,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 @Component
+@Slf4j
 public class ReservationManageEventHandler {
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -37,7 +39,7 @@ public class ReservationManageEventHandler {
         ReservationManageEvent dto = null;
         try {
             dto = objectMapper.readValue(messageBody, ReservationManageEvent.class);
-
+            log.info("mq 활동중 영차영차 : "+dto.toString());
 //          인원 업데이트
             Reservation reservation = reservationRepository.findByIdAndDelYn(dto.getReservationId(), "N").orElseThrow(() -> new EntityNotFoundException("해당 예약을 찾을 수 없습니다."));
             reservation.decreaseAvailablePeople();
