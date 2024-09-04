@@ -55,7 +55,7 @@
             <v-card-text>
               <v-form @submit.prevent="createRecord">
                 <v-row class="menufont">
-                  <v-col cols="4"><label>SUCCESS OR FAILURE</label></v-col>
+                  <v-col cols="3"><label>SUCCESS OR FAILURE</label></v-col>
                   <v-col cols="8">
                     <v-radio-group v-model="registerData.snf" inline>
                       <v-radio label="SUCCESS" value="S"></v-radio>
@@ -64,7 +64,7 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="2"><label class="menufont">EXERCISE TIME</label></v-col>
+                  <v-col cols="3"><label class="menufont">EXERCISE TIME</label></v-col>
                   <v-col cols="5">
                     <v-text-field class="custom-text-box" style="margin-right:2px" v-model="registerData.exerciseTime"
                       label="ExerciseTime" placeholder="HH:mm:ss" @click="timePickerVisible = true"
@@ -94,18 +94,18 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="2"><label class="menufont">COMMENT</label></v-col>
-                  <v-col cols="9">
-                    <v-text-field v-model="registerData.comments" required></v-text-field>
+                  <v-col cols="3"><label class="menufont">COMMENT</label></v-col>
+                  <v-col cols="8">
+                    <v-textarea v-model="registerData.comments" required auto-grow :rows="5"></v-textarea>
                   </v-col>
                 </v-row>
+                <hr style="border: solid 0.8px #BDBDBD">
+                <br>
                 <v-row v-for=" (wodDetDto, index) in wod.wodDetResDtoList" :key="wodDetDto.id">
-                  <v-col cols="5">
-                    <label class="menufont">name : {{ wodDetDto.name }}</label>
-                    <br>
-                    <label class="menufont">contents : {{ wodDetDto.contents }}</label>
+                  <v-col cols="3">
+                    <label class="menufont">{{ wodDetDto.name }} - {{ wodDetDto.contents }}</label>
                   </v-col>
-                  <v-col cols="7">
+                  <v-col cols="8">
                     <v-text-field v-model="registerData.recordDetSaveReqDtoList[index].detailComments"
                       label="Detail Comments" required></v-text-field>
                   </v-col>
@@ -130,35 +130,25 @@
                   <tr>
                     <td class="menufont">SUCCESS OR FAILURE</td>
                     <td>{{ this.record.snf === 'S' ? 'SUCCESS' : 'FAILURE' }}</td>
-                    <td></td>
                   </tr>
                   <tr>
                     <td class="menufont">EXERCISE TIME</td>
                     <td>{{ this.record.exerciseTime }}</td>
-                    <td></td>
                   </tr>
                   <tr>
                     <td class="menufont">COMMENT</td>
                     <td>{{ this.record.comments }}</td>
-                    <td></td>
+                  </tr>
+                  <tr v-for=" recordDetDto in record.recordResDetDtoList" :key="recordDetDto.id">
+                    <td class="menufont">{{ recordDetDto.wodName }} - {{ recordDetDto.wodContents }}</td>
+                    <td>{{ recordDetDto.detailComments }}</td>
                   </tr>
                 </tbody>
               </v-table>
-              <hr style="border: solid 0.8px #BDBDBD">
-              <v-row v-for=" recordDetDto in record.recordResDetDtoList" :key="recordDetDto.id">
-                <v-col cols="5">
-                  <label class="menufont">name : {{ recordDetDto.wodName }}</label>
-                  <br>
-                  <label class="menufont">contents : {{ recordDetDto.wodContents }}</label>
-                </v-col>
-                <v-col cols="6">
-                  <label class="menufont">comment : {{ recordDetDto.detailComments }}</label>
-                </v-col>
-              </v-row>
               <br>
               <v-row justify="end">
-                  <v-btn @click="changeModifyBtn">MODIFY</v-btn>
-                  <v-btn @click="showDeleteRecordModal">DELETE</v-btn>
+                <v-btn @click="changeModifyBtn">MODIFY</v-btn>
+                <v-btn @click="showDeleteRecordModal">DELETE</v-btn>
               </v-row>
             </v-card-text>
           </v-card>
@@ -174,7 +164,7 @@
             <v-card-text>
               <v-form @submit.prevent="modifyRecord">
                 <v-row>
-                  <v-col cols="4"><label class="menufont">SUCCESS OR FAILURE</label></v-col>
+                  <v-col cols="3"><label class="menufont">SUCCESS OR FAILURE</label></v-col>
                   <v-col cols="8">
                     <v-radio-group v-model="modifyData.snf" inline>
                       <v-radio label="SUCCESS" value="S"></v-radio>
@@ -183,7 +173,7 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="2"><label class="menufont">EXERCISE TIME</label></v-col>
+                  <v-col cols="3"><label class="menufont">EXERCISE TIME</label></v-col>
                   <v-col cols="5">
                     <v-text-field class="custom-text-box" style="margin-right:2px" v-model="modifyData.exerciseTime"
                       label="ExerciseTime" placeholder="HH:mm:ss" @click="mtimePickerVisible = true"
@@ -212,19 +202,19 @@
                     </v-dialog>
                   </v-col>
                 </v-row>
+                <hr style="border: solid 0.8px #BDBDBD">
+                <br>
                 <v-row>
-                  <v-col cols="2"><label class="menufont">COMMENT</label></v-col>
-                  <v-col cols="9">
-                    <v-text-field v-model="modifyData.comments" required></v-text-field>
+                  <v-col cols="3"><label class="menufont">COMMENT</label></v-col>
+                  <v-col cols="8">
+                    <v-textarea v-model="modifyData.comments" required auto-grow :rows="5"></v-textarea>
                   </v-col>
                 </v-row>
                 <v-row v-for=" (wodDetDto, index) in wod.wodDetResDtoList" :key="wodDetDto.id">
-                  <v-col cols="5">
-                    <label class="menufont">name : {{ wodDetDto.name }}</label>
-                    <br>
-                    <label class="menufont">contents : {{ wodDetDto.contents }}</label>
+                  <v-col cols="3">
+                    <label class="menufont">{{ wodDetDto.name }} - {{ wodDetDto.contents }}</label>
                   </v-col>
-                  <v-col cols="7">
+                  <v-col cols="8">
                     <v-text-field v-model="modifyData.recordDetSaveReqDtoList[index].detailComments"
                       label="Detail Comments" required></v-text-field>
                   </v-col>
@@ -243,7 +233,8 @@
       <DeleteRecordModal v-model="deleteRecord" :recordId="reservation.recordId" @update:dialog="deleteRecord = $event">
       </DeleteRecordModal>
 
-
+      <AlertModalComponent v-model="alertModal" @update:dialog="alertModal = $event" :dialogTitle="dialogTitle"
+        :dialogText="dialogText" />
 
     </v-container>
   </div>
@@ -253,10 +244,11 @@
 import axios from 'axios';
 import DeleteRecordModal from './DeleteRecordModal.vue';
 import ReservationWod from './ReservationDetailWodModal.vue'
+import AlertModalComponent from '@/components/AlertModalComponent.vue';
 
 export default {
   components: {
-    DeleteRecordModal, ReservationWod
+    DeleteRecordModal, ReservationWod, AlertModalComponent
   },
   data() {
     return {
@@ -300,7 +292,12 @@ export default {
 
       isWod: false,
 
-      deleteRecord: false
+      deleteRecord: false,
+
+
+      alertModal: false,
+      dialogTitle: "",
+      dialogText: "",
 
     };
   },
@@ -365,7 +362,17 @@ export default {
         await axios.put(`${process.env.VUE_APP_API_BASE_URL}/record/create`, recordData);
         window.location.reload(); // 스무스하게 바꾸고 싶은데.. 일단 보류
       } catch (e) {
+        let errorMessage = "";
+        if (e.response && e.response.data) {
+          errorMessage += `: ${e.response.data.error_message}`;
+        } else if (e.message) {
+          errorMessage += `: ${e.message}`;
+        }
+        this.dialogTitle = "기록할 수 없습니다";
+        this.dialogText = errorMessage;
+        this.alertModal = true;
         console.log(e)
+
       }
     },
     async viewRecord() { // 운동기록 있을 때 조회 // 구현완료 // 수정필요
@@ -448,6 +455,7 @@ export default {
 
 .menufont {
   font-family: 'Rubik Mono One', sans-serif;
+  font-size: 17px
 }
 
 .custom-text-box {

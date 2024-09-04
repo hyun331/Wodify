@@ -202,7 +202,8 @@ export default {
     const uploadMedia = async (file) => {
       const formData = createFormData({ file });
       try {
-        const response = await axios.post("http://localhost:8090/upload-media",
+        const response = await axios.post(
+          `${process.env.VUE_APP_API_BASE_URL}/upload-media`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -299,7 +300,7 @@ export default {
       data.append("title", formData.title);
       data.append("contents", formData.contents);
       try {
-        const response = await axios.post("http://localhost:8090/post/create", data, {
+        const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/post/create`, data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         const createdPostId = response.data.result;

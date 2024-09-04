@@ -159,7 +159,7 @@ export default {
     }, // 삭제 확인 모달 닫기
     async fetchPostDetail() {
       try {
-        const response = await axios.get(`http://localhost:8090/post/detail/${this.id}`);
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/post/detail/${this.id}`);
         this.post = response.data.result;
         this.checkAuthor();
       } catch (error) {
@@ -172,9 +172,7 @@ export default {
     },
     async deletePost() {
       try {
-        const response = await axios.patch(
-          `http://localhost:8090/post/delete/${this.id}`
-        );
+        const response = await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/post/delete/${this.id}`);
         if (response.status === 200) {
           this.resultMessage = response.data.status_message;
           this.goBackToList();
@@ -190,7 +188,7 @@ export default {
     },
     async likePost() {
       try {
-        const response = await axios.post(`http://localhost:8090/post/like/${this.id}`);
+        const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/post/like/${this.id}`);
         if (response.status === 200) {
           this.post.likeCount = response.data.result;
         } else {
@@ -201,7 +199,8 @@ export default {
         console.error("Error liking post:", error);
         this.resultMessage = "좋아요 처리 중 오류가 발생했습니다.";
         this.showResultModal = true; // 결과 모달 열기
-      }
+
+      } 
     },
     async submitComment() {
       if (!this.newComment.trim()) {
@@ -210,10 +209,7 @@ export default {
       }
       const commentData = { comment: this.newComment, parentId: null };
       try {
-        const response = await axios.post(
-          `http://localhost:8090/post/comment/create/${this.id}`,
-          commentData
-        );
+        const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/post/comment/create/${this.id}`, commentData);
         if (response.status === 201) {
           this.post.comments.push(response.data.result);
           this.newComment = "";
@@ -225,7 +221,7 @@ export default {
         console.error("Error submitting comment:", error);
         this.resultMessage = "댓글 등록 중 오류가 발생했습니다.";
         this.showResultModal = true; // 결과 모달 열기
-      }
+      } 
     },
     removeComment(commentId) {
       this.post.comments = this.post.comments.filter(

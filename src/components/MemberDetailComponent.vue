@@ -25,6 +25,12 @@
                             </v-row>
 
                         </v-card-title>
+
+                        <v-row justify="end">
+                            <v-col cols="1"><v-btn @click="changeMemberInfo">수정</v-btn></v-col>
+                            <v-col cols="2"><v-btn @click="deleteMember">탈퇴</v-btn></v-col>
+                        </v-row>
+
                         <v-card-text style="font-size: 20px;">
 
                             <hr>
@@ -121,10 +127,13 @@
                     </v-card>
                     <br><br><br>
 
+                    <v-card v-if="userRole != 'USER'  && pageType=='My Page'">
 
+                    </v-card>
 
                     <!-- 차트 -->
-                    <v-card>
+                    <v-card v-else>
+
                         <v-card-title>
                           <v-row class="d-flex justify-center align-center">
                             <v-col class="text-center">
@@ -148,6 +157,17 @@
 
             <BoxCoachRegister v-model="boxCoachRegister" @update:dialog="boxCoachRegister = $event">
             </BoxCoachRegister>
+
+            <ChangeMemberInfoModal v-model="changeMemberInfoModal" @update:dialog="changeMemberInfoModal = $event"
+            :name="memberInfo.name"
+            :email="memberInfo.email"
+            :phone="memberInfo.phone"
+            :address="memberInfo.address"
+            :benchPress="memberInfo.benchPress"
+            :squat="memberInfo.squat"
+            :deadLift="memberInfo.deadLift"
+            >
+            </ChangeMemberInfoModal>
         </v-container>
   
 </template>
@@ -157,7 +177,9 @@ import HoldingModal from '@/views/member/HoldingModal.vue';
 import UnholdingModal from '@/views/member/UnholdingModal.vue';
 import ExerciseTimeChart from '@/views/member/ExerciseTimeChart.vue';
 import BoxCoachRegister from '@/views/box/BoxCoachRegister.vue';
-// import axios from 'axios';
+import ChangeMemberInfoModal from '@/views/member/ChangeMemberInfoModal.vue';
+import axios from 'axios';
+import { KAKAO_LOGOUT_URL } from '@/router/KakaoLogoutUrl';
 
 
 export default {
@@ -167,12 +189,14 @@ export default {
         UnholdingModal,
         ExerciseTimeChart,
         BoxCoachRegister,
+        ChangeMemberInfoModal,
     },
     data() {
         return {
             holding: false,
             unholding: false,
             boxCoachRegister: false,
+            changeMemberInfoModal: false,
         }
     },
 
@@ -185,6 +209,18 @@ export default {
         },
         showBoxCoachRegisterModal() {
             this.boxCoachRegister = true;
+        },
+        changeMemberInfo(){
+            this.changeMemberInfoModal = true;
+
+        },
+        async deleteMember(){
+            await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/member/delete`);
+            localStorage.removeItem('token');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('role');
+            localStorage.removeItem('notifications');
+            window.location.href = KAKAO_LOGOUT_URL;
         }
     }
 }

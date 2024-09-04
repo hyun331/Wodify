@@ -81,12 +81,12 @@ const onDateSelected = async (date) => {
             record.value = null;
             wod.value = null;
 
-            const wodResponse = await axios.get(`http://localhost:8090/wod/find/${formattedDate}`);
+            const wodResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/wod/find/${formattedDate}`);
             if (wodResponse.status === 200) {
                 wod.value = wodResponse.data.result;
             }
 
-            const recordResponse = await axios.get(`http://localhost:8090/post/record/${formattedDate}`);
+            const recordResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/post/record/${formattedDate}`);
             if (recordResponse.status === 200) {
                 record.value = recordResponse.data.result;
             }
