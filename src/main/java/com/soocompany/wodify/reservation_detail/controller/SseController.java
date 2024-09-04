@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -76,6 +78,15 @@ public class SseController implements MessageListener {
             e.printStackTrace();
         }
         subscribeChannel(memberId);
+        // Keep-Alive 메시지 주기적으로 전송 (예: 30초마다)
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            try {
+                emitter.send(SseEmitter.event().name("keepAlive").data("ping"));
+            } catch (IOException e) {
+                emitters.remove(memberId); // 에러 발생 시 emitter 제거
+            }
+        }, 30, 30, TimeUnit.SECONDS);
+
         return emitter;
     }
 
