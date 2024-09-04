@@ -26,7 +26,7 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: update cluster information
-        run: aws eks update-kubeconfig  --name wodify-cluster --region ap-northeast-2
+        run: aws eks update-kubeconfig  --name 3team-cluster --region ap-northeast-2
 
       - name: login ecr
         id: login-ecr
@@ -35,8 +35,8 @@ jobs:
 
       - name: build and push docker image to ecr
         env:
-          REGISTRY: 730335238091.dkr.ecr.ap-northeast-2.amazonaws.com
-          REPOSITORY: wodify-service
+          REGISTRY: 346903264902.dkr.ecr.ap-northeast-2.amazonaws.com
+          REPOSITORY: wodify
         run: |
           docker build -t $REGISTRY/$REPOSITORY:latest .
           docker push $REGISTRY/$REPOSITORY:latest 
