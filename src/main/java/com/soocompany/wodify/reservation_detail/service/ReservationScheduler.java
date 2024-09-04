@@ -61,27 +61,11 @@ public class ReservationScheduler {
                         }
                     }
                 }
-                log.info("예약 알림 : 현재 서버에서 스케쥴러 끝");
             }finally {
                 schedulreRedisTemplate.delete(lockKey);
             }
         }else {
             log.info("예약 알림 : 다른 서버에서 스케쥴러 실행중");
         }
-
-//        LocalDate date = LocalDate.now();
-//        List<Reservation> reservationList = reservationRepository.findAllByDateAndDelYn(date, "N");
-//        for(Reservation reservation : reservationList){
-//            List<ReservationDetail> reservationDetails = reservationDetailRepository.findAllByReservationAndDelYn(reservation, "N");
-//            for(ReservationDetail reservationDetail : reservationDetails){
-//                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-//                if(reservationDetail.getReservation().getTime().minusHours(1).format(dateTimeFormatter).equals(LocalTime.now().format(dateTimeFormatter))){
-//                    ReservationDetailDetResDto dto = reservationDetail.detFromEntity();
-//                    dto.setCheck("reservationDetail");
-//                    String memberId = String.valueOf(reservationDetail.getMember().getId());
-//                    sseController.publishReservationMessage(dto,memberId);
-//                }
-//            }
-//        }
     }
 }
