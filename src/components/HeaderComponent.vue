@@ -16,17 +16,14 @@
                     <v-list-item-title>내 박스</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="userRole === 'CEO'" :to="{ path: '/box/create' }">
-                <v-list-item :to="{ path: '/box/create' }">
                     <v-list-item-title>박스 생성</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/member/list/user' }">
-                <v-list-item :to="{ path: '/member/list/user' }">
                     <v-list-item-title>박스 회원 관리</v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-menu>
         <v-menu v-if="userRole === 'COACH' || userRole === 'CEO'" open-on-hover>
-        <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
                 <v-btn color="white" v-bind="props" class="rubikMonoOne fontClass">WOD</v-btn>
             </template>
@@ -42,19 +39,15 @@
             </template>
             <v-list>
                 <v-list-item v-if="userRole === 'USER'" :to="{ path: '/reservation-detail/create' }">
-                <v-list-item :to="{ path: '/reservation-detail/create' }">
                     <v-list-item-title>예약하기</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/reservation/create' }">
-                <v-list-item :to="{ path: '/reservation/create' }">
                     <v-list-item-title>예약생성</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="userRole === 'USER'" :to="{ path: '/reservation-detail/list' }">
-                <v-list-item :to="{ path: '/reservation-detail/list' }">
                     <v-list-item-title>예약조회</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="userRole === 'COACH' || userRole === 'CEO'" :to="{ path: '/reservation/list' }">
-                <v-list-item :to="{ path: '/reservation/list' }">
                     <v-list-item-title>예약조회</v-list-item-title>
                 </v-list-item>
             </v-list>
