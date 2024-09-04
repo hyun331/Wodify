@@ -28,6 +28,7 @@ public class ReservationManageEventHandler {
     }
 
     public void publish(ReservationManageEvent event) {
+        log.info("mq 활동중 영차영차 : publish : reservation ="+event.getReservationId());
         rabbitTemplate.convertAndSend(RabbitMqConfig.RESERVATION_MANAGE_QUEUE, event);
     }
     @Transactional
@@ -39,7 +40,7 @@ public class ReservationManageEventHandler {
         ReservationManageEvent dto = null;
         try {
             dto = objectMapper.readValue(messageBody, ReservationManageEvent.class);
-            log.info("mq 활동중 영차영차 : "+dto.toString());
+            log.info("mq 활동중 영차영차 : listen : "+dto.toString());
 //          인원 업데이트
             Reservation reservation = reservationRepository.findByIdAndDelYn(dto.getReservationId(), "N").orElseThrow(() -> new EntityNotFoundException("해당 예약을 찾을 수 없습니다."));
             reservation.decreaseAvailablePeople();
