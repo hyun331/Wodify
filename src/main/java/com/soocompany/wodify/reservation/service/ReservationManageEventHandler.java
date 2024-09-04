@@ -40,7 +40,7 @@ public class ReservationManageEventHandler {
 //        json 메시지를 ObjectMapper로 직접 parsing
         ObjectMapper objectMapper = new ObjectMapper();
         ReservationManageEvent dto = null;
-
+        log.info("mq 활동중 영차영차 : listen을 하긴 함");
         try {
             dto = objectMapper.readValue(messageBody, ReservationManageEvent.class);
             log.info("mq 활동중 영차영차 : listen : " + dto.toString());
