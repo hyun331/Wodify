@@ -86,16 +86,7 @@ public class SseController implements MessageListener {
             try {
                 emitter.send(SseEmitter.event().name("reservation").data(dto));
             }catch (IOException e){
-                try {
-                    Thread.sleep(2000);
-                    emitter.send(SseEmitter.event().name("reservation").data(dto));
-                }catch (IOException e2){
-                    log.error(e2.getMessage());
-                    throw new RuntimeException(e.getMessage());
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
-
+                throw new RuntimeException(e.getMessage());
             }
         }else { // 현재 서버의 받는 이의 emitter 정보가 없는 경우
             sseRedisTemplate.convertAndSend(memberId, dto);
