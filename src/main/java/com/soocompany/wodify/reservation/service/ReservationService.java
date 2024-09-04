@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,7 +116,7 @@ public class ReservationService {
     }
 
 
-    public Page<ReservationTimeResDto> reservationListByDate(ReservationListReqDto dto, Pageable pageable){
+    public List<ReservationTimeResDto> reservationListByDate(ReservationListReqDto dto){
         Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
         Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
             log.error("reservationList() : 해당 id의 회원을 찾을 수 없습니다.");
@@ -126,8 +128,12 @@ public class ReservationService {
             throw new IllegalArgumentException("박스에 대한 권한이 없습니다.");
         }
         LocalDate date = dto.getDate();
-        Page<Reservation> reservationList = reservationRepository.findByBoxAndDateAndDelYn(box, date, "N", pageable);
-        return reservationList.map(Reservation::timeFromEntity);
+        List<Reservation> reservationList = reservationRepository.findByBoxAndDateAndDelYn(box, date, "N");
+        List<ReservationTimeResDto> resDtos = new ArrayList<>();
+        for (Reservation reservation : reservationList) {
+            resDtos.add(reservation.timeFromEntity());
+        }
+        return resDtos;
     }
 
     public ReservationDetailResDto reservationUpdate(Long id, ReservationUpdateReqDto dto) {
@@ -161,6 +167,14 @@ public class ReservationService {
             return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
         });
         Reservation reservation = reservationRepository.findByIdAndDelYn(id, "N").orElseThrow(() -> new EntityNotFoundException("해당 id의 예약이 없습니다."));
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        if (!reservation.getDate().isAfter(now.toLocalDate()) && reservation.getTime().isAfter(now.toLocalTime())) {
+            throw new IllegalArgumentException("지난 예약은 삭제가 불가합니다.");
+        }
+        List<ReservationDetail> reservationDetails = reservationDetailRepository.findByReservationAndDelYn(reservation, "N");
+        for (ReservationDetail reservationDetail : reservationDetails) {
+            reservationDetail.updateDelYn();
+        }
         reservation.updateDelYn();
         reservationRepository.save(reservation);
     }
