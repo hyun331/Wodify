@@ -64,7 +64,6 @@ public class ReservationScheduler {
                     }
                 }
             }finally {
-                log.info("예약 알림: 끝");
                 schedulreRedisTemplate.delete(lockKey);
             }
         }else {
