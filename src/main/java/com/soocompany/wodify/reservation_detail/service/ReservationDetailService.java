@@ -102,7 +102,6 @@ public class ReservationDetailService {
         if (available < 0) {
             throw new IllegalStateException("예약 인원이 초과되어 예약이 불가능합니다.");
         }
-        reservationManageEventHandler.publish(new ReservationManageEvent(reservation.getId(), 1));
 
         ReservationDetail reservationDetail = dto.toEntity(reservation, member);
         ReservationDetail savedDetail = reservationDetailRepository.save(reservationDetail);
@@ -116,6 +115,7 @@ public class ReservationDetailService {
         Member boxRepresentative = box.getMember();
         reservationDetailDetResDto.setCheck("reservation");
         sseController.publishMessage(reservationDetailDetResDto, String.valueOf(boxRepresentative.getId()));
+        reservationManageEventHandler.publish(new ReservationManageEvent(reservation.getId(), 1));
         return reservationDetailDetResDto;
     }
 
