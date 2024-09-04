@@ -80,13 +80,20 @@ public class SseController implements MessageListener {
     }
 
     //예약 생성 알림
-    public void publishMessage(ReservationDetailDetResDto dto, String memberId) {
+    public void publishMessage(ReservationDetailDetResDto dto, String memberId) throws InterruptedException {
         SseEmitter emitter = emitters.get(memberId);
         if (emitter != null) {
             try {
                 emitter.send(SseEmitter.event().name("reservation").data(dto));
             }catch (IOException e){
-                throw new RuntimeException(e);
+                Thread.sleep(2000);
+                try{
+                    emitter.send(SseEmitter.event().name("reservation").data(dto));
+//
+                }catch (IOException e2){
+                    log.error(e.getMessage());
+                }
+
             }
         }else { // 현재 서버의 받는 이의 emitter 정보가 없는 경우
             sseRedisTemplate.convertAndSend(memberId, dto);
