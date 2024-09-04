@@ -27,11 +27,11 @@ public class ReservationScheduler {
     private final ReservationRepository reservationRepository;
     private final ReservationDetailRepository reservationDetailRepository;
 
-    @Qualifier("schedulerLockTemplate")
+    @Qualifier("schedulerLockTemplate2")
     private final RedisTemplate<String, Object> schedulreRedisTemplate;
 
     public ReservationScheduler(SseController sseController, ReservationRepository reservationRepository, ReservationDetailRepository reservationDetailRepository,
-                                @Qualifier("schedulerLockTemplate") RedisTemplate<String, Object> schedulreRedisTemplate) {
+                                @Qualifier("schedulerLockTemplate2") RedisTemplate<String, Object> schedulreRedisTemplate) {
         this.sseController = sseController;
         this.reservationRepository = reservationRepository;
         this.reservationDetailRepository = reservationDetailRepository;
