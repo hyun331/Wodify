@@ -101,13 +101,11 @@ public class SseController implements MessageListener {
                 .build();
         if (emitter != null) {
             try {
-                log.info("명예의 전당 : emitter 같은 경우");
                 emitter.send(SseEmitter.event().name("hallOfFame").data(dto));
             }catch (IOException e){
                 throw new RuntimeException(e);
             }
         }else { // 현재 서버의 받는 이의 emitter 정보가 없는 경우
-            log.info("명예의 전당 : emitter 다른 경우");
             sseRedisTemplate.convertAndSend(memberId, dto);
         }
     }
