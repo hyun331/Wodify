@@ -59,7 +59,7 @@ public class HallOfFameScheduler {
     @Transactional
     public void updateHallOfFame() throws InterruptedException{
         String lockKey = "hallOfFameLock";
-        Boolean isLocked = redisTemplate.opsForValue().setIfAbsent(lockKey, "true", Duration.ofSeconds(60)); // 60초 동안 락 유지
+        Boolean isLocked = redisTemplate.opsForValue().setIfAbsent(lockKey, "true", Duration.ofSeconds(90)); // 60초 동안 락 유지
         if (Boolean.TRUE.equals(isLocked)) {
             try{
                 log.info("명예의 전당 : 현재 서버에서 스케쥴러 실행중");

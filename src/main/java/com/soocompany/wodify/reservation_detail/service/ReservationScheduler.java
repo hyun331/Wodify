@@ -43,7 +43,7 @@ public class ReservationScheduler {
     @Transactional
     public void alarmReservation(){
         String lockKey = "reservationLock";
-        Boolean isLocked = schedulreRedisTemplate.opsForValue().setIfAbsent(lockKey, "true", Duration.ofSeconds(60)); // 60초간 락 유지
+        Boolean isLocked = schedulreRedisTemplate.opsForValue().setIfAbsent(lockKey, "true", Duration.ofSeconds(90)); // 60초간 락 유지
         if(Boolean.TRUE.equals(isLocked)){
             try {
                 log.info("예약 알림 : 현재 서버에서 스케쥴러 실행중");
@@ -53,13 +53,12 @@ public class ReservationScheduler {
                     List<ReservationDetail> reservationDetails = reservationDetailRepository.findAllByReservationAndDelYn(reservation, "N");
                     for(ReservationDetail reservationDetail : reservationDetails){
                         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-                        log.info(LocalTime.now().format(dateTimeFormatter));
-                        if(reservationDetail.getReservation().getTime().minusHours(1).format(dateTimeFormatter).equals(LocalTime.now().format(dateTimeFormatter))){
+                        if(reservationDetail.getReservation().getTime().minusHours(1).format(dateTimeFormatter).equals(LocalTime.now().plusHours(9).format(dateTimeFormatter))){
                             ReservationDetailDetResDto dto = reservationDetail.detFromEntity();
                             dto.setCheck("reservationDetail");
                             String memberId = String.valueOf(reservationDetail.getMember().getId());
                             sseController.publishReservationMessage(dto,memberId);
-                            log.info("예약 알림 : "+dto.getMemberName());
+                            log.info("예약 알림 : 잘됩니다.");
                         }
                     }
                 }
