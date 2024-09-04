@@ -1,88 +1,111 @@
 <template>
-    <div class="box right-align"> <br>
-      <span class="boxLocation"> {{ this.boxName }} </span> <br>
-    </div>
-    <v-container class="container" fluid>
-      <!-- 테이블 중앙 정렬 -->
-      <v-row justify="center">
-        <v-col cols="12">
-          <!-- 테이블 v-card -->
-          <v-card class="custom-card">
-            <!-- 검색 영역 -->
-            <v-row class="search-bar">
-              <!-- 검색 기준 선택 -->
-              <v-col cols="2" class="search-type-col">
-                <v-select v-model="searchType" :items="searchOptions" item-title="text" item-value="value" label="Type"
-                  dense outlined hide-details class="search-select"></v-select>
-              </v-col>
-              <!-- 검색 입력 필드 -->
-              <v-col cols="8" class="search-text-col">
-                <v-text-field v-model="searchText" label="검색" outlined dense hide-details class="search-text-field"></v-text-field>
-              </v-col>
-              <!-- 검색 버튼과 글쓰기 버튼 -->
-              <v-col cols="2" class="search-btn-col">
-                <button class="search-btn" @click="searchPosts">검색</button>
-                <button class="newPost-btn" @click="goToCreatePost">글쓰기</button>
-              </v-col>
-            </v-row>
+  <div class="box right-align">
+    <br />
+    <span class="boxLocation"> {{ this.boxName }} </span> <br />
+  </div>
+  <v-container class="container" fluid>
+    <v-row justify="center">
+      <v-col cols="12">
+        <v-card class="custom-card">
+          <v-row class="search-bar">
+            <v-col cols="2" class="search-type-col">
+              <v-select
+                v-model="searchType"
+                :items="searchOptions"
+                item-title="text"
+                item-value="value"
+                label="Type"
+                dense
+                outlined
+                hide-details
+                class="search-select"
+              ></v-select>
+            </v-col>
+            <v-col cols="8" class="search-text-col">
+              <v-text-field
+                v-model="searchText"
+                label="검색"
+                outlined
+                dense
+                hide-details
+                class="search-text-field"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="2" class="search-btn-col">
+              <button class="search-btn" @click="searchPosts">검색</button>
+              <button class="newPost-btn" @click="goToCreatePost">글쓰기</button>
+            </v-col>
+          </v-row>
 
-            <!-- 고정된 너비를 가진 테이블 -->
-            <div class="table-wrapper">
-              <v-simple-table class="fixed-table">
-                <thead>
-                  <tr>
-                    <th class="fixed-cell no-col">No</th>
-                    <th class="fixed-cell title-col">제목</th>
-                    <th class="fixed-cell author-col">글쓴이</th>
-                    <th class="fixed-cell date-col">등록일</th>
-                    <th class="fixed-cell comments-col">댓글</th>
-                    <th class="fixed-cell likes-col">추천</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- 공지사항 -->
-                  <tr v-for="(notice, index) in notices" :key="`notice-${index}`" @click="goToDetail(notice.id)"
-                    style="cursor: pointer;">
-                    <td class="fixed-cell no-col">공지</td>
-                    <td class="fixed-cell title-col">{{ truncateTitle(notice.title, 30) }}</td>
-                    <td class="fixed-cell author-col">{{ notice.name }}</td>
-                    <td class="fixed-cell date-col">{{ notice.createdTime }}</td>
-                    <td class="fixed-cell comments-col">{{ notice.commentCount }}</td>
-                    <td class="fixed-cell likes-col">{{ notice.likeCount }}</td>
-                  </tr>
-                  <!-- POST 타입 글 -->
-                  <tr v-for="(post, index) in posts" :key="`post-${index}`" @click="goToDetail(post.id)"
-                    style="cursor: pointer;">
-                    <td class="fixed-cell no-col">{{ post.id }}</td>
-                    <td class="fixed-cell title-col">{{ truncateTitle(post.title, 30) }}</td>
-                    <td class="fixed-cell author-col">{{ post.name }}</td>
-                    <td class="fixed-cell date-col">{{ post.createdTime }}</td>
-                    <td class="fixed-cell comments-col">{{ post.commentCount }}</td>
-                    <td class="fixed-cell likes-col">{{ post.likeCount }}</td>
-                  </tr>
-                </tbody>
-              </v-simple-table>
-            </div>
-          </v-card>
-        </v-col>
-      </v-row>
+          <div class="table-wrapper">
+            <v-simple-table class="fixed-table">
+              <thead>
+                <tr>
+                  <th class="fixed-cell no-col">No</th>
+                  <th class="fixed-cell title-col">제목</th>
+                  <th class="fixed-cell author-col">글쓴이</th>
+                  <th class="fixed-cell date-col">등록일</th>
+                  <th class="fixed-cell comments-col">댓글</th>
+                  <th class="fixed-cell likes-col">추천</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(notice, index) in notices"
+                  :key="`notice-${index}`"
+                  @click="goToDetail(notice.id)"
+                  style="cursor: pointer"
+                >
+                  <td class="fixed-cell no-col">공지</td>
+                  <!-- <td class="fixed-cell title-col"> {{ truncateTitle(notice.title, 30) }} </td> -->
+                  <td class="fixed-cell title-col">{{ notice.title }}</td>
+                  <td class="fixed-cell author-col">{{ notice.name }}</td>
+                  <td class="fixed-cell date-col">{{ notice.createdTime }}</td>
+                  <td class="fixed-cell comments-col">{{ notice.commentCount }}</td>
+                  <td class="fixed-cell likes-col">{{ notice.likeCount }}</td>
+                </tr>
+                <tr
+                  v-for="(post, index) in posts"
+                  :key="`post-${index}`"
+                  @click="goToDetail(post.id)"
+                  style="cursor: pointer"
+                >
+                  <td class="fixed-cell no-col">{{ post.id }}</td>
+                  <!-- <td class="fixed-cell title-col"> {{ truncateTitle(post.title, 30) }} </td> -->
+                  <td class="fixed-cell title-col">{{ post.title }}</td>
+                  <td class="fixed-cell author-col">{{ post.name }}</td>
+                  <td class="fixed-cell date-col">{{ post.createdTime }}</td>
+                  <td class="fixed-cell comments-col">{{ post.commentCount }}</td>
+                  <td class="fixed-cell likes-col">{{ post.likeCount }}</td>
+                </tr>
+              </tbody>
+            </v-simple-table>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
 
-      <!-- 무한 스크롤을 위한 트리거 -->
-      <div ref="scrollObserver" style="height: 100px;"></div>
-
-      <!-- 화면 오른쪽 하단의 맨위로 버튼 -->
-      <v-btn color="black" dark class="scroll-top-btn" v-show="showScrollTopButton" @click="scrollToTop"> 맨위로 </v-btn>
-    </v-container>
+    <div ref="scrollObserver" style="height: 100px"></div>
+    <v-btn
+      color="black"
+      dark
+      class="scroll-top-btn"
+      v-show="showScrollTopButton"
+      @click="scrollToTop"
+    >
+      맨위로
+    </v-btn>
+  </v-container>
 </template>
 
-<script setup>
+<!-- <script setup>
 function truncateTitle(title, maxLength) {
   if (title.length > maxLength) {
-    return title.slice(0, maxLength) + '...';
+    return title.slice(0, maxLength) + "...";
   }
   return title;
 }
-</script>
+</script> -->
 
 <script>
 import axios from "axios";
@@ -107,11 +130,11 @@ export default {
   },
   data() {
     return {
-      searchType: '', // 검색타입
+      searchType: "", // 검색타입
       searchText: "", // 검색어
       searchOptions: [
         { text: "제목", value: "title" },
-        { text: "글쓴이", value: "memberName" }
+        { text: "글쓴이", value: "memberName" },
       ],
       currentPage: 1,
       itemsPerPage: 10,
@@ -147,15 +170,18 @@ export default {
       if (this.isFetching || this.currentPage > this.totalPages) return;
       this.isFetching = true;
       try {
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/post/list/page`, {
-          params: {
-            page: this.currentPage - 1,
-            size: this.itemsPerPage,
-            sort: "id,desc", // 'id' 필드를 기준으로 내림차순 정렬
-            searchCategory: this.searchType, // 검색 기준 (제목 또는 작성자)
-            searchText: this.searchText, // 검색어
-          },
-        });
+        const response = await axios.get(
+          `${process.env.VUE_APP_API_BASE_URL}/post/list/page`,
+          {
+            params: {
+              page: this.currentPage - 1,
+              size: this.itemsPerPage,
+              sort: "id,desc", // 'id' 필드를 기준으로 내림차순 정렬
+              searchCategory: this.searchType, // 검색 기준 (제목 또는 작성자)
+              searchText: this.searchText, // 검색어
+            },
+          }
+        );
 
         if (this.currentPage === 1) {
           this.posts = response.data.result.content;
@@ -252,7 +278,7 @@ export default {
   margin-left: -11px;
   margin-right: -20px;
   padding-right: -20px;
-  background-color: #D9D9D9;
+  background-color: #d9d9d9;
   border-radius: 4px;
 }
 
