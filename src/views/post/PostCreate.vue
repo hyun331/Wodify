@@ -173,35 +173,34 @@ export default {
         console.error("Quill Editor is not initialized yet.");
         return;
       }
-      const fileInput = document.createElement("input");
-      fileInput.setAttribute("type", "file");
-      fileInput.setAttribute("accept", acceptType);
-      fileInput.click();
 
-      fileInput.onchange = async () => {
-        const file = fileInput.files[0];
-        const mediaUrl = await uploadMedia(file);
+      const file = await selectFile(acceptType);
+      if (!file) return;
 
-        if (mediaUrl) {
-          const range = quillInstance.value.getSelection();
-          if (range) {
-            const extension = mediaUrl.split(".").pop().toLowerCase();
-            const videoExtensions = ["mp4", "webm", "ogg"];
+      const mediaData = await uploadMedia(file);
 
-            if (videoExtensions.includes(extension)) {
-              quillInstance.value.insertEmbed(range.index, "video", mediaUrl);
-              makeResizable();
-            } else {
-              quillInstance.value.insertEmbed(range.index, "image", mediaUrl);
-            }
-          }
-        }
-      };
+      if (mediaData) {
+        const { url, type } = mediaData;
+        insertMediaToEditor(url, type);
+      }
+    };
+
+    const selectFile = (acceptType) => {
+      return new Promise((resolve) => {
+        const fileInput = document.createElement("input");
+        fileInput.setAttribute("type", "file");
+        fileInput.setAttribute("accept", acceptType);
+        fileInput.click();
+
+        fileInput.onchange = () => {
+          const file = fileInput.files[0];
+          resolve(file);
+        };
+      });
     };
 
     const uploadMedia = async (file) => {
-      const formData = new FormData();
-      formData.append("file", file);
+      const formData = createFormData({ file });
       try {
         const response = await axios.post(
           `${process.env.VUE_APP_API_BASE_URL}/post/upload-media`,
@@ -213,6 +212,31 @@ export default {
         console.error("Error uploading media:", error);
         return null;
       }
+    };
+
+    const insertMediaToEditor = (url, type) => {
+      const range = quillInstance.value.getSelection();
+      if (range) {
+        if (type.startsWith('video')) {
+          quillInstance.value.insertEmbed(range.index, "video", url);
+          makeResizable();
+        } else if (type.startsWith('image')) {
+          quillInstance.value.insertEmbed(range.index, "image", url);
+        }
+        // 커서 위치를 삽입한 미디어 뒤로 이동
+        quillInstance.value.setSelection(range.index + 1, 0);
+
+        // 에디터에 포커스를 다시 맞춤
+        quillInstance.value.focus();
+      }
+    };
+
+    const createFormData = (data) => {
+      const formData = new FormData();
+      for (const key in data) {
+        formData.append(key, data[key]);
+      }
+      return formData;
     };
 
     const makeResizable = () => {
@@ -304,12 +328,14 @@ export default {
         `;
 
         data.wod.wodDetResDtoList.forEach((detail) => {
-          wodText += `
-          ${detail.name}: ${detail.contents}
-          `;
+          wodText += ` ${detail.name}: ${detail.contents} `;
         });
 
-        quill.insertText(quill.getLength(), wodText); // WOD 데이터를 먼저 삽입
+        const currentLength = quill.getLength();
+        quill.insertText(currentLength, wodText);
+
+        // WOD 데이터 삽입 후 커서를 위치시킴
+        quill.setSelection(currentLength + wodText.length, 0);
       }
 
       // Record 데이터 삽입
@@ -321,8 +347,15 @@ export default {
         Comments: ${data.record.comments}
         `;
 
-        quill.insertText(quill.getLength(), recordText); // Record 데이터를 나중에 삽입
+        const currentLength = quill.getLength();
+        quill.insertText(currentLength, recordText);
+
+        // Record 데이터 삽입 후 커서를 위치시킴
+        quill.setSelection(currentLength + recordText.length, 0);
       }
+
+      // 에디터 포커스를 다시 맞춤
+      quill.focus();
 
       isModalOpen.value = false; // 모달 닫기
     };
@@ -341,6 +374,8 @@ export default {
       cancel,
       isModalOpen,
       insertIntoEditor,
+      quillInstance,
+      handleMediaUpload
     };
   },
 };
