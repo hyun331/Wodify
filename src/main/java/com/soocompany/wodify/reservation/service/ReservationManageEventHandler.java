@@ -38,6 +38,8 @@ public class ReservationManageEventHandler {
         } catch (AmqpException e) {
             log.error("mq 메시지 전송 실패: ", e);
             // 예외 처리 로직 추가
+        }catch (Exception e) {
+            log.error("mq 메시지 전송 실패: ", e);
         }
     }
     @Transactional
