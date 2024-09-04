@@ -111,6 +111,7 @@ public class HallOfFameScheduler {
                 }
             }finally {
                 //작업 끝난 후 락 해제
+                log.info("명예의 전당 : 끝");
                 redisTemplate.delete(lockKey);
 
             }
