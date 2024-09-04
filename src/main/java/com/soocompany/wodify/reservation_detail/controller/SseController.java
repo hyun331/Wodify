@@ -80,18 +80,20 @@ public class SseController implements MessageListener {
     }
 
     //예약 생성 알림
-    public void publishMessage(ReservationDetailDetResDto dto, String memberId) throws InterruptedException {
+    public void publishMessage(ReservationDetailDetResDto dto, String memberId) {
         SseEmitter emitter = emitters.get(memberId);
         if (emitter != null) {
             try {
                 emitter.send(SseEmitter.event().name("reservation").data(dto));
             }catch (IOException e){
-                Thread.sleep(2000);
-                try{
+                try {
+                    Thread.sleep(2000);
                     emitter.send(SseEmitter.event().name("reservation").data(dto));
-//
                 }catch (IOException e2){
-                    log.error(e.getMessage());
+                    log.error(e2.getMessage());
+                    throw new RuntimeException(e.getMessage());
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
                 }
 
             }
