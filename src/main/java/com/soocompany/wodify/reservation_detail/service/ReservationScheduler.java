@@ -58,10 +58,12 @@ public class ReservationScheduler {
                             dto.setCheck("reservationDetail");
                             String memberId = String.valueOf(reservationDetail.getMember().getId());
                             sseController.publishReservationMessage(dto,memberId);
+                            log.info("예약 알림 : "+dto.getMemberName());
                         }
                     }
                 }
             }finally {
+                log.info("예약 알림: 끝");
                 schedulreRedisTemplate.delete(lockKey);
             }
         }else {

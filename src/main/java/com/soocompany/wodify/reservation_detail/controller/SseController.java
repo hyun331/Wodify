@@ -101,11 +101,13 @@ public class SseController implements MessageListener {
                 .build();
         if (emitter != null) {
             try {
+                log.info("명예의 전당 : emitter 같은 경우");
                 emitter.send(SseEmitter.event().name("hallOfFame").data(dto));
             }catch (IOException e){
                 throw new RuntimeException(e);
             }
         }else { // 현재 서버의 받는 이의 emitter 정보가 없는 경우
+            log.info("명예의 전당 : emitter 다른 경우");
             sseRedisTemplate.convertAndSend(memberId, dto);
         }
     }
@@ -130,17 +132,20 @@ public class SseController implements MessageListener {
         ObjectMapper objectMapper = new ObjectMapper();
         String email = new String(pattern, StandardCharsets.UTF_8); //email이 아닌 id
         try {
-            System.out.println("listening");
+
             ReservationDetailDetResDto dto = objectMapper.readValue(message.getBody(), ReservationDetailDetResDto.class);
             SseEmitter emitter = emitters.get(email);
             if (emitter != null) {
                 if (dto.getCheck().equals("reservation")) {
+                    System.out.println("listening - reservation");
                     emitter.send(SseEmitter.event().name("reservation").data(dto));
                 }
                 if (dto.getCheck().equals("reservationDetail")) {
+                    System.out.println("listening-reservationDetail");
                     emitter.send(SseEmitter.event().name("reservationDetail").data(dto));
                 }
                 if (dto.getCheck().equals("hallOfFame")) {
+                    System.out.println("listening - hallOfFame");
                     emitter.send(SseEmitter.event().name("hallOfFame").data(dto));
                 }
             }
