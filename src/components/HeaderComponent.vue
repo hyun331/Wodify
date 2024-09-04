@@ -194,7 +194,7 @@ export default {
                         memberName: "",
                         date: "",
                         createdTime: "hallOfFame",
-                        message: data.message
+                        message: "명예의 전당에 등록되었습니다!"
                     };
                     
                     
@@ -226,7 +226,7 @@ export default {
         },
         handleNotificationClick(index, createdTime) {
             if(createdTime==='hallOfFame'){
-                this.$router.push('/');
+                this.$router.push('/hallOfFame');
                 this.notifications.splice(index, 1);
 
             // Update localStorage

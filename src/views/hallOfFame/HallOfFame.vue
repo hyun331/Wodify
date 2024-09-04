@@ -197,7 +197,7 @@ export default {
 
 
         } catch (e) {
-            this.dialogTitle = '박스에 가입해주세요';
+            this.dialogTitle = '명예의 전당 확인 불가';
             this.dialogText = e.response?.data?.error_message;
 
             this.alertModal = true;
