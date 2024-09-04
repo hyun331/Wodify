@@ -62,7 +62,7 @@ public class HallOfFameScheduler {
         Boolean isLocked = redisTemplate.opsForValue().setIfAbsent(lockKey, "true", Duration.ofSeconds(60)); // 60초 동안 락 유지
         if (Boolean.TRUE.equals(isLocked)) {
             try{
-                log.info("명예의 전당 스케쥴러 실행중");
+                log.info("명예의 전당 : 현재 서버에서 스케쥴러 실행중");
                 for(Box box : boxRepository.findByDelYn("N")){
                     //각 박스의 멤버 리스트
                     List<Member> memberList = memberRepository.findByBoxAndRoleAndDelYn(box, Role.USER, "N");
@@ -91,7 +91,7 @@ public class HallOfFameScheduler {
 
                     for(HallOfFame hof: hallOfFameList){
                         if(hallOfFameRepository.findByMember(hof.getMember()).isEmpty()){
-                            System.out.println("명예의 전당");
+//                            System.out.println("명예의 전당");
                             sseController.publishHallOfFameMessage(String.valueOf(hof.getMember().getId()));
                         }
                     }
@@ -115,8 +115,8 @@ public class HallOfFameScheduler {
 
             }
         }else{
-            log.info("다른 서버에서 스케쥴러 실행중");
-            System.out.println("다른 서버에서 스케쥴러 실행중");
+            log.info("명예의 전당 : 다른 서버에서 스케쥴러 실행중");
+//            System.out.println("다른 서버에서 스케쥴러 실행중");
         }
 
 
