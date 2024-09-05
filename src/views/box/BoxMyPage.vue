@@ -1,41 +1,44 @@
 <template>
     <div class="page-container">
-        <v-container>
-            <v-row class="align-left justify-start" style="height: 100%; margin-top: 16px;">
-                <v-col cols="auto" class="text-left">
-                    <img :src="boxDetail.logo" alt="Box Logo" class="rounded-logo" />
-                </v-col>
-                <v-col class="d-flex align-center">
-                    <h1 class="black-han-sans-regular">{{ boxDetail.name }}</h1>
-                </v-col>
-            </v-row>
-            <v-row justify="center">
-                <v-col cols="60" md="48" lg="42">
-                    <v-card class="dynamic-card">
-                        <v-card-text>
-                            <v-table class="v-table" style="table-layout: fixed; width: 100%; overflow: hidden;">
-                                <tbody>
-                                    <tr v-for="(item, index) in boxDetailList" :key="index">
-                                        <td class="title" style="padding-left: 20px;">{{ item.key }}</td>
-                                        <td>
-                                            <template v-if="item.key !== 'LOGO'">
-                                                <div class="text" v-html="formatText(item.value)"></div>
-                                            </template>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </v-table>
-                        </v-card-text>
-                        <v-card-actions v-if="userRole === 'CEO'" class="card-actions">
-                            <v-spacer></v-spacer>
-                            <v-btn small class="hover-btn mx-auto custom-btn" @click="updateBox">UPDATE</v-btn>
-                            <v-btn small class="hover-btn mx-auto custom-btn" @click="showDeleteDialog">DELETE</v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-col>
-            </v-row>
-        </v-container>
-        <OrderListComponent :isAdmin="false" />
+        <template v-if="userRole">
+            <v-container>
+                <v-row class="align-left justify-start" style="height: 100%; margin-top: 16px;">
+                    <v-col cols="auto" class="text-left">
+                        <img :src="boxDetail.logo" alt="Box Logo" class="rounded-logo" />
+                    </v-col>
+                    <v-col class="d-flex align-center">
+                        <h1 class="black-han-sans-regular">{{ boxDetail.name }}</h1>
+                    </v-col>
+                </v-row>
+                <v-row justify="center">
+                    <v-col cols="60" md="48" lg="42">
+                        <v-card class="dynamic-card">
+                            <v-card-text>
+                                <v-table class="v-table" style="table-layout: fixed; width: 100%; overflow: hidden;">
+                                    <tbody>
+                                        <tr v-for="(item, index) in boxDetailList" :key="index">
+                                            <td class="title" style="padding-left: 20px;">{{ item.key }}</td>
+                                            <td>
+                                                <template v-if="item.key !== 'LOGO'">
+                                                    <div class="text" v-html="formatText(item.value)"></div>
+                                                </template>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </v-table>
+                            </v-card-text>
+                            <v-card-actions v-if="userRole === 'CEO'" class="card-actions">
+                                <v-spacer></v-spacer>
+                                <v-btn small class="hover-btn mx-auto custom-btn" @click="updateBox">UPDATE</v-btn>
+                                <v-btn small class="hover-btn mx-auto custom-btn"
+                                    @click="showDeleteDialog">DELETE</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-col>
+                </v-row>
+            </v-container>
+            <OrderListComponent :isAdmin="false" />
+        </template>
 
         <!-- 삭제 확인 다이얼로그 -->
         <v-dialog v-model="deleteDialog" max-width="500px">
@@ -78,7 +81,8 @@ import BoxCoachRegister from './BoxCoachRegister.vue';
 
 export default {
     components: {
-        AlertModalComponent, BoxCoachRegister
+        AlertModalComponent, 
+        BoxCoachRegister
     },
     data() {
         return {
@@ -89,7 +93,6 @@ export default {
 
             boxCoachRegister: false,
 
-            boxDetailId: this.$route.params.id,
             boxDetail: {},
             boxDetailList: [],
             deleteDialog: false,
@@ -106,9 +109,9 @@ export default {
             const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/box/mybox`);
             this.boxDetail = response.data.result;
             this.boxDetailList = [
+                { key: "ADDRESS", value: this.boxDetail.address },
                 { key: "TIME", value: this.boxDetail.operatingHours },
                 { key: "PRICE", value: this.boxDetail.fee },
-                { key: "ADDRESS", value: this.boxDetail.address },
                 { key: "INTRO", value: this.boxDetail.intro },
             ];
         } catch (error) {
@@ -125,7 +128,7 @@ export default {
             } else {
                 //CEO
                 this.dialogTitle = '등록된 박스가 존재하지 않습니다';
-                this.dialogText = '박스에 생성해주세요';
+                this.dialogText = '박스를 생성해주세요';
                 this.alertModal = true;
             }
         }
