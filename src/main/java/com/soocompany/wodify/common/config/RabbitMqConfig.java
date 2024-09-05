@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+
 @Configuration
 public class RabbitMqConfig {
     public static final String RESERVATION_MANAGE_QUEUE = "reservationManageQueue";
@@ -23,6 +26,8 @@ public class RabbitMqConfig {
     private String password;
     @Value("${spring.rabbitmq.virtual-host}")
     private String virtualHost;
+    @Value("${spring.rabbitmq.ssl.enabled}")
+    private boolean sslEnabled;
 
     @Bean
     public Queue stockDecreaseQueue() {
@@ -40,6 +45,15 @@ public class RabbitMqConfig {
         factory.setUsername(username);
         factory.setPassword(password);
         factory.setVirtualHost(virtualHost);
+        // SSL 활성화 부분
+        if (sslEnabled) {
+            try {
+                factory.getRabbitConnectionFactory().useSslProtocol();
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         return factory;
     }
     @Bean

@@ -40,8 +40,8 @@ public class ReservationController {
      * 박스별 날짜별 예약 목록 조회
      */
     @PostMapping("/box/list/")
-    public ResponseEntity<CommonResDto> reservationListByDate(@RequestBody ReservationListReqDto dto,@PageableDefault(sort = "date",direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<ReservationTimeResDto> listResDtos = reservationService.reservationListByDate(dto,pageable);
+    public ResponseEntity<CommonResDto> reservationListByDate(@RequestBody ReservationListReqDto dto) {
+        List<ReservationTimeResDto> listResDtos = reservationService.reservationListByDate(dto);
         return new ResponseEntity<>(new CommonResDto(HttpStatus.OK,"날짜별 예약 리스트 조회 성공",listResDtos),HttpStatus.OK);
     }
 

@@ -13,6 +13,7 @@ import com.soocompany.wodify.member.dto.*;
 import com.soocompany.wodify.member.service.MemberService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 @RequestMapping("/member")
 @RestController
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
@@ -53,13 +55,16 @@ public class MemberController {
     @Value("${jwt.secretKeyRt}")
     String secretKeyRt;
 
+    @Value("${spring.profiles.active}")
+    String applicationYml;
+
     ////////////////////////////////////////////////
     //kakao login
     @GetMapping("/auth/kakao/callback")
     public ResponseEntity<?> kakaoLogin(@RequestParam(value = "code")String code) {
         RestTemplate rt = new RestTemplate();   //Post방식으로 key=value 데이터를 요청 //이때 필요한 라이브러리가 RestTemplate. http 요청을 용이하게
-
-        //토큰
+        log.info("login backend 요청!!!!!!!!!!!!!!"+code);
+        //카카오 로그인 토큰 요청
         HttpHeaders headers = new HttpHeaders();
 
         headers.add("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
@@ -67,8 +72,18 @@ public class MemberController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "2d129c6af1317e9dc12a8669b1957416");    //Rest API 키
+<<<<<<< HEAD
         params.add("redirect_uri", "http://localhost:3000/member/auth/kakao/callback");
         params.add("code", code);
+=======
+        if(applicationYml.equals("local")){
+            params.add("redirect_uri", "http://localhost:3000/member/auth/kakao/callback"); //0904
+        }else{
+            params.add("redirect_uri", "https://www.wodify.site/member/auth/kakao/callback");
+        }
+
+        params.add("code", code); // 프론트에서 받아온 인가 코드
+>>>>>>> fd2992a08d7d412f2d3695b29588f59f9c348283
 
         //header body 합치기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
@@ -84,15 +99,18 @@ public class MemberController {
         OAuthToken oAuthToken = null;
         try{
             oAuthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+            log.info("token : "+oAuthToken.getAccess_token());
         }catch (JsonMappingException e){
             e.printStackTrace();
+            log.error(e.getMessage());
         }catch (JsonProcessingException e){
             e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         ///////////////////////////////////////////
 
-        //member의 이메일 가져오기
+        //member의 이메일 가져오기 // 카카오 로그인 토큰을 통해
         RestTemplate rt2 = new RestTemplate();
 
         HttpHeaders headers2 = new HttpHeaders();
@@ -113,8 +131,10 @@ public class MemberController {
         try{
             jsonNode = objectMapper.readTree(response2.getBody());
             email = jsonNode.get("kakao_account").get("email").asText();
+            log.info("email : " + email);
         }catch (JsonProcessingException e){
             e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         //현재 데이터베이스에 있는지 확인
@@ -133,7 +153,7 @@ public class MemberController {
             loginInfo.put("refreshToken", refreshToken);
 
             CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, member.getName()+"회원님 login 완료", loginInfo);
-
+            log.info("존재하는 이메일");
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 
         }else{
@@ -182,8 +202,6 @@ public class MemberController {
         if(member!=null){
             String jwtToken = jwtTokenProvider.createToken(member.getId().toString(), member.getRole().toString());
             String refreshToken = jwtTokenProvider.createRefreshToken(member.getId().toString(), member.getRole().toString());
-
-            System.out.println("로그인화면");
 
             redisTemplate.opsForValue().set(member.getId().toString(), refreshToken, 240, TimeUnit.HOURS);
             Map<String, Object> loginInfo = new HashMap<>();

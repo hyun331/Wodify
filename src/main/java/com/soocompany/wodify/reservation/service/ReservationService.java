@@ -15,15 +15,15 @@ import com.soocompany.wodify.wod.domain.Wod;
 import com.soocompany.wodify.wod.repository.WodRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +65,7 @@ public class ReservationService {
             Reservation reservation = dto.toEntity(box, member, wod);
             int maximumPeople = dto.getMaximumPeople();
             Reservation savedReservation = reservationRepository.save(reservation);
-            reservationManagementService.increaseAvailable(savedReservation.getId(), maximumPeople);
+            reservationManagementService.updateAvailable(savedReservation.getId(), maximumPeople);
             ReservationDetailResDto detailResDto = savedReservation.detailResDtoFromEntity();
             list.add(detailResDto);
         }
@@ -91,14 +91,18 @@ public class ReservationService {
             throw new IllegalArgumentException("박스에 대한 권한이 없습니다.");
         }
         Page<Reservation> reservationList;
+        Sort sort = Sort.by(Sort.Order.desc("date"), Sort.Order.desc("time")); // 날짜 및 시간으로 내림차순 정렬
+
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
         if (searchDto.getStartDate()!=null&&searchDto.getEndDate()!=null) {
-            reservationList = reservationRepository.findByBoxAndDateBetweenAndDelYn(box, searchDto.getStartDate(), searchDto.getEndDate(), "N", pageable);
+            reservationList = reservationRepository.findByBoxAndDateBetweenAndDelYn(box, searchDto.getStartDate(), searchDto.getEndDate(), "N", sortedPageable);
         }else {
-            reservationList = reservationRepository.findByBoxAndDelYn(box,"N", pageable);
+            reservationList = reservationRepository.findByBoxAndDelYn(box,"N", sortedPageable);
         }
         List<ReservationListResDto> list = new ArrayList<>();
 
-        // Convert each Reservation to ReservationListResDto
+        //  Reservation to ReservationListResDto 변환
         for (Reservation reservation : reservationList) {
             List<ReservationDetListResDto> dtoList = new ArrayList<>();
             List<ReservationDetail> reservationDetails = reservationDetailRepository.findByReservationAndDelYn(reservation, "N");
@@ -108,12 +112,11 @@ public class ReservationService {
             list.add(reservation.ListResDtoFromEntity(dtoList));
         }
 
-        // Convert the list to a Page object
         return new PageImpl<>(list, pageable, reservationList.getTotalElements());
     }
 
 
-    public Page<ReservationTimeResDto> reservationListByDate(ReservationListReqDto dto, Pageable pageable){
+    public List<ReservationTimeResDto> reservationListByDate(ReservationListReqDto dto){
         Long memberId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
         Member member = memberRepository.findByIdAndDelYn(memberId, "N").orElseThrow(() -> {
             log.error("reservationList() : 해당 id의 회원을 찾을 수 없습니다.");
@@ -125,8 +128,12 @@ public class ReservationService {
             throw new IllegalArgumentException("박스에 대한 권한이 없습니다.");
         }
         LocalDate date = dto.getDate();
-        Page<Reservation> reservationList = reservationRepository.findByBoxAndDateAndDelYn(box, date, "N", pageable);
-        return reservationList.map(Reservation::timeFromEntity);
+        List<Reservation> reservationList = reservationRepository.findByBoxAndDateAndDelYn(box, date, "N");
+        List<ReservationTimeResDto> resDtos = new ArrayList<>();
+        for (Reservation reservation : reservationList) {
+            resDtos.add(reservation.timeFromEntity());
+        }
+        return resDtos;
     }
 
     public ReservationDetailResDto reservationUpdate(Long id, ReservationUpdateReqDto dto) {
@@ -160,6 +167,14 @@ public class ReservationService {
             return new EntityNotFoundException("해당 id의 회원을 찾을 수 없습니다.");
         });
         Reservation reservation = reservationRepository.findByIdAndDelYn(id, "N").orElseThrow(() -> new EntityNotFoundException("해당 id의 예약이 없습니다."));
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        if (!reservation.getDate().isAfter(now.toLocalDate()) && reservation.getTime().isAfter(now.toLocalTime())) {
+            throw new IllegalArgumentException("지난 예약은 삭제가 불가합니다.");
+        }
+        List<ReservationDetail> reservationDetails = reservationDetailRepository.findByReservationAndDelYn(reservation, "N");
+        for (ReservationDetail reservationDetail : reservationDetails) {
+            reservationDetail.updateDelYn();
+        }
         reservation.updateDelYn();
         reservationRepository.save(reservation);
     }

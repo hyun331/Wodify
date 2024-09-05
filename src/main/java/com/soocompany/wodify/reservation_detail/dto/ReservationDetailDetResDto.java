@@ -23,5 +23,6 @@ public class ReservationDetailDetResDto {
     private Long recordId;
     private String recordSnF;
     private String createdTime;
+    private String check;
 
 }

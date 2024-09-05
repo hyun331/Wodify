@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     Page<Reservation> findByBoxAndDelYn(Box box, String delYn, Pageable pageable);
-    Page<Reservation> findByBoxAndDateAndDelYn(Box box, LocalDate date, String delYn, Pageable pageable);
+    List<Reservation> findByBoxAndDateAndDelYn(Box box, LocalDate date, String delYn);
     List<Reservation> findAllByBoxAndDateAndDelYn(Box box, LocalDate date, String delYn);
     Optional<Reservation> findByIdAndDelYn(Long id,String delYn);
     Page<Reservation> findByBoxAndDateBetweenAndDelYn(Box box, LocalDate startDate, LocalDate endDate,String delYn,Pageable pageable);

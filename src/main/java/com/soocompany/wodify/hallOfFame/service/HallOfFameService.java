@@ -113,7 +113,6 @@ public class HallOfFameService {
 
         // Get the last day of the current month
         LocalDate lastDayOfMonth = today.with(TemporalAdjusters.lastDayOfMonth());
-        System.out.println(firstDayOfMonth+"~"+lastDayOfMonth+"\n\n");
         List<Reservation> reservationList = reservationRepository.findByBoxAndDateBetweenAndDelYn(box, firstDayOfMonth, lastDayOfMonth, "N", Pageable.unpaged()).getContent();
         for(Reservation r : reservationList){
             List<ReservationDetail> reservationDetailList = reservationDetailRepository.findByReservationAndDelYn(r, "N");
