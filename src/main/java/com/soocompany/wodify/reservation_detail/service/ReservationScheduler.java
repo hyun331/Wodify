@@ -40,7 +40,7 @@ public class ReservationScheduler {
         this.schedulreRedisTemplate = schedulreRedisTemplate;
     }
 
-    @SchedulerLock(name = "cron_lock", lockAtLeastFor = "20s", lockAtMostFor = "50s")
+    @SchedulerLock(name = "cron_lock_reservation", lockAtLeastFor = "20s", lockAtMostFor = "50s")
     @Scheduled(cron="0 0/1 * * * *") // test
 //    @Scheduled(cron="0 0/5 * * * *")  // test
     @Transactional
