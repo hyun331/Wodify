@@ -68,7 +68,7 @@ public class HallOfFameScheduler {
 
         RLock lock = redissonClient.getLock("hallOfFameLock");
         try{
-            boolean isLocked = lock.tryLock(2, 3, TimeUnit.SECONDS);
+            boolean isLocked = lock.tryLock(2, 15, TimeUnit.SECONDS);
             if(!isLocked){
                 log.info("명예의 전당 : 다른 서버");
             }
