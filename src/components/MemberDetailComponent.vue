@@ -26,7 +26,7 @@
 
                         </v-card-title>
 
-                        <v-row justify="end">
+                        <v-row justify="end" v-if="memberId === memberInfo.id">
                             <v-col cols="1"><v-btn @click="changeMemberInfo">수정</v-btn></v-col>
                             <v-col cols="2"><v-btn @click="deleteMember">탈퇴</v-btn></v-col>
                         </v-row>
