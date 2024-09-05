@@ -360,7 +360,8 @@ export default {
         };
         console.log(recordData);
         await axios.put(`${process.env.VUE_APP_API_BASE_URL}/record/create`, recordData);
-        window.location.reload(); // 스무스하게 바꾸고 싶은데.. 일단 보류
+
+        window.location.reload();
       } catch (e) {
         let errorMessage = "";
         if (e.response && e.response.data) {
@@ -389,6 +390,17 @@ export default {
     changeModifyBtn() { // 운동기록 수정 -> 화면구성 변경
       this.isModify = true;
       this.isExisted = false;
+
+      // 기존 데이터 입력창에 채우기
+      this.modifyData.snf = this.record.snf;
+      this.modifyData.exerciseTime = this.record.exerciseTime;
+      this.modifyData.comments = this.record.comments;
+
+      const wodDetails = this.wod.wodDetResDtoList;
+      this.modifyData.recordDetSaveReqDtoList = wodDetails.map((wodDetDto, index) => ({
+        wodDetailId: wodDetDto.id,
+        detailComments: this.record.recordResDetDtoList[index].detailComments
+      }));
     },
 
     confirmmTime() {
@@ -412,7 +424,8 @@ export default {
         };
         console.log(mRecordData);
         await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/record/update/${this.reservation.recordId}`, mRecordData);
-        window.location.reload(); // 스무스하게 바꾸고 싶은데.. 일단 보류
+
+        window.location.reload();
       } catch (e) {
         console.log(e)
       }
