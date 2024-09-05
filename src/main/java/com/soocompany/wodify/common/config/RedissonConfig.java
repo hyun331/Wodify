@@ -23,6 +23,7 @@ public class RedissonConfig {
         RedissonClient redisson = null;
         Config config = new Config();
         config.useSingleServer().setAddress(REDISSON_HOST_PREFIX+redisHost+":"+redisPort);
+        config.useSingleServer().setDatabase(7);
         redisson = Redisson.create(config);
         return redisson;
     }
