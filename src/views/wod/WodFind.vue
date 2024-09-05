@@ -1,18 +1,63 @@
 <template>
-  <v-container style="min-width: 345px; min-height: 600px;">
-    <v-row style="margin:1px">
-      <v-text-field class="custom-text-box" style="margin-right:2px" v-model="localWod.date" label="Date" readonly></v-text-field>
-      <v-text-field class="custom-text-box" style="margin-right:2px" v-model="localWod.timeCap" label="Time Cap" readonly></v-text-field>
-      <v-text-field class="custom-text-box" v-model="localWod.rounds" label="Rounds" readonly outlined></v-text-field>
+  <v-container style="min-width: 345px; min-height: 600px">
+    <v-row style="margin: 1px">
+      <v-text-field
+        class="custom-text-box"
+        style="margin-right: 2px"
+        v-model="localWod.date"
+        label="Date"
+        readonly
+      ></v-text-field>
+      <v-text-field
+        class="custom-text-box"
+        style="margin-right: 2px"
+        v-model="localWod.timeCap"
+        label="Time Cap"
+        readonly
+      ></v-text-field>
+      <v-text-field
+        class="custom-text-box"
+        v-model="localWod.rounds"
+        label="Rounds"
+        readonly
+        outlined
+      ></v-text-field>
     </v-row>
-    <v-row style="margin:1px">
-      <v-textarea class="custom-text-box" v-model="localWod.info" label="Info" readonly auto-grow :rows="2" outlined></v-textarea>
+    <v-row style="margin: 1px">
+      <v-textarea
+        class="custom-text-box"
+        v-model="localWod.info"
+        label="Info"
+        readonly
+        auto-grow
+        :rows="2"
+        outlined
+      ></v-textarea>
     </v-row>
-    <div v-for="(wodDet, index) in localWod.wodDetResDtoList" :key="wodDet.id" class="exercise-group" outlined>
-      <v-text-field class="exercise-box" style="border-radius: 4px 4px 0 0;" :label="`Exercise ${index + 1} Name`" v-model="wodDet.name" readonly outlined></v-text-field>
-      <v-text-field class="exercise-box" style="border-radius: 0 0 4px 4px;" v-model="wodDet.contents" :label="`Exercise ${index + 1} Contents`" readonly outlined></v-text-field>
+    <div
+      v-for="(wodDet, index) in localWod.wodDetResDtoList"
+      :key="wodDet.id"
+      class="exercise-group"
+      outlined
+    >
+      <v-text-field
+        class="exercise-box"
+        style="border-radius: 4px 4px 0 0"
+        :label="`Exercise ${index + 1} Name`"
+        v-model="wodDet.name"
+        readonly
+        outlined
+      ></v-text-field>
+      <v-text-field
+        class="exercise-box"
+        style="border-radius: 0 0 4px 4px"
+        v-model="wodDet.contents"
+        :label="`Exercise ${index + 1} Contents`"
+        readonly
+        outlined
+      ></v-text-field>
     </div>
-    <div style="display: flex; justify-content: flex-end;">
+    <div style="display: flex; justify-content: flex-end">
       <v-btn color="black" @click="showDeleteConfirmation = true">삭제</v-btn>
     </div>
 
@@ -22,8 +67,10 @@
         <v-card-text>정말로 이 WOD 데이터를 삭제하시겠습니까?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="action-button" text @click="confirmDelete">확인</v-btn>
-          <v-btn class="action-button" text @click="showDeleteConfirmation = false">취소</v-btn>
+          <v-btn class="custom-btn" text @click="confirmDelete">확인</v-btn>
+          <v-btn class="custom-btn" text @click="showDeleteConfirmation = false"
+            >취소</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -35,7 +82,7 @@
         <v-card-text>{{ resultMessage }}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="action-button" text @click="closeResultModal">확인</v-btn>
+          <v-btn class="custom-btn" text @click="closeResultModal">확인</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -43,7 +90,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   props: {
@@ -57,20 +104,22 @@ export default {
       localWod: { ...this.wod }, // props로 받은 wod 데이터를 로컬 데이터로 복사
       showDeleteConfirmation: false, // 삭제 확인 모달을 제어하는 변수
       showResultModal: false, // 삭제 후 결과 모달을 제어하는 변수
-      resultMessage: '', // 삭제 결과 메시지
+      resultMessage: "", // 삭제 결과 메시지
     };
   },
   methods: {
     async deleteWod() {
       try {
-        const response = await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/wod/delete/${this.localWod.date}`);
+        const response = await axios.patch(
+          `${process.env.VUE_APP_API_BASE_URL}/wod/delete/${this.localWod.date}`
+        );
         if (response.status === 200) {
           this.resultMessage = response.data.status_message; // 서버에서 받은 메시지 설정
           this.showResultModal = true; // 결과 모달 열기
         }
       } catch (error) {
-        console.error('Error deleting WOD data:', error);
-        this.resultMessage = 'WOD 데이터를 삭제하는 중 오류가 발생했습니다.';
+        console.error("Error deleting WOD data:", error);
+        this.resultMessage = "WOD 데이터를 삭제하는 중 오류가 발생했습니다.";
         this.showResultModal = true; // 오류 시에도 결과 모달 열기
       }
     },
@@ -80,13 +129,19 @@ export default {
     },
     closeResultModal() {
       this.showResultModal = false; // 결과 모달 닫기
-      this.$emit('wod-deleted', this.wod.date); // 삭제 완료 이벤트 emit
+      this.$emit("wod-deleted", this.wod.date); // 삭제 완료 이벤트 emit
     },
   },
 };
 </script>
 
-<style scoped>
+<style scope>
+.custom-btn {
+  background-color: black !important;
+  color: white !important;
+  margin-left: 1px;
+}
+
 .custom-text-box {
   background-color: rgba(255, 255, 255, 0.7);
   border-radius: 4px;
