@@ -72,18 +72,12 @@ public class MemberController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "2d129c6af1317e9dc12a8669b1957416");    //Rest API 키
-<<<<<<< HEAD
-        params.add("redirect_uri", "http://localhost:3000/member/auth/kakao/callback");
-        params.add("code", code);
-=======
         if(applicationYml.equals("local")){
             params.add("redirect_uri", "http://localhost:3000/member/auth/kakao/callback"); //0904
         }else{
             params.add("redirect_uri", "https://www.wodify.site/member/auth/kakao/callback");
         }
-
         params.add("code", code); // 프론트에서 받아온 인가 코드
->>>>>>> fd2992a08d7d412f2d3695b29588f59f9c348283
 
         //header body 합치기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
