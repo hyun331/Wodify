@@ -218,6 +218,7 @@ export default {
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('role');
             localStorage.removeItem('notifications');
+            localStorage.removeItem('memberId');
             window.location.href = KAKAO_LOGOUT_URL;
         },
         toggleNotificationDropdown() {
