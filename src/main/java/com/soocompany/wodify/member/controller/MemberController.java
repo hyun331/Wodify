@@ -77,7 +77,6 @@ public class MemberController {
         }else{
             params.add("redirect_uri", "https://www.wodify.site/member/auth/kakao/callback");
         }
-
         params.add("code", code); // 프론트에서 받아온 인가 코드
 
         //header body 합치기

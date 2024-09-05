@@ -167,13 +167,11 @@ public class PostService {
         });
         Box box = member.getBox();
         if (box == null) { throw new IllegalArgumentException("box 에 등록되지 않은 사용자입니다.");}
-        System.out.println("before findTopRecordByDateAndBoxIdAndMemberId");
         Optional<Tuple> tupleOptional = postRepository.findTopRecordByDateAndBoxIdAndMemberId(date, box.getId(), member.getId());
         if (tupleOptional.isEmpty()) {
             log.error("postRecord() : record가 없습니다.");
             throw new EntityNotFoundException("record가 없습니다.");
         }
-        System.out.println("after findTopRecordByDateAndBoxIdAndMemberId");
 //        List<PostRecordResDto> postRecordResDtoList = new ArrayList<>();
 //        for (Record record : recordList) { postRecordResDtoList.add(PostRecordResDto.fromEntity(record)); }
         return convertToDto(tupleOptional.get());
@@ -182,7 +180,7 @@ public class PostService {
     public PostRecordResDto convertToDto(Tuple tuple) {
         return new PostRecordResDto(
                 tuple.get("exerciseTime", Time.class),  // 쿼리에서 지정한 별칭
-                tuple.get("snf", Character.class),           // 쿼리에서 지정한 별칭
+                tuple.get("snf", String.class),           // 쿼리에서 지정한 별칭
                 tuple.get("comments", String.class)       // 쿼리에서 지정한 별칭
         );
     }

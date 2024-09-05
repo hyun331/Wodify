@@ -13,6 +13,6 @@ import java.sql.Time;
 @NoArgsConstructor
 public class PostRecordResDto {
     private Time time;
-    private Character snf;
+    private String snf;
     private String comments;
 }
