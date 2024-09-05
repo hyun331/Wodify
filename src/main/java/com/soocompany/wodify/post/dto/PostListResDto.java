@@ -33,7 +33,12 @@ public class PostListResDto {
                 .likeCount(post.getLikeCount())
                 .name(post.getMemberName())
                 .createdTime(DateTimeFormatterUtil.dateOnly(post.getCreatedTime()))
-                .commentCount(post.getComments().size())
-                .build();
+                .commentCount(
+                        (int) post.getComments().stream()
+                                .filter(comment -> "N".equals(comment.getDelYn()))
+                                .count()
+                )
+                .build()
+                ;
     }
 }
