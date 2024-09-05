@@ -69,6 +69,7 @@
 <script>
 import axios from 'axios';
 import AlertModalComponent from '@/components/AlertModalComponent.vue';
+import { KAKAO_LOGIN_URL } from '@/router/KakaoLoginUrl';
 export default {
   components: {
     AlertModalComponent
@@ -98,8 +99,15 @@ export default {
     } catch (error) {
       let errorMessage = "";
       if (error.response && error.response.data) {
-        // 서버에서 반환한 에러 메시지가 있는 경우
-        errorMessage += `: ${error.response.data.error_message}`;
+        if(error.response.status === 403) {
+          this.dialogTitle = "로그인이 필요합니다";
+          this.dialogText = "";
+          this.alertModal = true;
+          this.kakaoLogin();
+        }else {
+          // 서버에서 반환한 에러 메시지가 있는 경우
+          errorMessage += `: ${error.response.data.error_message}`;
+        }
       } else if (error.message) {
         errorMessage += `: ${error.message}`;
       }
@@ -110,6 +118,9 @@ export default {
     }
   },
   methods: {
+    kakaoLogin() {
+      window.location.href = KAKAO_LOGIN_URL;
+    },
     async loadList() {
       try {
         if (this.isLoading || this.isLastPage) return;
