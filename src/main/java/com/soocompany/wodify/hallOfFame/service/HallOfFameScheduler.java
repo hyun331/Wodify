@@ -42,13 +42,11 @@ public class HallOfFameScheduler {
     private final ReservationDetailRepository reservationDetailRepository;
     private final SseController sseController;
 
-    @Qualifier("schedulerLockTemplate")
-    private final RedisTemplate<String, Object> redisTemplate;
+
 
     private final RedissonClient redissonClient;
-    public HallOfFameScheduler(BoxRepository boxRepository, @Qualifier("schedulerLockTemplate") RedisTemplate<String, Object> redisTemplate, SseController sseController, ReservationDetailRepository reservationDetailRepository, ReservationRepository reservationRepository, HallOfFameRepository hallOfFameRepository, MemberRepository memberRepository, RedissonClient redissonClient) {
+    public HallOfFameScheduler(BoxRepository boxRepository,  SseController sseController, ReservationDetailRepository reservationDetailRepository, ReservationRepository reservationRepository, HallOfFameRepository hallOfFameRepository, MemberRepository memberRepository, RedissonClient redissonClient) {
         this.boxRepository = boxRepository;
-        this.redisTemplate = redisTemplate;
         this.sseController = sseController;
         this.reservationDetailRepository = reservationDetailRepository;
         this.reservationRepository = reservationRepository;
@@ -64,6 +62,7 @@ public class HallOfFameScheduler {
 
     //    @Scheduled(cron = "0 0 0 * * *")  //자정
     @Scheduled(cron = "0 * * * * *")
+
     @Transactional
     public void updateHallOfFame() throws InterruptedException{
 
