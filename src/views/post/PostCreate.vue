@@ -4,14 +4,32 @@
       <v-card-title>
         <v-row align="center">
           <v-col cols="auto">
-            <v-select v-model="formData.type" :items="typeOptions" label="Type" required outlined dense
-              :disabled="userRole === 'USER'" style="width: 200px; margin-top: 18px;" />
+            <v-select
+              v-model="formData.type"
+              :items="typeOptions"
+              label="Type"
+              required
+              outlined
+              dense
+              :disabled="userRole === 'USER'"
+              style="width: 200px; margin-top: 18px"
+            />
           </v-col>
           <v-spacer />
           <v-col cols="auto">
             <v-row justify="end" style="margin-right: 8px">
-              <v-btn class="custom-btn" style="margin-right: 8px" @click="isModalOpen = true">기록</v-btn>
-              <v-btn class="custom-btn" style="margin-right: 8px" @click="validateAndSubmit">저장</v-btn>
+              <v-btn
+                class="custom-btn"
+                style="margin-right: 8px"
+                @click="isModalOpen = true"
+                >기록</v-btn
+              >
+              <v-btn
+                class="custom-btn"
+                style="margin-right: 8px"
+                @click="validateAndSubmit"
+                >저장</v-btn
+              >
               <v-btn class="custom-btn" @click="showCancelConfirmationModal">취소</v-btn>
             </v-row>
           </v-col>
@@ -20,25 +38,43 @@
       <v-card-text>
         <v-row>
           <v-col cols="12">
-            <v-text-field v-model="formData.title" :rules="title_rule" label="Title" required outlined dense />
+            <v-text-field
+              v-model="formData.title"
+              :rules="title_rule"
+              label="Title"
+              required
+              outlined
+              dense
+            />
           </v-col>
           <v-col cols="12">
-            <quill-editor ref="quillEditorRef" v-model:value="formData.contents" :options="editorOptions"
-              @blur="onEditorBlur" @focus="onEditorFocus" @ready="onEditorReady" class="custom-quill-editor" />
+            <quill-editor
+              ref="quillEditorRef"
+              v-model:value="formData.contents"
+              :options="editorOptions"
+              @blur="onEditorBlur"
+              @focus="onEditorFocus"
+              @ready="onEditorReady"
+              class="custom-quill-editor"
+            />
           </v-col>
         </v-row>
       </v-card-text>
     </v-card>
     <!-- 기록 모달 컴포넌트 -->
-    <ModalRecord v-if="isModalOpen" @close="isModalOpen = false" @insert="insertIntoEditor" />
-
+    <ModalRecord
+      v-if="isModalOpen"
+      @close="isModalOpen = false"
+      @insert="insertIntoEditor"
+    />
     <!-- 제목 초과 경고 모달 -->
     <v-dialog v-model="showTitleLengthModal" persistent max-width="400px">
       <v-card>
         <v-card-text>{{ modalMessage }}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="action-button" text @click="closeTitleLengthModal">확인</v-btn>
+          <!-- <v-btn class="custom-btn" text @click="closeTitleLengthModal">확인</v-btn> -->
+          <v-btn class="custom-btn" text @click="closeTitleLengthModal">확인</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -49,8 +85,8 @@
         <v-card-text>저장하시겠습니까?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="action-button" text @click="submitForm">확인</v-btn>
-          <v-btn class="action-button" text @click="closeConfirmSaveModal">취소</v-btn>
+          <v-btn class="custom-btn" text @click="submitForm">확인</v-btn>
+          <v-btn class="custom-btn" text @click="closeConfirmSaveModal">취소</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -58,15 +94,17 @@
     <!-- 취소 확인 모달 -->
     <v-dialog v-model="showCancelModal" persistent max-width="400px">
       <v-card>
-        <v-card-text>작성한 내용은 저장되지 않습니다. <br> 목록으로 돌아가시겠습니까?</v-card-text>
+        <v-card-text
+          >작성한 내용은 저장되지 않습니다. <br />
+          목록으로 돌아가시겠습니까?</v-card-text
+        >
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="action-button" text @click="goBackToList">확인</v-btn>
-          <v-btn class="action-button" text @click="closeCancelModal">취소</v-btn>
+          <v-btn class="custom-btn" text @click="goBackToList">확인</v-btn>
+          <v-btn class="custom-btn" text @click="closeCancelModal">취소</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-
   </v-container>
 </template>
 
@@ -76,7 +114,7 @@ import "quill/dist/quill.snow.css";
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import ModalRecord from './ModalRecord.vue';
+import ModalRecord from "./ModalRecord.vue";
 import BlotFormatter from "quill-blot-formatter";
 import Quill from "quill";
 import interact from "interactjs";
@@ -109,7 +147,7 @@ export default {
   components: { quillEditor, ModalRecord },
   data() {
     return {
-      title_rule: [v => v.length <= 50 || '50자 이하로 작성해주세요.',],
+      title_rule: [(v) => v.length <= 50 || "50자 이하로 작성해주세요."],
       showTitleLengthModal: false, // 제목 유효성 검사 모달 제어 변수
       showConfirmSaveModal: false, // 저장 확인 모달 제어 변수
       showCancelModal: false, // 취소 확인 모달 제어 변수
@@ -155,7 +193,7 @@ export default {
     const quillInstance = ref(null);
 
     const formData = reactive({
-      type: 'POST',
+      type: "POST",
       title: "",
       contents: "",
     });
@@ -164,21 +202,11 @@ export default {
     const userRole = localStorage.getItem("role");
     const isLogin = !!localStorage.getItem("token");
 
-    if (userRole === "USER") {
-      formData.type = "POST";
-    }
-
     const handleMediaUpload = async (acceptType) => {
-      if (!quillInstance.value) {
-        console.error("Quill Editor is not initialized yet.");
-        return;
-      }
-
       const file = await selectFile(acceptType);
       if (!file) return;
 
       const mediaData = await uploadMedia(file);
-
       if (mediaData) {
         const { url, type } = mediaData;
         insertMediaToEditor(url, type);
@@ -200,13 +228,16 @@ export default {
     };
 
     const uploadMedia = async (file) => {
-      const formData = createFormData({ file });
+      const formData = new FormData();
+      formData.append("file", file);
       try {
         const response = await axios.post(
           `${process.env.VUE_APP_API_BASE_URL}/upload-media`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
+        console.log(response.data.result.type);
+        console.log(response.data.result.url);
         return response.data.result;
       } catch (error) {
         console.error("Error uploading media:", error);
@@ -217,26 +248,17 @@ export default {
     const insertMediaToEditor = (url, type) => {
       const range = quillInstance.value.getSelection();
       if (range) {
-        if (type.startsWith('video')) {
+        if (type === "video") {
           quillInstance.value.insertEmbed(range.index, "video", url);
           makeResizable();
-        } else if (type.startsWith('image')) {
+        } else if (type === "image") {
           quillInstance.value.insertEmbed(range.index, "image", url);
         }
-        // 커서 위치를 삽입한 미디어 뒤로 이동
+        // 커서를 삽입한 미디어 뒤로 이동
         quillInstance.value.setSelection(range.index + 1, 0);
-
         // 에디터에 포커스를 다시 맞춤
         quillInstance.value.focus();
       }
-    };
-
-    const createFormData = (data) => {
-      const formData = new FormData();
-      for (const key in data) {
-        formData.append(key, data[key]);
-      }
-      return formData;
     };
 
     const makeResizable = () => {
@@ -261,7 +283,6 @@ export default {
 
     const onEditorReady = (quill) => {
       quillInstance.value = quill; // Quill 인스턴스 저장
-      console.log("Editor ready!", quill);
       makeResizable();
     };
 
@@ -294,15 +315,18 @@ export default {
     };
 
     const submitForm = async () => {
-
       const data = new FormData();
       data.append("type", formData.type);
       data.append("title", formData.title);
       data.append("contents", formData.contents);
       try {
-        const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/post/create`, data, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const response = await axios.post(
+          `${process.env.VUE_APP_API_BASE_URL}/post/create`,
+          data,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
         const createdPostId = response.data.result;
         router.push(`/post/detail/${createdPostId}`);
       } catch (error) {
@@ -375,22 +399,13 @@ export default {
       isModalOpen,
       insertIntoEditor,
       quillInstance,
-      handleMediaUpload
+      handleMediaUpload,
     };
   },
 };
 </script>
 
-
 <style scoped>
-.background-wrapper {
-  background: linear-gradient(135deg, #1c1c1c, #3a3a3a);
-  /* 그라데이션 배경 */
-  padding: 20px;
-  min-height: 100vh;
-  /* 화면 전체 높이 */
-}
-
 .custom-quill-editor {
   min-height: 300px;
   /* 기본 높이 설정 */
@@ -400,7 +415,6 @@ export default {
   background-color: black !important;
   color: white !important;
   font-weight: 600;
-  /* 글씨 두께를 조금 두껍게 설정 */
 }
 
 .v-card-title {
