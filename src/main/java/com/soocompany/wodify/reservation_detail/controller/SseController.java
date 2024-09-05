@@ -79,13 +79,13 @@ public class SseController implements MessageListener {
         }
         subscribeChannel(memberId);
         // Keep-Alive 메시지 주기적으로 전송 (예: 30초마다)
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-            try {
-                emitter.send(SseEmitter.event().name("keepAlive").data("ping"));
-            } catch (IOException e) {
-                emitters.remove(memberId); // 에러 발생 시 emitter 제거
-            }
-        }, 30, 30, TimeUnit.SECONDS);
+//        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+//            try {
+//                emitter.send(SseEmitter.event().name("keepAlive").data("ping"));
+//            } catch (IOException e) {
+//                emitters.remove(memberId); // 에러 발생 시 emitter 제거
+//            }
+//        }, 30, 30, TimeUnit.SECONDS);
 
         return emitter;
     }
