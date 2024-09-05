@@ -57,8 +57,10 @@
                   style="cursor: pointer"
                 >
                   <td class="fixed-cell no-col">공지</td>
-                  <!-- <td class="fixed-cell title-col"> {{ truncateTitle(notice.title, 30) }} </td> -->
-                  <td class="fixed-cell title-col">{{ notice.title }}</td>
+                  <td class="fixed-cell title-col">
+                    {{ truncateTitle(notice.title, 30) }}
+                  </td>
+                  <!-- <td class="fixed-cell title-col">{{ notice.title }}</td> -->
                   <td class="fixed-cell author-col">{{ notice.name }}</td>
                   <td class="fixed-cell date-col">{{ notice.createdTime }}</td>
                   <td class="fixed-cell comments-col">{{ notice.commentCount }}</td>
@@ -71,8 +73,10 @@
                   style="cursor: pointer"
                 >
                   <td class="fixed-cell no-col">{{ post.id }}</td>
-                  <!-- <td class="fixed-cell title-col"> {{ truncateTitle(post.title, 30) }} </td> -->
-                  <td class="fixed-cell title-col">{{ post.title }}</td>
+                  <td class="fixed-cell title-col">
+                    {{ truncateTitle(post.title, 30) }}
+                  </td>
+                  <!-- <td class="fixed-cell title-col">{{ post.title }}</td> -->
                   <td class="fixed-cell author-col">{{ post.name }}</td>
                   <td class="fixed-cell date-col">{{ post.createdTime }}</td>
                   <td class="fixed-cell comments-col">{{ post.commentCount }}</td>
@@ -97,15 +101,6 @@
     </v-btn>
   </v-container>
 </template>
-
-<!-- <script setup>
-function truncateTitle(title, maxLength) {
-  if (title.length > maxLength) {
-    return title.slice(0, maxLength) + "...";
-  }
-  return title;
-}
-</script> -->
 
 <script>
 import axios from "axios";
@@ -228,6 +223,16 @@ export default {
     },
     goToDetail(id) {
       this.$router.push(`/post/detail/${id}`);
+    },
+    truncateTitle(title, maxLength) {
+      // title이 문자열인지 확인하는 안전한 체크 추가
+      if (typeof title !== "string") return "";
+
+      // title 길이가 maxLength를 초과하는지 확인 후, 잘라내기
+      if (title.length > maxLength) {
+        return title.slice(0, maxLength) + "...";
+      }
+      return title;
     },
   },
 };
