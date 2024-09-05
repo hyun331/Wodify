@@ -16,6 +16,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: false
+    open-in-view: true
   redis:
     host: ${REDIS_HOST}
     port: 6379

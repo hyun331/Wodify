@@ -107,7 +107,6 @@ public class SseController implements MessageListener {
 
     //명예의 전당 알림
     public void publishHallOfFameMessage(String memberId) {
-        SseEmitter emitter = emitters.get(memberId);
         ReservationDetailDetResDto dto = ReservationDetailDetResDto.builder()
                 .check("hallOfFame")
                 .build();
@@ -116,16 +115,7 @@ public class SseController implements MessageListener {
 
     //예약 한시간 전 알림
     public void publishReservationMessage(ReservationDetailDetResDto dto, String memberId) {
-        SseEmitter emitter = emitters.get(memberId);
-        if (emitter != null) {
-            try {
-                emitter.send(SseEmitter.event().name("reservationDetail").data(dto));
-            }catch (IOException e){
-                throw new RuntimeException(e);
-            }
-        }else { // 현재 서버의 받는 이의 emitter 정보가 없는 경우
-            sseRedisTemplate.convertAndSend(memberId, dto);
-        }
+        sseRedisTemplate.convertAndSend(memberId, dto);
     }
 
 
