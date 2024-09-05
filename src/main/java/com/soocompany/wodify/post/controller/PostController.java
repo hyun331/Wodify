@@ -37,16 +37,7 @@ public class PostController {
         CommonResDto commonResDto = new CommonResDto(code, msg, post.getId());
         return new ResponseEntity<>(commonResDto, code);
     }
-//
-//    @PostMapping("/upload-media")
-//    public ResponseEntity<?> uploadMedia(@ModelAttribute ImageSaveReqDto dto) throws IOException {
-//        String url = imageService.uploadMedia(dto.getFile());
-//        HttpStatus code = HttpStatus.OK;
-//        String msg = "파일이 s3에 업로드 되었습니다.";
-//        CommonResDto commonResDto = new CommonResDto(code, msg, url);
-//        return new ResponseEntity<>(commonResDto, code);
-//    }
-//
+
 //    @DeleteMapping("/delete-media")
 //    public ResponseEntity<?> deleteMedia(@RequestParam String imageUrl) {
 //        imageService.deleteMedia(imageUrl);
@@ -55,16 +46,7 @@ public class PostController {
 //        CommonResDto commonResDto = new CommonResDto(code, msg, imageUrl);
 //        return new ResponseEntity<>(commonResDto, code);
 //    }
-//
-//    @GetMapping("/list")
-//    public ResponseEntity<?> postList() {
-//        List<PostListResDto> posts = postService.postList();
-//        HttpStatus code = HttpStatus.OK;
-//        String msg = "전체 게시글 목록 조회에 성공하였습니다.";
-//        CommonResDto commonResDto = new CommonResDto(code, msg, posts);
-//        return new ResponseEntity<>(commonResDto, code);
-//    }
-//
+
     @GetMapping("/list/notice")
     public ResponseEntity<?> postListNotice() {
         List<PostListResDto> posts = postService.postListNotice();
@@ -76,7 +58,6 @@ public class PostController {
 
     @GetMapping("/list/page")
     public ResponseEntity<?> postListPage(PostSearchDto postSearchDto, Pageable pageable) {
-        System.out.println("postSearchDto = " + postSearchDto);
         Page<PostListResDto> posts = postService.postListPage(postSearchDto, pageable);
         HttpStatus code = HttpStatus.OK;
         String msg = "박스 게시글 목록 조회에 성공하였습니다.";
