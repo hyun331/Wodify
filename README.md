@@ -82,6 +82,7 @@ hyun331">신승현</a>
   </tr>
 </table>
 
+
 ## 요구사항 명세서 
 <a href="https://docs.google.com/spreadsheets/d/1W1FjcAb94req69eazwTaeBWuBIm2LCm-wggrFX2LAu0/edit?gid=1029891774#gid=1029891774">
 <img width="1220" alt="image" src="https://github.com/user-attachments/assets/2af19907-f6f8-43dd-9178-157b84e8ac70"></a>
@@ -385,3 +386,14 @@ hyun331">신승현</a>
 ![스크린샷 2024-08-20 233107](https://github.com/user-attachments/assets/2277d1d7-5ed2-4160-91b0-bb180ad393f5)
 
 </details>
+
+
+## 배포 아키텍처
+
+### 프론트엔드
+
+### 백엔드
+
+## 배포 테스트 결과서
+
+
