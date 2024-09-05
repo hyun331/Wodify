@@ -70,8 +70,7 @@ export default {
 
         },
         closeModal() {
-            this.boxCodeLabel = 'BOX CODE';
-            this.$emit('update:dialog', false)
+            this.$router.push('/');
         }
     },
 

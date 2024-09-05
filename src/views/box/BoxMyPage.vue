@@ -1,5 +1,6 @@
 <template>
     <div class="page-container">
+        <template v-if="userRole && boxDetailId">
         <v-container>
             <v-row class="align-left justify-start" style="height: 100%; margin-top: 16px;">
                 <v-col cols="auto" class="text-left">
@@ -36,6 +37,8 @@
             </v-row>
         </v-container>
         <OrderListComponent :isAdmin="false" />
+        </template>    
+        
 
         <!-- 삭제 확인 다이얼로그 -->
         <v-dialog v-model="deleteDialog" max-width="500px">
@@ -106,9 +109,9 @@ export default {
             const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/box/mybox`);
             this.boxDetail = response.data.result;
             this.boxDetailList = [
+                { key: "ADDRESS", value: this.boxDetail.address },
                 { key: "TIME", value: this.boxDetail.operatingHours },
                 { key: "PRICE", value: this.boxDetail.fee },
-                { key: "ADDRESS", value: this.boxDetail.address },
                 { key: "INTRO", value: this.boxDetail.intro },
             ];
         } catch (error) {
@@ -125,7 +128,7 @@ export default {
             } else {
                 //CEO
                 this.dialogTitle = '등록된 박스가 존재하지 않습니다';
-                this.dialogText = '박스에 생성해주세요';
+                this.dialogText = '박스를 생성해주세요';
                 this.alertModal = true;
             }
         }
