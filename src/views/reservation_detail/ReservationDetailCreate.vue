@@ -178,7 +178,7 @@ export default {
             try {
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation/box/list/`, dateData);
                 console.log(response.data.result.content);
-                this.timeOptions = response.data.result.content.map(item => {
+                this.timeOptions = response.data.result.map(item => {
                     return { text: item.time, value: item.id };
                 });
                 console.log(this.timeOptions)
