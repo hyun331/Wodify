@@ -149,6 +149,7 @@ export default {
             if (this.isLogin) {
                 let sse = new EventSourcePolyfill(`${process.env.VUE_APP_API_BASE_URL}/subscribe`, { headers: { Authorization: `Bearer ${token}` } });
                 sse.addEventListener('connect', (event) => { console.log(event) });
+                sse.addEventListener('keepAlive', (event) => { console.log(event.data) });
                 sse.addEventListener('reservation', (event) => {
                     this.liveAlert++;
 
