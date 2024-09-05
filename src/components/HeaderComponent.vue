@@ -237,9 +237,9 @@ export default {
                 return;
             }
             if (this.userRole === 'USER') {
-                this.$router.push('/reservation-detail/list');
+                window.location.href="/reservation-detail/list"
             } else {
-                this.$router.push('/reservation/list');
+                window.location.href="/reservation/list"
             }
             
             // Redirect to /reservation/list
@@ -277,6 +277,5 @@ export default {
 
 .fontClass{
     font-size: 14px;
-
 }
 </style>
