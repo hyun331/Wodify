@@ -1,7 +1,5 @@
 <template>
-  <!-- div로 v-container를 감싸서 배경색을 지정 -->
   <v-container class="container">
-    <!-- post가 null이 아닐 때만 콘텐츠를 렌더링 -->
     <v-card v-if="post" class="post-card">
       <v-card-title>
         <v-row align="center" justify="space-between" class="mb-1">
@@ -15,22 +13,24 @@
             </v-row>
           </v-col>
           <v-col cols="auto">
-            <v-btn class="action-button mx-1" @click="likePost">
-              <v-icon>mdi-thumb-up</v-icon> {{ post.likeCount }}
-            </v-btn>
-            <v-btn class="action-button mx-1" @click="goBackToList">
-              <v-icon>mdi-format-list-bulleted</v-icon>
-            </v-btn>
-            <v-btn class="action-button mx-1" v-if="isAuthor" @click="goToEditPost">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn
-              class="action-button mx-1"
-              v-if="isAuthor"
-              @click="showDeleteConfirmationModal"
-            >
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
+            <v-row>
+              <v-btn class="custom-btn" @click="likePost">
+                <v-icon>mdi-thumb-up</v-icon> {{ post.likeCount }}
+              </v-btn>
+              <v-btn class="custom-btn" @click="goBackToList">
+                <v-icon>mdi-format-list-bulleted</v-icon>
+              </v-btn>
+              <v-btn class="custom-btn" v-if="isAuthor" @click="goToEditPost">
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+              <v-btn
+                class="custom-btn"
+                v-if="isAuthor"
+                @click="showDeleteConfirmationModal"
+              >
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </v-row>
           </v-col>
         </v-row>
       </v-card-title>
@@ -61,7 +61,7 @@
             ></v-text-field>
           </v-col>
           <v-col cols="auto">
-            <v-btn icon class="action-button" @click="submitComment">
+            <v-btn icon class="custom-btn" @click="submitComment">
               <v-icon>mdi-send</v-icon>
             </v-btn>
           </v-col>
@@ -98,7 +98,7 @@
         <v-card-text>{{ resultMessage }}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="handleResultConfirmation">확인</v-btn>
+          <v-btn color="grey" text @click="handleResultConfirmation">확인</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -109,7 +109,7 @@
         <v-card-text>내용을 입력해주세요.</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="closeEmptyCommentModal">확인</v-btn>
+          <v-btn color="grey" text @click="closeEmptyCommentModal">확인</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -159,7 +159,9 @@ export default {
     }, // 삭제 확인 모달 닫기
     async fetchPostDetail() {
       try {
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/post/detail/${this.id}`);
+        const response = await axios.get(
+          `${process.env.VUE_APP_API_BASE_URL}/post/detail/${this.id}`
+        );
         this.post = response.data.result;
         this.checkAuthor();
       } catch (error) {
@@ -172,7 +174,9 @@ export default {
     },
     async deletePost() {
       try {
-        const response = await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/post/delete/${this.id}`);
+        const response = await axios.patch(
+          `${process.env.VUE_APP_API_BASE_URL}/post/delete/${this.id}`
+        );
         if (response.status === 200) {
           this.resultMessage = response.data.status_message;
           this.goBackToList();
@@ -188,7 +192,9 @@ export default {
     },
     async likePost() {
       try {
-        const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/post/like/${this.id}`);
+        const response = await axios.post(
+          `${process.env.VUE_APP_API_BASE_URL}/post/like/${this.id}`
+        );
         if (response.status === 200) {
           this.post.likeCount = response.data.result;
         } else {
@@ -199,8 +205,7 @@ export default {
         console.error("Error liking post:", error);
         this.resultMessage = "좋아요 처리 중 오류가 발생했습니다.";
         this.showResultModal = true; // 결과 모달 열기
-
-      } 
+      }
     },
     async submitComment() {
       if (!this.newComment.trim()) {
@@ -209,7 +214,10 @@ export default {
       }
       const commentData = { comment: this.newComment, parentId: null };
       try {
-        const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/post/comment/create/${this.id}`, commentData);
+        const response = await axios.post(
+          `${process.env.VUE_APP_API_BASE_URL}/post/comment/create/${this.id}`,
+          commentData
+        );
         if (response.status === 201) {
           this.post.comments.push(response.data.result);
           this.newComment = "";
@@ -221,7 +229,7 @@ export default {
         console.error("Error submitting comment:", error);
         this.resultMessage = "댓글 등록 중 오류가 발생했습니다.";
         this.showResultModal = true; // 결과 모달 열기
-      } 
+      }
     },
     removeComment(commentId) {
       this.post.comments = this.post.comments.filter(
@@ -244,8 +252,6 @@ export default {
 
 <style scoped>
 .container {
-  background-color: transparent;
-  /* 투명하게 설정해 그라데이션이 보이도록 */
   padding: 24px;
   max-width: 1216px;
   margin: auto;
@@ -253,7 +259,6 @@ export default {
   border-radius: 8px;
 }
 
-/* 카드 배경색 */
 .post-card,
 .comment-section {
   padding: 10px;
@@ -265,16 +270,11 @@ export default {
   font-size: 24px;
 }
 
-.action-button {
-  background-color: #3a3a3a !important;
-  color: #ffffff !important;
+.custom-btn {
+  background-color: black !important;
+  color: white !important;
   margin-left: 4px;
-  padding: 6px 12px;
-  min-width: 40px;
-}
-
-.action-button v-icon {
-  color: #ffffff;
+  font-weight: 600;
 }
 
 .comment-box {
