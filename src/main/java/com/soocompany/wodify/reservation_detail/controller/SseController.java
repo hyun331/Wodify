@@ -71,6 +71,7 @@ public class SseController implements MessageListener {
         emitters.put(memberId, emitter);
         emitter.onCompletion(() -> emitters.remove((memberId)));
         emitter.onTimeout(() -> emitters.remove(memberId));
+        emitter.onError((e) ->emitters.remove(memberId));
 
         try {
             emitter.send(SseEmitter.event().name("connect").data("connected!"));
