@@ -185,6 +185,13 @@ export default {
             const uniqueTimes = new Set(times);
             return times.length !== uniqueTimes.size;
         },
+        checkpeople() {
+            // entries 배열에서 people 값이 0인 항목이 있는지 확인
+            const isValid = this.entries.every(entry => entry.people > 0);
+
+            // people 값 중 하나라도 0이 있으면 false를 반환
+            return isValid;
+        },
         async reservation() {
             if (!this.formattedDate) {
                 this.dialogTitle = "입력사항을 모두 입력해주세요";
@@ -196,6 +203,13 @@ export default {
             if (this.hasDuplicateTimes()) {
                 this.dialogTitle = "중복된 시간이 있습니다";
                 this.dialogText = "동일한 시간에 두 개 이상의 예약을 할 수 없습니다. 시간을 다시 선택해 주세요.";
+                this.alertModal = true;
+                return;
+            }
+
+            if (!this.checkpeople()) {
+                this.dialogTitle = "입력사항을 모두 입력해주세요";
+                this.dialogText = "인원을 작성해주세요";
                 this.alertModal = true;
                 return;
             }
@@ -233,7 +247,7 @@ export default {
                     this.dialogText = errorMessage;
                     this.alertModal = true;
                 });
-        }
+        },
     }
 }
 </script>
