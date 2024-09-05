@@ -84,6 +84,7 @@
 <script>
 import AlertModalComponent from '@/components/AlertModalComponent.vue';
 import RoundedButtonComponent from '@/components/RoundedButtonComponent.vue';
+import { KAKAO_LOGIN_URL } from '@/router/KakaoLoginUrl';
 import axios from 'axios';
 export default {
     components: {
@@ -95,16 +96,19 @@ export default {
             const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/box/name/`);
             this.boxName = response.data.result;
         } catch (error) {
-            let errorMessage = "";
             if (error.response && error.response.data) {
+                if(error.response.status === 403) {
+                    this.dialogTitle = "로그인이 필요합니다";
+                    this.dialogText = "";
+                    this.alertModal = true;
+                    this.kakaoLogin();
+                } else {
+                    this.dialogTitle = "박스명 로드 실패";
+                    this.dialogText = "등록된 박스가 존재하지 않습니다";
+                    this.alertModal = true;
+                }
                 // 서버에서 반환한 에러 메시지가 있는 경우
-                errorMessage += `: ${error.response.data.error_message}`;
-            } else if (error.message) {
-                errorMessage += `: ${error.message}`;
             }
-            this.dialogTitle = "박스명 로드 실패";
-            this.dialogText = errorMessage;
-            this.alertModal = true;
         }
     },
     data() {
@@ -139,6 +143,9 @@ export default {
         }
     },
     methods: {
+        kakaoLogin() {
+            window.location.href = KAKAO_LOGIN_URL;
+        },
         formatDate(date) {
             const year = date.getFullYear();
             const month = ('0' + (date.getMonth() + 1)).slice(-2);
@@ -171,7 +178,7 @@ export default {
             try {
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/reservation/box/list/`, dateData);
                 console.log(response.data.result.content);
-                this.timeOptions = response.data.result.content.map(item => {
+                this.timeOptions = response.data.result.map(item => {
                     return { text: item.time, value: item.id };
                 });
                 console.log(this.timeOptions)
