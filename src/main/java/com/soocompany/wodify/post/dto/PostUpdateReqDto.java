@@ -14,7 +14,6 @@ import javax.persistence.Enumerated;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostUpdateReqDto {
-
     @Enumerated(EnumType.STRING)
     private Type type;
     private String title;
