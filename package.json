@@ -16,7 +16,6 @@
     "chart.js": "^4.4.3",
     "chartjs-plugin-datalabels": "^2.2.0",
     "core-js": "^3.8.3",
-    "cors": "^2.8.5",
     "date-fns": "^3.6.0",
     "event-source-polyfill": "^1.0.31",
     "interactjs": "^1.10.27",
