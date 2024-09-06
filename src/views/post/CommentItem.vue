@@ -9,7 +9,7 @@
           <v-row align="center">
             <v-btn
               text
-              v-if="!isEditing"
+              v-if="!isEditing && !commentCopy.parentId"
               @click="startReplying"
               style="font-size: 12px; padding: 0; min-width: auto; height: auto"
             >
