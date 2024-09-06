@@ -4,14 +4,29 @@
       <v-card-title>
         <v-row align="center">
           <v-col cols="auto">
-            <v-select v-model="post.type" :items="typeOptions" label="Type" required outlined dense
-              :disabled="userRole === 'USER'" style="margin-top: 15px; width: 200px" />
+            <v-select
+              v-model="post.type"
+              :items="typeOptions"
+              label="Type"
+              required
+              outlined
+              dense
+              :disabled="userRole === 'USER'"
+              style="margin-top: 15px; width: 200px"
+            />
           </v-col>
           <v-spacer />
           <v-col cols="auto">
             <v-row justify="end" style="margin-right: 8px">
-              <v-btn class="custom-btn" style="margin-right: 8px" @click="isModalOpen = true">기록</v-btn>
-              <v-btn class="custom-btn" style="margin-right: 8px" @click="updatePost">저장</v-btn>
+              <v-btn
+                class="custom-btn"
+                style="margin-right: 8px"
+                @click="isModalOpen = true"
+                >기록</v-btn
+              >
+              <v-btn class="custom-btn" style="margin-right: 8px" @click="updatePost"
+                >저장</v-btn
+              >
               <v-btn class="custom-btn" @click="goBackToDetail">취소</v-btn>
             </v-row>
           </v-col>
@@ -23,14 +38,25 @@
             <v-text-field v-model="post.title" label="Title" required outlined dense />
           </v-col>
           <v-col cols="12">
-            <quill-editor ref="quillEditorRef" v-model:value="post.contents" :options="editorOptions"
-              @blur="onEditorBlur" @focus="onEditorFocus" @ready="onEditorReady" @change="onEditorChange"
-              class="custom-quill-editor" />
+            <quill-editor
+              ref="quillEditorRef"
+              v-model:value="post.contents"
+              :options="editorOptions"
+              @blur="onEditorBlur"
+              @focus="onEditorFocus"
+              @ready="onEditorReady"
+              @change="onEditorChange"
+              class="custom-quill-editor"
+            />
           </v-col>
         </v-row>
       </v-card-text>
     </v-card>
-    <ModalRecord v-if="isModalOpen" @close="isModalOpen = false" @insert="insertIntoEditor" />
+    <ModalRecord
+      v-if="isModalOpen"
+      @close="isModalOpen = false"
+      @insert="insertIntoEditor"
+    />
 
     <!-- 알림 모달 -->
     <v-dialog v-model="isAlertDialogOpen" max-width="500px">
@@ -52,7 +78,7 @@ import "quill/dist/quill.snow.css";
 import { reactive, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import ModalRecord from './ModalRecord.vue';
+import ModalRecord from "./ModalRecord.vue";
 import BlotFormatter from "quill-blot-formatter";
 import Quill from "quill";
 import interact from "interactjs";
@@ -81,7 +107,48 @@ Quill.register(VideoBlot);
 
 export default {
   components: { quillEditor, ModalRecord },
-  props: ['id'], // post ID를 prop으로 받아옴
+  props: ["id"], // post ID를 prop으로 받아옴
+  data() {
+    return {
+      title_rule: [(v) => v.length <= 50 || "50자 이하로 작성해주세요."],
+      showTitleLengthModal: false, // 제목 유효성 검사 모달 제어 변수
+      showConfirmSaveModal: false, // 저장 확인 모달 제어 변수
+      showCancelModal: false, // 취소 확인 모달 제어 변수
+      modalMessage: "", // 모달에 표시될 메시지
+    };
+  },
+  methods: {
+    validateAndSubmit() {
+      // 제목 유효성 검사
+      if (!this.formData.title) {
+        // 제목이 비어 있는 경우
+        this.modalMessage = "제목을 입력해주세요.";
+        this.showTitleLengthModal = true;
+      } else if (this.formData.title.length > 50) {
+        // 제목이 50자를 초과하는 경우
+        this.modalMessage = "제목은 50자 이하로 작성해야 합니다.";
+        this.showTitleLengthModal = true;
+      } else {
+        this.showConfirmSaveModal = true; // 유효성 검사를 통과하면 저장 확인 모달을 띄움      }
+      }
+    },
+    closeTitleLengthModal() {
+      this.showTitleLengthModal = false; // 모달 닫기
+    },
+    closeConfirmSaveModal() {
+      this.showConfirmSaveModal = false; // 저장 확인 모달 닫기
+    },
+    showCancelConfirmationModal() {
+      this.showCancelModal = true; // 취소 확인 모달 열기
+    },
+    closeCancelModal() {
+      this.showCancelModal = false; // 취소 확인 모달 닫기
+    },
+    goBackToList() {
+      this.showCancelModal = false; // 모달 닫기
+      this.$router.push("/post/list"); // 목록 페이지로 이동
+    },
+  },
   setup(props) {
     const router = useRouter();
     const quillEditorRef = ref(null);
@@ -99,11 +166,13 @@ export default {
 
     const loadPostData = async () => {
       try {
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/post/detail/${props.id}`);
+        const response = await axios.get(
+          `${process.env.VUE_APP_API_BASE_URL}/post/detail/${props.id}`
+        );
         Object.assign(post, response.data.result);
       } catch (error) {
-        console.error('Error loading post:', error);
-        alert('Failed to load post data.');
+        console.error("Error loading post:", error);
+        alert("Failed to load post data.");
       }
     };
 
@@ -112,34 +181,37 @@ export default {
     });
 
     const handleMediaUpload = async (acceptType) => {
-      if (!quillInstance.value) {
-        console.error("Quill Editor is not initialized yet.");
-        return;
+      const file = await selectFile(acceptType);
+      if (!file) return;
+
+      const mediaData = await uploadMedia(file);
+      if (mediaData) {
+        const { url, type } = mediaData;
+        insertMediaToEditor(url, type);
       }
-      const fileInput = document.createElement("input");
-      fileInput.setAttribute("type", "file");
-      fileInput.setAttribute("accept", acceptType);
-      fileInput.click();
+    };
 
-      fileInput.onchange = async () => {
-        const file = fileInput.files[0];
-        const mediaUrl = await uploadMedia(file);
+    const selectFile = (acceptType) => {
+      const maxFileSize = 1024 * 1024 * 100; // 100MB 용량 제한 설정
 
-        if (mediaUrl) {
-          const range = quillInstance.value.getSelection();
-          if (range) {
-            const extension = mediaUrl.split(".").pop().toLowerCase();
-            const videoExtensions = ["mp4", "webm", "ogg"];
+      return new Promise((resolve, reject) => {
+        const fileInput = document.createElement("input");
+        fileInput.setAttribute("type", "file");
+        fileInput.setAttribute("accept", acceptType);
+        fileInput.click();
 
-            if (videoExtensions.includes(extension)) {
-              quillInstance.value.insertEmbed(range.index, "video", mediaUrl);
-              makeResizable();
-            } else {
-              quillInstance.value.insertEmbed(range.index, "image", mediaUrl);
-            }
+        fileInput.onchange = () => {
+          const file = fileInput.files[0];
+
+          if (file.size > maxFileSize) {
+            alert("파일 크기가 너무 큽니다. 100MB 이하의 파일만 업로드 가능합니다.");
+            reject(new Error("File size exceeds the 100MB limit.")); // 에러를 전달하며 Promise를 실패 상태로 전환
+            return;
           }
-        }
-      };
+
+          resolve(file); // 파일 크기가 적절하면 Promise를 성공 상태로 전환
+        };
+      });
     };
 
     const uploadMedia = async (file) => {
@@ -155,6 +227,22 @@ export default {
       } catch (error) {
         console.error("Error uploading media:", error);
         return null;
+      }
+    };
+
+    const insertMediaToEditor = (url, type) => {
+      const range = quillInstance.value.getSelection();
+      if (range) {
+        if (type === "video") {
+          quillInstance.value.insertEmbed(range.index, "video", url);
+          makeResizable();
+        } else if (type === "image") {
+          quillInstance.value.insertEmbed(range.index, "image", url);
+        }
+        // 커서를 삽입한 미디어 뒤로 이동
+        quillInstance.value.setSelection(range.index + 1, 0);
+        // 에디터에 포커스를 다시 맞춤
+        quillInstance.value.focus();
       }
     };
 
@@ -218,28 +306,33 @@ export default {
 
     const updatePost = async () => {
       const formData = new FormData();
-      formData.append('title', post.title);
-      formData.append('contents', post.contents);
-      formData.append('type', post.type);
+      formData.append("title", post.title);
+      formData.append("contents", post.contents);
+      formData.append("type", post.type);
 
       try {
-        const response = await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/post/update/${props.id}`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        const response = await axios.patch(
+          `${process.env.VUE_APP_API_BASE_URL}/post/update/${props.id}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
 
         if (response.status === 200) {
           goBackToDetail();
         } else {
-          alert('Failed to update post.');
+          alert("Failed to update post.");
         }
       } catch (error) {
-        console.error('Error updating post:', error);
-        alert('An error occurred while updating the post.');
+        console.error("Error updating post:", error);
+        alert("An error occurred while updating the post.");
       }
     };
 
-
-    const goBackToDetail = () => { router.push(`/post/detail/${props.id}`); };
+    const goBackToDetail = () => {
+      router.push(`/post/detail/${props.id}`);
+    };
 
     // 모달에서 전달된 데이터를 Quill Editor에 삽입
     const insertIntoEditor = (data) => {
