@@ -220,7 +220,7 @@ export default {
                         () => this.alertModal,
                         (newVal) => {
                             if (!newVal) {
-                                this.$router.push("/reservation-detail/list");
+                                window.location.href="/reservation-detail/list";
                             }
                         }
                     );
