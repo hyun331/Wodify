@@ -17,7 +17,7 @@
             </v-btn>
             <v-btn
               text
-              v-if="!isEditing"
+              v-if="!isEditing && isAuthor"
               @click="startEditing"
               style="font-size: 12px; padding: 0; min-width: auto; height: auto"
             >
@@ -25,7 +25,7 @@
             </v-btn>
             <v-btn
               text
-              v-if="!isEditing"
+              v-if="!isEditing && isAuthor"
               @click="showDeleteConfirmationModal"
               style="font-size: 12px; padding: 0; min-width: auto; height: auto"
             >
@@ -126,9 +126,21 @@ export default {
       showDeleteModal: false, // 삭제 확인 모달 제어 변수
       showResultModal: false, // 작업 결과 모달 제어 변수
       resultMessage: "", // 모달에 표시될 메시지
+      isAuthor: false, // 추가: 작성자 여부를 판단할 변수
     };
   },
+  created() {
+    this.checkAuthor(); // 컴포넌트가 생성될 때 작성자 여부를 확인
+  },
   methods: {
+    // 이 메서드는 created나 mounted 훅에서 호출
+    getCurrentUserId() {
+      return localStorage.getItem("memberId");
+    },
+    checkAuthor() {
+      const currentUserId = this.getCurrentUserId();
+      this.isAuthor = this.comment.memberId === Number(currentUserId);
+    },
     startEditing() {
       this.isEditing = true;
     },
