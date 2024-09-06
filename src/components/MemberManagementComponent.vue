@@ -118,7 +118,7 @@ export default{
             alertModal: false,
 
             userList:[],
-            pageSize: 5,
+            pageSize: 10,
             currentPage:0,
             isLastPage: false,
             isLoading: false,
