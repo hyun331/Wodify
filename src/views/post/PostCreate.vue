@@ -214,7 +214,9 @@ export default {
     };
 
     const selectFile = (acceptType) => {
-      return new Promise((resolve) => {
+      const maxFileSize = 1024 * 1024 * 100; // 100MB 용량 제한 설정
+
+      return new Promise((resolve, reject) => {
         const fileInput = document.createElement("input");
         fileInput.setAttribute("type", "file");
         fileInput.setAttribute("accept", acceptType);
@@ -222,7 +224,14 @@ export default {
 
         fileInput.onchange = () => {
           const file = fileInput.files[0];
-          resolve(file);
+
+          if (file.size > maxFileSize) {
+            alert("파일 크기가 너무 큽니다. 100MB 이하의 파일만 업로드 가능합니다.");
+            reject(new Error("File size exceeds the 100MB limit.")); // 에러를 전달하며 Promise를 실패 상태로 전환
+            return;
+          }
+
+          resolve(file); // 파일 크기가 적절하면 Promise를 성공 상태로 전환
         };
       });
     };
@@ -236,8 +245,6 @@ export default {
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
-        console.log(response.data.result.type);
-        console.log(response.data.result.url);
         return response.data.result;
       } catch (error) {
         console.error("Error uploading media:", error);
@@ -304,14 +311,6 @@ export default {
         },
         blotFormatter: {},
       },
-    };
-
-    const onEditorBlur = (quill) => {
-      console.log("Editor blur!", quill);
-    };
-
-    const onEditorFocus = (quill) => {
-      console.log("Editor focus!", quill);
     };
 
     const submitForm = async () => {
@@ -391,8 +390,6 @@ export default {
       isLogin,
       quillEditorRef,
       editorOptions,
-      onEditorBlur,
-      onEditorFocus,
       onEditorReady,
       submitForm,
       cancel,
