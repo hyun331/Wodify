@@ -1,16 +1,6 @@
 
   ![header](https://github.com/user-attachments/assets/32d5e016-5266-4f01-9a19-97c61c369b2a)
 
-## 프로젝트 개요
-<div>
-WODIFY는 기존의 비체계적인 방식으로 이루어지던 크로스핏 박스 회원들의 WOD(Workout of the Day) 예약 및 운동 기록 방식을 디지털화하여 효율적이고 체계적인 관리 시스템을 제공합니다.
-기존에는 회원들이 채팅방에서의 선착순 예약이나 커뮤니티 게시글의 댓글을 통해 WOD에 참여할 수 있었고, 운동 기록은 박스 내 칠판에 아날로그 형식으로 작성하는 방식이었습니다.
-이러한 비효율적이고 혼란을 초래할 수 있는 방식을 개선하기 위해, WODIFY는 온라인에서 WOD 예약과 운동 기록을 간편하게 처리할 수 있도록 설계되었습니다.
-<br>
-이 시스템은 박스 코치가 WOD를 계획하고 예약을 받을 수 있는 기능을 제공하며, 회원들은 자신에게 맞는 시간대에 예약을 진행할 수 있습니다.
-또한, 회원들은 자신의 운동 기록을 시스템에 입력하여, 체계적으로 관리하고 성과를 추적할 수 있습니다.
-이를 통해 크로스핏 박스의 운영 효율성을 높이고, 회원들의 만족도와 참여도를 극대화하는 것이 목표입니다.
-</div>
 
 ## 개발 환경
 <div>   
@@ -81,30 +71,6 @@ hyun331">신승현</a>
     </td>
   </tr>
 </table>
-
-
-## 요구사항 명세서 
-<a href="https://docs.google.com/spreadsheets/d/1W1FjcAb94req69eazwTaeBWuBIm2LCm-wggrFX2LAu0/edit?gid=1029891774#gid=1029891774">
-<img width="1220" alt="image" src="https://github.com/user-attachments/assets/2af19907-f6f8-43dd-9178-157b84e8ac70"></a>
-<a href="https://docs.google.com/spreadsheets/d/1W1FjcAb94req69eazwTaeBWuBIm2LCm-wggrFX2LAu0/edit?gid=1029891774#gid=1029891774">문서 링크</a>
-
-## ERD
-<div>
-<a href="https://www.erdcloud.com/d/aDg7sHzLD8pbe3ncJ">
-<img width="968" alt="image" src="https://github.com/user-attachments/assets/ab8de366-ba9f-41ec-90b8-f3551c0647b1">
-</a>
-  </div>
-<a href="https://www.erdcloud.com/d/aDg7sHzLD8pbe3ncJ">문서 링크</a>
-
-
-## 화면 설계서 
-
-<div>
-<a href="https://www.figma.com/design/7HfxLQ1e75enbmIxMYC4RF/view?node-id=0-1&t=TMOrO564XQIz5Jtv-0">
-<img width="935" alt="image" src="https://github.com/user-attachments/assets/55ca474f-ac48-493d-8081-76d933591c61">
-</a>
-  </div>
-<a href="https://www.figma.com/design/7HfxLQ1e75enbmIxMYC4RF/view?node-id=0-1&t=TMOrO564XQIz5Jtv-0">문서 링크</a>
 
 
 ## Api 명세서 
