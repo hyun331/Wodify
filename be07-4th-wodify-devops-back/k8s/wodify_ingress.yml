@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wodify-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"  # 여기서 최대 요청 크기를 설정
+spec:
+  tls:
+    - hosts:
+        - "server.wodify.site"
+      secretName: wodify-com-tls
+  rules:
+    - host: server.wodify.site
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: wodify-service
+                port:
+                  number: 80

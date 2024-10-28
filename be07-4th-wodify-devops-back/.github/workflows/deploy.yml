@@ -1,0 +1,47 @@
+# docker build -> ecr upload -> kubectl apply
+name: deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v2
+
+      - name: install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: "v1.25.9"
+        id: install
+
+      - name: configure aws
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          # 은지님 access key, secret key 사용
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET}}
+          aws-region: ap-northeast-2
+
+      - name: update cluster information
+        run: aws eks update-kubeconfig  --name wodify-cluster --region ap-northeast-2
+
+      - name: login ecr
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+
+      - name: build and push docker image to ecr
+        env:
+          REGISTRY: 730335238091.dkr.ecr.ap-northeast-2.amazonaws.com
+          REPOSITORY: wodify-service
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:latest .
+          docker push $REGISTRY/$REPOSITORY:latest 
+
+      - name: eks kubectl apply
+        run: |
+          kubectl apply -f ./k8s/wodify_depl.yml
+          kubectl rollout restart deployment wodify-deployment
