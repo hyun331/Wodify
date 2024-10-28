@@ -106,7 +106,6 @@ hyun331">신승현</a>
 
 
 ## 화면 기능 테스트
-https://github.com/beyond-sw-camp/be07-3nd-soocompany-frontend/wiki/화면
 [화면 링크](https://github.com/hyun331/Wodify/wiki)
 
 
